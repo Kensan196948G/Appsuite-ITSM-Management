@@ -2,7 +2,7 @@
 # AppSuite ITSM 開発環境起動スクリプト
 # ========================================
 
-$PORT = 3000
+$PORT = 3100
 $ENV_NAME = "開発"
 
 Write-Host "========================================" -ForegroundColor Cyan
@@ -18,6 +18,9 @@ Write-Host ""
 Write-Host "🌐 アクセスURL:" -ForegroundColor Yellow
 Write-Host "   ローカル: http://localhost:$PORT" -ForegroundColor Cyan
 Write-Host "   LAN: http://192.168.0.145:$PORT" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "📌 ポート情報:" -ForegroundColor Yellow
+Write-Host "   このプロジェクト専用ポート（変更不可）: $PORT" -ForegroundColor White
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""

@@ -1,0 +1,57 @@
+{
+  "hooks": {
+    "SessionStart": {
+      "command": ".claude/hooks/session-start.sh",
+      "description": "並列開発環境の初期化とGit状態確認"
+    },
+    "UserPromptSubmit": {
+      "command": ".claude/hooks/user-prompt-submit.sh",
+      "description": "コンフリクト防止のためのロック管理"
+    },
+    "ToolCall": {
+      "command": ".claude/hooks/tool-call.sh",
+      "description": "ファイル操作監視とバックアップ"
+    }
+  },
+  "agents": {
+    "bash": {
+      "config": ".claude/agents/bash-agent.yml",
+      "enabled": true
+    },
+    "general": {
+      "config": ".claude/agents/general-agent.yml",
+      "enabled": true
+    },
+    "explore": {
+      "config": ".claude/agents/explore-agent.yml",
+      "enabled": true
+    },
+    "plan": {
+      "config": ".claude/agents/plan-agent.yml",
+      "enabled": true
+    },
+    "guide": {
+      "config": ".claude/agents/guide-agent.yml",
+      "enabled": true
+    },
+    "simplifier": {
+      "config": ".claude/agents/simplifier-agent.yml",
+      "enabled": true
+    },
+    "statusline": {
+      "config": ".claude/agents/statusline-agent.yml",
+      "enabled": true
+    }
+  },
+  "worktree": {
+    "enabled": true,
+    "basePath": "./worktrees",
+    "autoCleanup": true,
+    "maxWorktrees": 5
+  },
+  "parallel": {
+    "enabled": true,
+    "maxConcurrentAgents": 3,
+    "conflictDetection": true
+  }
+}

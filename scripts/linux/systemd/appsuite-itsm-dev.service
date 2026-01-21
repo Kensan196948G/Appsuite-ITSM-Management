@@ -1,0 +1,31 @@
+[Unit]
+Description=AppSuite ITSM Management System - Development Environment
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kensan
+Group=kensan
+WorkingDirectory=/mnt/LinuxHDD/Appsuite-ITSM-Management/WebUI-Sample
+Environment="NODE_ENV=development"
+Environment="PORT=3000"
+
+# http-serverを起動
+ExecStart=/usr/bin/npx http-server -p 3000 -c-1 --cors
+
+# 自動再起動設定
+Restart=on-failure
+RestartSec=10
+
+# ログ設定
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=appsuite-itsm-dev
+
+# セキュリティ設定
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,28 @@
+{
+  "environment": "production",
+  "port": 8443,
+  "protocol": "https",
+  "host": "localhost",
+  "lanIP": "192.168.0.145",
+  "logLevel": "INFO",
+  "enableHotReload": false,
+  "enableSourceMaps": false,
+  "compression": true,
+  "sampleData": false,
+  "ssl": {
+    "cert": "../ssl/prod-cert.pem",
+    "key": "../ssl/prod-key.pem"
+  },
+  "urls": {
+    "local": "https://localhost:8443",
+    "lan": "https://192.168.0.145:8443"
+  },
+  "cors": {
+    "enabled": false,
+    "origin": "https://192.168.0.145:8443"
+  },
+  "cache": {
+    "enabled": true,
+    "maxAge": 86400
+  }
+}

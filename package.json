@@ -1,0 +1,34 @@
+{
+  "name": "appsuite-itsm-management",
+  "version": "1.0.0",
+  "description": "AppSuite ITSM Management System - DeskNet's Neo AppSuite業務アプリケーション管理システム",
+  "keywords": [
+    "ITSM",
+    "IT Service Management",
+    "DeskNet's Neo",
+    "AppSuite",
+    "管理システム"
+  ],
+  "author": "Kensan196948G",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kensan196948G/Appsuite-ITSM-Management.git"
+  },
+  "scripts": {
+    "dev:win": "powershell -ExecutionPolicy Bypass -File scripts/windows/dev-start.ps1",
+    "prod:win": "powershell -ExecutionPolicy Bypass -File scripts/windows/prod-start.ps1",
+    "dev:linux": "bash scripts/linux/dev-start.sh",
+    "prod:linux": "bash scripts/linux/prod-start.sh",
+    "ssl:generate": "npm run ssl:dev && npm run ssl:prod",
+    "ssl:dev": "openssl req -x509 -newkey rsa:4096 -keyout ssl/dev-key.pem -out ssl/dev-cert.pem -days 365 -nodes -subj \"/CN=localhost\"",
+    "ssl:prod": "openssl req -x509 -newkey rsa:4096 -keyout ssl/prod-key.pem -out ssl/prod-cert.pem -days 365 -nodes -subj \"/CN=192.168.0.145\""
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

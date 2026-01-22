@@ -1,17 +1,56 @@
 {
   "hooks": {
-    "SessionStart": {
-      "command": ".claude/hooks/session-start.sh",
-      "description": "並列開発環境の初期化とGit状態確認"
-    },
-    "UserPromptSubmit": {
-      "command": ".claude/hooks/user-prompt-submit.sh",
-      "description": "コンフリクト防止のためのロック管理"
-    },
-    "ToolCall": {
-      "command": ".claude/hooks/tool-call.sh",
-      "description": "ファイル操作監視とバックアップ"
-    }
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/user-prompt-submit.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/tool-call.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/tool-call.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/tool-call.sh"
+          }
+        ]
+      }
+    ]
   },
   "agents": {
     "bash": {

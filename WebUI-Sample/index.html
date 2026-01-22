@@ -6,6 +6,8 @@
     <title>AppSuite 管理運用システム</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -73,8 +75,25 @@
             <div class="content-area" id="contentArea">
                 <!-- ダッシュボードセクション -->
                 <section class="section" id="section-dashboard">
-                    <h2><i class="fas fa-tachometer-alt"></i> ダッシュボード</h2>
-                    <div class="stats-grid">
+                    <!-- ダッシュボードヘッダー -->
+                    <div class="dashboard-header">
+                        <h2><i class="fas fa-tachometer-alt"></i> ダッシュボード</h2>
+                        <div class="dashboard-controls">
+                            <span class="last-refresh">
+                                <i class="fas fa-clock"></i>
+                                最終更新: <span id="lastRefreshTime">--:--:--</span>
+                            </span>
+                            <button class="btn btn-sm btn-outline" id="refreshDashboard" onclick="DashboardManager.refresh()">
+                                <i class="fas fa-sync-alt"></i> 更新
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="DashboardManager.openWidgetSettings()">
+                                <i class="fas fa-cog"></i> 設定
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 統計カード -->
+                    <div class="stats-grid" id="widget-stats">
                         <div class="stat-card">
                             <div class="stat-icon users"><i class="fas fa-users"></i></div>
                             <div class="stat-info">
@@ -119,12 +138,69 @@
                         </div>
                     </div>
 
+                    <!-- KPIウィジェット -->
+                    <div class="panel kpi-panel" id="widget-kpi">
+                        <h3><i class="fas fa-chart-line"></i> KPI指標</h3>
+                        <div id="kpiWidget"></div>
+                    </div>
+
+                    <!-- クイックアクション -->
+                    <div class="panel quick-actions-panel" id="widget-quickActions">
+                        <h3><i class="fas fa-bolt"></i> クイックアクション</h3>
+                        <div id="quickActions"></div>
+                    </div>
+
+                    <!-- チャートグリッド -->
+                    <div class="charts-grid">
+                        <!-- インシデントトレンド -->
+                        <div class="chart-panel" id="widget-incidentTrend">
+                            <div class="chart-container">
+                                <canvas id="incidentTrendChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- アプリステータス分布 -->
+                        <div class="chart-panel chart-small" id="widget-appStatus">
+                            <div class="chart-container">
+                                <canvas id="appStatusChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- インシデント優先度分布 -->
+                        <div class="chart-panel chart-small" id="widget-incidentPriority">
+                            <div class="chart-container">
+                                <canvas id="incidentPriorityChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 変更タイプ別 -->
+                        <div class="chart-panel" id="widget-changeType">
+                            <div class="chart-container">
+                                <canvas id="changeTypeChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 週間アクティビティ -->
+                        <div class="chart-panel chart-wide" id="widget-weeklyActivity">
+                            <div class="chart-container">
+                                <canvas id="weeklyActivityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- システムステータス -->
+                    <div class="panel system-status-panel" id="widget-systemStatus">
+                        <h3><i class="fas fa-server"></i> システムステータス</h3>
+                        <div id="systemStatus"></div>
+                    </div>
+
+                    <!-- 下部パネル -->
                     <div class="dashboard-panels">
-                        <div class="panel">
+                        <div class="panel" id="widget-recentLogs">
                             <h3><i class="fas fa-clock"></i> 最近の操作ログ</h3>
                             <div class="recent-logs" id="recentLogs"></div>
                         </div>
-                        <div class="panel">
+                        <div class="panel" id="widget-appSummary">
                             <h3><i class="fas fa-th-large"></i> アプリ一覧</h3>
                             <div class="app-summary" id="appSummary"></div>
                         </div>
@@ -967,6 +1043,7 @@
     <script src="js/api.js"></script>
     <script src="js/components.js"></script>
     <script src="js/modules.js"></script>
+    <script src="js/dashboard.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script>

@@ -142,6 +142,26 @@ function initSettings() {
 // ダッシュボード初期化
 function initDashboard() {
     updateDashboard();
+
+    // DashboardManager初期化（Chart.js読み込み後）
+    if (typeof DashboardManager !== 'undefined') {
+        DashboardManager.init();
+
+        // KPIウィジェット初期化
+        if (typeof KPIWidget !== 'undefined') {
+            KPIWidget.render();
+        }
+
+        // クイックアクション初期化
+        if (typeof QuickActions !== 'undefined') {
+            QuickActions.render();
+        }
+
+        // システムステータス初期化
+        if (typeof SystemStatus !== 'undefined') {
+            SystemStatus.render();
+        }
+    }
 }
 
 // ダッシュボード更新
@@ -159,6 +179,14 @@ function updateDashboard() {
 
     // アプリサマリー
     renderAppSummary();
+
+    // ウィジェット更新
+    if (typeof KPIWidget !== 'undefined') {
+        KPIWidget.render();
+    }
+    if (typeof SystemStatus !== 'undefined') {
+        SystemStatus.render();
+    }
 }
 
 // アプリサマリー表示

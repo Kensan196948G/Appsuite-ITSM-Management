@@ -17,16 +17,16 @@ const UserModule = {
         const tbody = document.getElementById('usersTableBody');
         tbody.innerHTML = users.map(user => `
             <tr>
-                <td>${user.id}</td>
-                <td>${user.username}</td>
-                <td>${user.email}</td>
-                <td>${user.department}</td>
-                <td><span class="badge ${user.role === '管理者' ? 'badge-primary' : 'badge-info'}">${user.role}</span></td>
+                <td>${escapeHtml(user.id)}</td>
+                <td>${escapeHtml(user.username)}</td>
+                <td>${escapeHtml(user.email)}</td>
+                <td>${escapeHtml(user.department)}</td>
+                <td><span class="badge ${user.role === '管理者' ? 'badge-primary' : 'badge-info'}">${escapeHtml(user.role)}</span></td>
                 <td><span class="badge ${user.status === 'active' ? 'badge-success' : 'badge-secondary'}">${user.status === 'active' ? '有効' : '無効'}</span></td>
-                <td>${user.lastLogin}</td>
+                <td>${escapeHtml(user.lastLogin)}</td>
                 <td>
-                    <button class="action-btn edit" onclick="UserModule.edit('${user.id}')" title="${readOnly ? '参照専用のため編集不可' : '編集'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="UserModule.delete('${user.id}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                    <button class="action-btn edit" onclick="UserModule.edit('${escapeHtml(user.id)}')" title="${readOnly ? '参照専用のため編集不可' : '編集'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="UserModule.delete('${escapeHtml(user.id)}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -210,17 +210,17 @@ const AppModule = {
         const tbody = document.getElementById('appsTableBody');
         tbody.innerHTML = apps.map(app => `
             <tr>
-                <td>${app.id}</td>
-                <td>${app.name}</td>
-                <td>${app.category}</td>
-                <td>${app.creator}</td>
+                <td>${escapeHtml(app.id)}</td>
+                <td>${escapeHtml(app.name)}</td>
+                <td>${escapeHtml(app.category)}</td>
+                <td>${escapeHtml(app.creator)}</td>
                 <td>${app.records.toLocaleString()}</td>
                 <td><span class="badge ${this.getStatusBadge(app.status)}">${this.getStatusText(app.status)}</span></td>
-                <td>${app.updated}</td>
+                <td>${escapeHtml(app.updated)}</td>
                 <td>
-                    <button class="action-btn view" onclick="AppModule.view('${app.id}')" title="詳細"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit" onclick="AppModule.edit('${app.id}')" title="${readOnly ? '参照専用のため編集不可' : '編集'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="AppModule.delete('${app.id}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view" onclick="AppModule.view('${escapeHtml(app.id)}')" title="詳細"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit" onclick="AppModule.edit('${escapeHtml(app.id)}')" title="${readOnly ? '参照専用のため編集不可' : '編集'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="AppModule.delete('${escapeHtml(app.id)}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -428,12 +428,12 @@ const LogModule = {
         const tbody = document.getElementById('logsTableBody');
         tbody.innerHTML = logs.map(log => `
             <tr>
-                <td>${log.timestamp}</td>
-                <td>${log.user}</td>
+                <td>${escapeHtml(log.timestamp)}</td>
+                <td>${escapeHtml(log.user)}</td>
                 <td><span class="badge ${this.getActionBadge(log.action)}">${this.getActionText(log.action)}</span></td>
-                <td>${log.target}</td>
-                <td>${log.detail}</td>
-                <td>${log.ip}</td>
+                <td>${escapeHtml(log.target)}</td>
+                <td>${escapeHtml(log.detail)}</td>
+                <td>${escapeHtml(log.ip)}</td>
             </tr>
         `).join('');
     },
@@ -524,10 +524,10 @@ const LogModule = {
         const container = document.getElementById('recentLogs');
         container.innerHTML = recentLogs.map(log => `
             <div class="log-item">
-                <span class="log-time">${log.timestamp}</span>
-                <span class="log-user">${log.user}</span>が
+                <span class="log-time">${escapeHtml(log.timestamp)}</span>
+                <span class="log-user">${escapeHtml(log.user)}</span>が
                 <span class="badge ${this.getActionBadge(log.action)}" style="font-size:0.7rem;">${this.getActionText(log.action)}</span>
-                ${log.target}
+                ${escapeHtml(log.target)}
             </div>
         `).join('');
     }
@@ -543,18 +543,18 @@ const IncidentModule = {
         const tbody = document.getElementById('incidentsTableBody');
         tbody.innerHTML = incidents.map(inc => `
             <tr>
-                <td>${inc.id}</td>
-                <td>${inc.title}</td>
-                <td>${inc.appName}</td>
+                <td>${escapeHtml(inc.id)}</td>
+                <td>${escapeHtml(inc.title)}</td>
+                <td>${escapeHtml(inc.appName)}</td>
                 <td><span class="badge ${this.getPriorityBadge(inc.priority)}">${this.getPriorityText(inc.priority)}</span></td>
                 <td><span class="badge ${this.getStatusBadge(inc.status)}">${this.getStatusText(inc.status)}</span></td>
-                <td>${inc.reporter}</td>
-                <td>${inc.assignee}</td>
-                <td>${inc.created}</td>
+                <td>${escapeHtml(inc.reporter)}</td>
+                <td>${escapeHtml(inc.assignee)}</td>
+                <td>${escapeHtml(inc.created)}</td>
                 <td>
-                    <button class="action-btn view" onclick="IncidentModule.view('${inc.id}')" title="詳細"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit" onclick="IncidentModule.edit('${inc.id}')" title="編集"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="IncidentModule.delete('${inc.id}')" title="削除"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view" onclick="IncidentModule.view('${escapeHtml(inc.id)}')" title="詳細"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit" onclick="IncidentModule.edit('${escapeHtml(inc.id)}')" title="編集"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="IncidentModule.delete('${escapeHtml(inc.id)}')" title="削除"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -1248,17 +1248,17 @@ const ChangeModule = {
         const tbody = document.getElementById('changesTableBody');
         tbody.innerHTML = changes.map(chg => `
             <tr>
-                <td>${chg.id}</td>
-                <td>${chg.title}</td>
-                <td>${chg.appName}</td>
+                <td>${escapeHtml(chg.id)}</td>
+                <td>${escapeHtml(chg.title)}</td>
+                <td>${escapeHtml(chg.appName)}</td>
                 <td><span class="badge ${this.getTypeBadge(chg.type)}">${this.getTypeText(chg.type)}</span></td>
                 <td><span class="badge ${this.getStatusBadge(chg.status)}">${this.getStatusText(chg.status)}</span></td>
-                <td>${chg.requester}</td>
-                <td>${chg.scheduled}</td>
+                <td>${escapeHtml(chg.requester)}</td>
+                <td>${escapeHtml(chg.scheduled)}</td>
                 <td>
-                    <button class="action-btn view" onclick="ChangeModule.view('${chg.id}')" title="詳細"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit" onclick="ChangeModule.edit('${chg.id}')" title="編集"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="ChangeModule.delete('${chg.id}')" title="削除"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view" onclick="ChangeModule.view('${escapeHtml(chg.id)}')" title="詳細"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit" onclick="ChangeModule.edit('${escapeHtml(chg.id)}')" title="編集"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="ChangeModule.delete('${escapeHtml(chg.id)}')" title="削除"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');

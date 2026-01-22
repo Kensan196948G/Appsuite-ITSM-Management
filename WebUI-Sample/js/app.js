@@ -1,9 +1,30 @@
 /**
  * AppSuite 管理運用システム - メインアプリケーション
+ * Phase 3 Sprint 1: 認証システム統合
  */
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
+    // 認証モジュール初期化
+    AuthModule.init();
+
+    // 認証チェック
+    if (AuthModule.isAuthenticated()) {
+        // 認証済み：アプリケーション初期化
+        initApplication();
+        AuthModule.hideLoginScreen();
+        const user = AuthModule.getCurrentUser();
+        if (user) {
+            AuthModule.updateUIForUser(user);
+        }
+    } else {
+        // 未認証：ログイン画面表示
+        AuthModule.showLoginScreen();
+    }
+});
+
+// アプリケーション初期化
+function initApplication() {
     initNavigation();
     initSidebar();
     initFilters();
@@ -11,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initApiSync();
     initDashboard();
     refreshAllModules();
-});
+}
 
 // ナビゲーション初期化
 function initNavigation() {
@@ -148,7 +169,7 @@ function renderAppSummary() {
         .slice(0, 5);
     container.innerHTML = apps.map(app => `
         <div class="app-summary-item">
-            <span class="app-name">${app.name}</span>
+            <span class="app-name">${escapeHtml(app.name)}</span>
             <span class="app-records">${app.records.toLocaleString()}件</span>
             <span class="badge ${AppModule.getStatusBadge(app.status)}">${AppModule.getStatusText(app.status)}</span>
         </div>
@@ -195,5 +216,7 @@ document.getElementById('modalOverlay').addEventListener('click', (e) => {
     }
 });
 
-// 初期ログイン記録
-LogModule.addLog('login', 'システム', 'system', 'ログイン成功');
+// 認証後のアプリケーション起動（AuthModuleから呼び出される）
+function startApplicationAfterLogin() {
+    initApplication();
+}

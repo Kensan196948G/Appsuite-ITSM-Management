@@ -1021,3 +1021,626 @@ body {
         justify-content: center;
     }
 }
+
+/* ================================================
+   認証・ログイン関連スタイル
+   Phase 3 Sprint 1: 認証システム実装
+   ================================================ */
+
+/* ログインモーダル */
+.login-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.login-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.login-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.login-header i {
+    font-size: 48px;
+    color: var(--primary-color);
+    margin-bottom: 16px;
+}
+
+.login-header h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.login-form .form-group {
+    margin-bottom: 20px;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.login-form label i {
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+.login-form input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.password-input-wrapper {
+    position: relative;
+}
+
+.password-input-wrapper input {
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}
+
+.login-error {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+    min-height: 20px;
+    text-align: center;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.login-hint {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.login-hint small {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* ログアウトボタン */
+.logout-btn {
+    margin-left: 16px;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.logout-btn:hover {
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+}
+
+/* ユーザーロールバッジ */
+.user-role-badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+    background: var(--primary-color);
+    color: white;
+}
+
+.user-role-badge.admin {
+    background: #7c3aed;
+}
+
+.user-role-badge.user {
+    background: #059669;
+}
+
+/* ボタンスモールサイズ */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-outline:hover {
+    background: var(--bg-secondary);
+}
+
+/* フォームエラー表示 */
+.input-error {
+    border-color: var(--danger-color) !important;
+}
+
+.field-error {
+    color: var(--danger-color);
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+/* パスワード強度インジケーター */
+.password-strength {
+    margin-top: 8px;
+}
+
+.password-strength-bar {
+    height: 4px;
+    background: var(--bg-secondary);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.password-strength-fill {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s, background-color 0.3s;
+}
+
+.password-strength-text {
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+/* 権限ベース表示制御 */
+[data-permission] {
+    transition: opacity 0.2s;
+}
+
+.permission-hidden {
+    display: none !important;
+}
+
+/* セッションタイムアウト警告 */
+.session-warning {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--warning-color);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* レスポンシブ：ログイン */
+@media (max-width: 480px) {
+    .login-container {
+        margin: 16px;
+        padding: 24px;
+    }
+
+    .login-header i {
+        font-size: 36px;
+    }
+
+    .login-header h2 {
+        font-size: 1.25rem;
+    }
+}
+
+/* ================================================
+   共通コンポーネントスタイル
+   Phase 3 Sprint 1: 共通コンポーネント実装
+   ================================================ */
+
+/* ページネーション */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border-radius: 0 0 12px 12px;
+}
+
+.pagination-info {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pagination-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(.disabled):not(.active) {
+    background: var(--bg-secondary);
+    border-color: var(--primary-color);
+}
+
+.pagination-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+    padding: 0 8px;
+    color: var(--text-muted);
+}
+
+/* ローディングオーバーレイ */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-message {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* 強化版トースト */
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 8px;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast.hide {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.toast-success {
+    border-left: 4px solid var(--success-color);
+}
+
+.toast-success i {
+    color: var(--success-color);
+}
+
+.toast-error {
+    border-left: 4px solid var(--danger-color);
+}
+
+.toast-error i {
+    color: var(--danger-color);
+}
+
+.toast-warning {
+    border-left: 4px solid var(--warning-color);
+}
+
+.toast-warning i {
+    color: var(--warning-color);
+}
+
+.toast-info {
+    border-left: 4px solid var(--info-color);
+}
+
+.toast-info i {
+    color: var(--info-color);
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+}
+
+.toast-close:hover {
+    color: var(--text-primary);
+}
+
+/* モーダルサイズ */
+.modal-small {
+    max-width: 400px;
+}
+
+.modal-medium {
+    max-width: 600px;
+}
+
+.modal-large {
+    max-width: 900px;
+}
+
+/* 検索ハイライト */
+.search-highlight {
+    background: #fef08a;
+    padding: 1px 2px;
+    border-radius: 2px;
+}
+
+/* テーブルソート */
+th[data-sortable] {
+    cursor: pointer;
+    user-select: none;
+}
+
+th[data-sortable]:hover {
+    background: var(--bg-secondary);
+}
+
+th[data-sortable]::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+th.sort-asc::after {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid var(--primary-color);
+}
+
+th.sort-desc::after {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--primary-color);
+}
+
+/* ドロップダウン */
+.dropdown-menu {
+    position: fixed;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s;
+}
+
+.dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background: var(--bg-secondary);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 4px 0;
+}
+
+/* タブ */
+.tab-container {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.tab-buttons {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+    background: white;
+}
+
+.tab-button.active {
+    background: white;
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.tab-panel {
+    display: none;
+    padding: 24px;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* レスポンシブ：コンポーネント */
+@media (max-width: 768px) {
+    .pagination-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .pagination-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .tab-buttons {
+        flex-wrap: wrap;
+    }
+
+    .tab-button {
+        flex: 1 1 50%;
+    }
+}

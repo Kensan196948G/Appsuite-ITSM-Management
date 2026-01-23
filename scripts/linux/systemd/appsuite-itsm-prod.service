@@ -1,0 +1,31 @@
+[Unit]
+Description=AppSuite ITSM Management System - Production Environment
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kensan
+Group=kensan
+WorkingDirectory=/mnt/LinuxHDD/Appsuite-ITSM-Management/WebUI-Production
+Environment="NODE_ENV=production"
+Environment="PORT=8443"
+
+# http-serverをHTTPSモードで起動
+ExecStart=/usr/bin/npx http-server -p 8443 --ssl --cert /mnt/LinuxHDD/Appsuite-ITSM-Management/ssl/prod-cert.pem --key /mnt/LinuxHDD/Appsuite-ITSM-Management/ssl/prod-key.pem
+
+# 自動再起動設定
+Restart=on-failure
+RestartSec=10
+
+# ログ設定
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=appsuite-itsm-prod
+
+# セキュリティ設定
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

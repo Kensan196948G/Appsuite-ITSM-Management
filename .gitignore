@@ -1,0 +1,58 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# SSL Certificates (Private keys should not be committed)
+ssl/*.pem
+ssl/*.key
+ssl/*.crt
+
+# Git Worktrees
+worktrees/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Claude Code (if needed)
+.claude/history.jsonl
+.claude/cache/
+.claude/debug/
+.claude/telemetry/
+
+# Backup files
+*.bak
+*.backup
+*~

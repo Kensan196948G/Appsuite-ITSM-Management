@@ -1,0 +1,96 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/user-prompt-submit.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/tool-call.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/tool-call.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/tool-call.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "agents": {
+    "bash": {
+      "config": ".claude/agents/bash-agent.yml",
+      "enabled": true
+    },
+    "general": {
+      "config": ".claude/agents/general-agent.yml",
+      "enabled": true
+    },
+    "explore": {
+      "config": ".claude/agents/explore-agent.yml",
+      "enabled": true
+    },
+    "plan": {
+      "config": ".claude/agents/plan-agent.yml",
+      "enabled": true
+    },
+    "guide": {
+      "config": ".claude/agents/guide-agent.yml",
+      "enabled": true
+    },
+    "simplifier": {
+      "config": ".claude/agents/simplifier-agent.yml",
+      "enabled": true
+    },
+    "statusline": {
+      "config": ".claude/agents/statusline-agent.yml",
+      "enabled": true
+    }
+  },
+  "worktree": {
+    "enabled": true,
+    "basePath": "./worktrees",
+    "autoCleanup": true,
+    "maxWorktrees": 5
+  },
+  "parallel": {
+    "enabled": true,
+    "maxConcurrentAgents": 3,
+    "conflictDetection": true
+  }
+}

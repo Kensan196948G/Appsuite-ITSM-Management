@@ -17,16 +17,16 @@ const UserModule = {
         const tbody = document.getElementById('usersTableBody');
         tbody.innerHTML = users.map(user => `
             <tr>
-                <td>${user.id}</td>
-                <td>${user.username}</td>
-                <td>${user.email}</td>
-                <td>${user.department}</td>
-                <td><span class="badge ${user.role === '管理者' ? 'badge-primary' : 'badge-info'}">${user.role}</span></td>
+                <td>${escapeHtml(user.id)}</td>
+                <td>${escapeHtml(user.username)}</td>
+                <td>${escapeHtml(user.email)}</td>
+                <td>${escapeHtml(user.department)}</td>
+                <td><span class="badge ${user.role === '管理者' ? 'badge-primary' : 'badge-info'}">${escapeHtml(user.role)}</span></td>
                 <td><span class="badge ${user.status === 'active' ? 'badge-success' : 'badge-secondary'}">${user.status === 'active' ? '有効' : '無効'}</span></td>
-                <td>${user.lastLogin}</td>
+                <td>${escapeHtml(user.lastLogin)}</td>
                 <td>
-                    <button class="action-btn edit" onclick="UserModule.edit('${user.id}')" title="${readOnly ? '参照専用のため編集不可' : '編集'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="UserModule.delete('${user.id}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                    <button class="action-btn edit" onclick="UserModule.edit('${escapeHtml(user.id)}')" title="${readOnly ? '参照専用のため編集不可' : '編集'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="UserModule.delete('${escapeHtml(user.id)}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -105,11 +105,11 @@ const UserModule = {
         openModal('ユーザー編集', `
             <div class="form-group">
                 <label>ユーザー名</label>
-                <input type="text" id="editUserName" value="${user.username}">
+                <input type="text" id="editUserName" value="${escapeHtml(user.username)}">
             </div>
             <div class="form-group">
                 <label>メールアドレス</label>
-                <input type="email" id="editUserEmail" value="${user.email}">
+                <input type="email" id="editUserEmail" value="${escapeHtml(user.email)}">
             </div>
             <div class="form-group">
                 <label>部署</label>
@@ -210,17 +210,17 @@ const AppModule = {
         const tbody = document.getElementById('appsTableBody');
         tbody.innerHTML = apps.map(app => `
             <tr>
-                <td>${app.id}</td>
-                <td>${app.name}</td>
-                <td>${app.category}</td>
-                <td>${app.creator}</td>
+                <td>${escapeHtml(app.id)}</td>
+                <td>${escapeHtml(app.name)}</td>
+                <td>${escapeHtml(app.category)}</td>
+                <td>${escapeHtml(app.creator)}</td>
                 <td>${app.records.toLocaleString()}</td>
                 <td><span class="badge ${this.getStatusBadge(app.status)}">${this.getStatusText(app.status)}</span></td>
-                <td>${app.updated}</td>
+                <td>${escapeHtml(app.updated)}</td>
                 <td>
-                    <button class="action-btn view" onclick="AppModule.view('${app.id}')" title="詳細"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit" onclick="AppModule.edit('${app.id}')" title="${readOnly ? '参照専用のため編集不可' : '編集'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="AppModule.delete('${app.id}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view" onclick="AppModule.view('${escapeHtml(app.id)}')" title="詳細"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit" onclick="AppModule.edit('${escapeHtml(app.id)}')" title="${readOnly ? '参照専用のため編集不可' : '編集'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="AppModule.delete('${escapeHtml(app.id)}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -304,17 +304,17 @@ const AppModule = {
 
     view(id) {
         const app = DataStore.apps.find(a => a.id === id);
-        openModal('アプリ詳細: ' + app.name, `
+        openModal('アプリ詳細: ' + escapeHtml(app.name), `
             <div style="line-height: 2;">
-                <p><strong>アプリID:</strong> ${app.id}</p>
-                <p><strong>アプリ名:</strong> ${app.name}</p>
-                <p><strong>カテゴリ:</strong> ${app.category}</p>
-                <p><strong>作成者:</strong> ${app.creator}</p>
+                <p><strong>アプリID:</strong> ${escapeHtml(app.id)}</p>
+                <p><strong>アプリ名:</strong> ${escapeHtml(app.name)}</p>
+                <p><strong>カテゴリ:</strong> ${escapeHtml(app.category)}</p>
+                <p><strong>作成者:</strong> ${escapeHtml(app.creator)}</p>
                 <p><strong>レコード数:</strong> ${app.records.toLocaleString()}件</p>
                 <p><strong>ステータス:</strong> ${this.getStatusText(app.status)}</p>
-                <p><strong>最終更新:</strong> ${app.updated}</p>
+                <p><strong>最終更新:</strong> ${escapeHtml(app.updated)}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${app.description || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(app.description) || '（なし）'}</p>
             </div>
         `, [
             { text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }
@@ -323,10 +323,10 @@ const AppModule = {
 
     edit(id) {
         const app = DataStore.apps.find(a => a.id === id);
-        openModal('アプリ編集: ' + app.name, `
+        openModal('アプリ編集: ' + escapeHtml(app.name), `
             <div class="form-group">
                 <label>アプリ名</label>
-                <input type="text" id="editAppName" value="${app.name}">
+                <input type="text" id="editAppName" value="${escapeHtml(app.name)}">
             </div>
             <div class="form-group">
                 <label>カテゴリ</label>
@@ -338,7 +338,7 @@ const AppModule = {
             </div>
             <div class="form-group">
                 <label>作成者</label>
-                <input type="text" id="editAppCreator" value="${app.creator}">
+                <input type="text" id="editAppCreator" value="${escapeHtml(app.creator)}">
             </div>
             <div class="form-group">
                 <label>ステータス</label>
@@ -350,11 +350,11 @@ const AppModule = {
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editAppDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${app.description || ''}</textarea>
+                <textarea id="editAppDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(app.description) || ''}</textarea>
             </div>
         `, [
             { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '保存', class: 'btn-primary', onclick: `AppModule.save('${id}')` }
+            { text: '保存', class: 'btn-primary', onclick: `AppModule.save('${escapeHtml(id)}')` }
         ]);
     },
 
@@ -428,12 +428,12 @@ const LogModule = {
         const tbody = document.getElementById('logsTableBody');
         tbody.innerHTML = logs.map(log => `
             <tr>
-                <td>${log.timestamp}</td>
-                <td>${log.user}</td>
+                <td>${escapeHtml(log.timestamp)}</td>
+                <td>${escapeHtml(log.user)}</td>
                 <td><span class="badge ${this.getActionBadge(log.action)}">${this.getActionText(log.action)}</span></td>
-                <td>${log.target}</td>
-                <td>${log.detail}</td>
-                <td>${log.ip}</td>
+                <td>${escapeHtml(log.target)}</td>
+                <td>${escapeHtml(log.detail)}</td>
+                <td>${escapeHtml(log.ip)}</td>
             </tr>
         `).join('');
     },
@@ -524,10 +524,10 @@ const LogModule = {
         const container = document.getElementById('recentLogs');
         container.innerHTML = recentLogs.map(log => `
             <div class="log-item">
-                <span class="log-time">${log.timestamp}</span>
-                <span class="log-user">${log.user}</span>が
+                <span class="log-time">${escapeHtml(log.timestamp)}</span>
+                <span class="log-user">${escapeHtml(log.user)}</span>が
                 <span class="badge ${this.getActionBadge(log.action)}" style="font-size:0.7rem;">${this.getActionText(log.action)}</span>
-                ${log.target}
+                ${escapeHtml(log.target)}
             </div>
         `).join('');
     }
@@ -543,18 +543,18 @@ const IncidentModule = {
         const tbody = document.getElementById('incidentsTableBody');
         tbody.innerHTML = incidents.map(inc => `
             <tr>
-                <td>${inc.id}</td>
-                <td>${inc.title}</td>
-                <td>${inc.appName}</td>
+                <td>${escapeHtml(inc.id)}</td>
+                <td>${escapeHtml(inc.title)}</td>
+                <td>${escapeHtml(inc.appName)}</td>
                 <td><span class="badge ${this.getPriorityBadge(inc.priority)}">${this.getPriorityText(inc.priority)}</span></td>
                 <td><span class="badge ${this.getStatusBadge(inc.status)}">${this.getStatusText(inc.status)}</span></td>
-                <td>${inc.reporter}</td>
-                <td>${inc.assignee}</td>
-                <td>${inc.created}</td>
+                <td>${escapeHtml(inc.reporter)}</td>
+                <td>${escapeHtml(inc.assignee)}</td>
+                <td>${escapeHtml(inc.created)}</td>
                 <td>
-                    <button class="action-btn view" onclick="IncidentModule.view('${inc.id}')" title="詳細"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit" onclick="IncidentModule.edit('${inc.id}')" title="編集"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="IncidentModule.delete('${inc.id}')" title="削除"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view" onclick="IncidentModule.view('${escapeHtml(inc.id)}')" title="詳細"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit" onclick="IncidentModule.edit('${escapeHtml(inc.id)}')" title="編集"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="IncidentModule.delete('${escapeHtml(inc.id)}')" title="削除"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -581,8 +581,8 @@ const IncidentModule = {
     },
 
     showAddModal() {
-        const appOptions = DataStore.apps.map(a => `<option value="${a.id}" data-name="${a.name}">${a.name}</option>`).join('');
-        const userOptions = DataStore.users.filter(u => u.status === 'active').map(u => `<option value="${u.username}">${u.username}</option>`).join('');
+        const appOptions = DataStore.apps.map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`).join('');
+        const userOptions = DataStore.users.filter(u => u.status === 'active').map(u => `<option value="${escapeHtml(u.username)}">${escapeHtml(u.username)}</option>`).join('');
 
         openModal('インシデント登録', `
             <div class="form-group">
@@ -645,18 +645,18 @@ const IncidentModule = {
 
     view(id) {
         const inc = DataStore.incidents.find(i => i.id === id);
-        openModal('インシデント詳細: ' + inc.id, `
+        openModal('インシデント詳細: ' + escapeHtml(inc.id), `
             <div style="line-height: 2;">
-                <p><strong>インシデントID:</strong> ${inc.id}</p>
-                <p><strong>タイトル:</strong> ${inc.title}</p>
-                <p><strong>対象アプリ:</strong> ${inc.appName}</p>
+                <p><strong>インシデントID:</strong> ${escapeHtml(inc.id)}</p>
+                <p><strong>タイトル:</strong> ${escapeHtml(inc.title)}</p>
+                <p><strong>対象アプリ:</strong> ${escapeHtml(inc.appName)}</p>
                 <p><strong>優先度:</strong> <span class="badge ${this.getPriorityBadge(inc.priority)}">${this.getPriorityText(inc.priority)}</span></p>
                 <p><strong>ステータス:</strong> <span class="badge ${this.getStatusBadge(inc.status)}">${this.getStatusText(inc.status)}</span></p>
-                <p><strong>報告者:</strong> ${inc.reporter}</p>
-                <p><strong>担当者:</strong> ${inc.assignee}</p>
-                <p><strong>登録日:</strong> ${inc.created}</p>
+                <p><strong>報告者:</strong> ${escapeHtml(inc.reporter)}</p>
+                <p><strong>担当者:</strong> ${escapeHtml(inc.assignee)}</p>
+                <p><strong>登録日:</strong> ${escapeHtml(inc.created)}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${inc.description || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(inc.description) || '（なし）'}</p>
             </div>
         `, [
             { text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }
@@ -665,13 +665,13 @@ const IncidentModule = {
 
     edit(id) {
         const inc = DataStore.incidents.find(i => i.id === id);
-        const appOptions = DataStore.apps.map(a => `<option value="${a.id}" data-name="${a.name}" ${a.id === inc.appId ? 'selected' : ''}>${a.name}</option>`).join('');
-        const userOptions = DataStore.users.filter(u => u.status === 'active').map(u => `<option value="${u.username}" ${u.username === inc.assignee ? 'selected' : ''}>${u.username}</option>`).join('');
+        const appOptions = DataStore.apps.map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === inc.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('');
+        const userOptions = DataStore.users.filter(u => u.status === 'active').map(u => `<option value="${escapeHtml(u.username)}" ${u.username === inc.assignee ? 'selected' : ''}>${escapeHtml(u.username)}</option>`).join('');
 
-        openModal('インシデント編集: ' + inc.id, `
+        openModal('インシデント編集: ' + escapeHtml(inc.id), `
             <div class="form-group">
                 <label>タイトル</label>
-                <input type="text" id="editIncTitle" value="${inc.title}">
+                <input type="text" id="editIncTitle" value="${escapeHtml(inc.title)}">
             </div>
             <div class="form-group">
                 <label>対象アプリ</label>
@@ -705,11 +705,11 @@ const IncidentModule = {
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editIncDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${inc.description || ''}</textarea>
+                <textarea id="editIncDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(inc.description) || ''}</textarea>
             </div>
         `, [
             { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '保存', class: 'btn-primary', onclick: `IncidentModule.save('${id}')` }
+            { text: '保存', class: 'btn-primary', onclick: `IncidentModule.save('${escapeHtml(id)}')` }
         ]);
     },
 
@@ -1248,17 +1248,17 @@ const ChangeModule = {
         const tbody = document.getElementById('changesTableBody');
         tbody.innerHTML = changes.map(chg => `
             <tr>
-                <td>${chg.id}</td>
-                <td>${chg.title}</td>
-                <td>${chg.appName}</td>
+                <td>${escapeHtml(chg.id)}</td>
+                <td>${escapeHtml(chg.title)}</td>
+                <td>${escapeHtml(chg.appName)}</td>
                 <td><span class="badge ${this.getTypeBadge(chg.type)}">${this.getTypeText(chg.type)}</span></td>
                 <td><span class="badge ${this.getStatusBadge(chg.status)}">${this.getStatusText(chg.status)}</span></td>
-                <td>${chg.requester}</td>
-                <td>${chg.scheduled}</td>
+                <td>${escapeHtml(chg.requester)}</td>
+                <td>${escapeHtml(chg.scheduled)}</td>
                 <td>
-                    <button class="action-btn view" onclick="ChangeModule.view('${chg.id}')" title="詳細"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn edit" onclick="ChangeModule.edit('${chg.id}')" title="編集"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete" onclick="ChangeModule.delete('${chg.id}')" title="削除"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn view" onclick="ChangeModule.view('${escapeHtml(chg.id)}')" title="詳細"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit" onclick="ChangeModule.edit('${escapeHtml(chg.id)}')" title="編集"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="ChangeModule.delete('${escapeHtml(chg.id)}')" title="削除"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -1285,7 +1285,7 @@ const ChangeModule = {
     },
 
     showAddModal() {
-        const appOptions = DataStore.apps.map(a => `<option value="${a.id}" data-name="${a.name}">${a.name}</option>`).join('');
+        const appOptions = DataStore.apps.map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`).join('');
 
         openModal('変更要求登録', `
             <div class="form-group">
@@ -1345,17 +1345,17 @@ const ChangeModule = {
 
     view(id) {
         const chg = DataStore.changes.find(c => c.id === id);
-        openModal('変更要求詳細: ' + chg.id, `
+        openModal('変更要求詳細: ' + escapeHtml(chg.id), `
             <div style="line-height: 2;">
-                <p><strong>変更ID:</strong> ${chg.id}</p>
-                <p><strong>タイトル:</strong> ${chg.title}</p>
-                <p><strong>対象アプリ:</strong> ${chg.appName}</p>
+                <p><strong>変更ID:</strong> ${escapeHtml(chg.id)}</p>
+                <p><strong>タイトル:</strong> ${escapeHtml(chg.title)}</p>
+                <p><strong>対象アプリ:</strong> ${escapeHtml(chg.appName)}</p>
                 <p><strong>変更種別:</strong> <span class="badge ${this.getTypeBadge(chg.type)}">${this.getTypeText(chg.type)}</span></p>
                 <p><strong>ステータス:</strong> <span class="badge ${this.getStatusBadge(chg.status)}">${this.getStatusText(chg.status)}</span></p>
-                <p><strong>依頼者:</strong> ${chg.requester}</p>
-                <p><strong>実施予定日:</strong> ${chg.scheduled}</p>
+                <p><strong>依頼者:</strong> ${escapeHtml(chg.requester)}</p>
+                <p><strong>実施予定日:</strong> ${escapeHtml(chg.scheduled)}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${chg.description || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(chg.description) || '（なし）'}</p>
             </div>
         `, [
             { text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }
@@ -1364,12 +1364,12 @@ const ChangeModule = {
 
     edit(id) {
         const chg = DataStore.changes.find(c => c.id === id);
-        const appOptions = DataStore.apps.map(a => `<option value="${a.id}" data-name="${a.name}" ${a.id === chg.appId ? 'selected' : ''}>${a.name}</option>`).join('');
+        const appOptions = DataStore.apps.map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === chg.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('');
 
-        openModal('変更要求編集: ' + chg.id, `
+        openModal('変更要求編集: ' + escapeHtml(chg.id), `
             <div class="form-group">
                 <label>タイトル</label>
-                <input type="text" id="editChgTitle" value="${chg.title}">
+                <input type="text" id="editChgTitle" value="${escapeHtml(chg.title)}">
             </div>
             <div class="form-group">
                 <label>対象アプリ</label>
@@ -1399,15 +1399,15 @@ const ChangeModule = {
             </div>
             <div class="form-group">
                 <label>実施予定日</label>
-                <input type="date" id="editChgScheduled" value="${chg.scheduled !== '-' ? chg.scheduled : ''}">
+                <input type="date" id="editChgScheduled" value="${chg.scheduled !== '-' ? escapeHtml(chg.scheduled) : ''}">
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editChgDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${chg.description || ''}</textarea>
+                <textarea id="editChgDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(chg.description) || ''}</textarea>
             </div>
         `, [
             { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '保存', class: 'btn-primary', onclick: `ChangeModule.save('${id}')` }
+            { text: '保存', class: 'btn-primary', onclick: `ChangeModule.save('${escapeHtml(id)}')` }
         ]);
     },
 

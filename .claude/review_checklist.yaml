@@ -1,0 +1,285 @@
+# 🔍 Code Review Checklist for Appsuite-ITSM-Management
+# Version: 1.0
+# Last Updated: 2026-01-23
+
+review_checklist:
+  # ========================================
+  # 1. 仕様準拠
+  # ========================================
+  - category: 仕様準拠
+    weight: CRITICAL
+    checks:
+      - id: SPEC-001
+        description: 入出力が仕様どおりか
+        reference: docs/機能仕様書(Functional-Specification).md
+
+      - id: SPEC-002
+        description: ITILプロセス（Incident/Change/Problem Management）に準拠しているか
+        reference: Appsuite_ITSM_Processes.md
+
+      - id: SPEC-003
+        description: ワークフロー（ステータス遷移）が設計どおりか
+        reference: docs/機能仕様書(Functional-Specification).md
+
+      - id: SPEC-004
+        description: 省略された要件がないか
+        reference: docs/詳細要件定義書(Requirements-Specification).md
+
+  # ========================================
+  # 2. セキュリティ（最重要）
+  # ========================================
+  - category: セキュリティ
+    weight: CRITICAL
+    checks:
+      - id: SEC-001
+        description: XSS対策（escapeHtml使用）されているか
+        reference: WebUI-Sample/js/security.js
+        severity: BLOCKING
+
+      - id: SEC-002
+        description: CSRF保護がされているか
+        reference: WebUI-Sample/js/security.js
+        severity: BLOCKING
+
+      - id: SEC-003
+        description: 入力バリデーションがあるか
+        reference: WebUI-Sample/js/security.js
+        severity: BLOCKING
+
+      - id: SEC-004
+        description: SQLインジェクション対策（該当する場合）
+        severity: BLOCKING
+
+      - id: SEC-005
+        description: 権限チェックがあるか（RBAC準拠）
+        reference: WebUI-Sample/js/auth.js
+        severity: BLOCKING
+
+      - id: SEC-006
+        description: アカウントロックアウト機能（認証系）
+        reference: WebUI-Sample/js/auth.js
+        severity: HIGH
+
+      - id: SEC-007
+        description: セッション管理が適切か
+        reference: WebUI-Sample/js/auth.js
+        severity: HIGH
+
+  # ========================================
+  # 3. 例外処理・エラーハンドリング
+  # ========================================
+  - category: 例外処理
+    weight: HIGH
+    checks:
+      - id: ERR-001
+        description: try/catch があるか（必要箇所）
+        severity: HIGH
+
+      - id: ERR-002
+        description: エラー時に異常終了しないか
+        severity: BLOCKING
+
+      - id: ERR-003
+        description: ユーザーフレンドリーなエラーメッセージがあるか
+        severity: MEDIUM
+
+      - id: ERR-004
+        description: エラー時のロールバック処理があるか
+        severity: HIGH
+
+  # ========================================
+  # 4. ログ・証跡（監査対応）
+  # ========================================
+  - category: ログ・証跡
+    weight: CRITICAL
+    checks:
+      - id: LOG-001
+        description: 成功ログがあるか
+        reference: WebUI-Sample/js/modules.js (LogModule)
+        severity: HIGH
+
+      - id: LOG-002
+        description: 失敗ログがあるか
+        severity: HIGH
+
+      - id: LOG-003
+        description: 誰が何をしたか残るか（監査ログ）
+        severity: BLOCKING
+        note: ISO20000/ISO27001準拠必須
+
+      - id: LOG-004
+        description: LogModule.addLog() が適切に呼ばれているか
+        reference: WebUI-Sample/js/modules.js
+        severity: HIGH
+
+  # ========================================
+  # 5. 権限・SoD（Separation of Duties）
+  # ========================================
+  - category: 権限・SoD
+    weight: CRITICAL
+    checks:
+      - id: AUTH-001
+        description: 権限チェックがあるか
+        severity: BLOCKING
+
+      - id: AUTH-002
+        description: 管理系操作が無制限で実行できないか
+        severity: BLOCKING
+
+      - id: AUTH-003
+        description: 承認フロー（変更管理）が実装されているか
+        reference: WebUI-Sample/js/modules.js (ChangeModule)
+        severity: HIGH
+
+      - id: AUTH-004
+        description: 読み取り専用モードが考慮されているか
+        severity: MEDIUM
+
+  # ========================================
+  # 6. ITSM特有要件
+  # ========================================
+  - category: ITSM準拠
+    weight: CRITICAL
+    checks:
+      - id: ITSM-001
+        description: インシデント優先度（High/Medium/Low）が正しく扱われているか
+        reference: WebUI-Sample/js/modules.js (IncidentModule)
+        severity: HIGH
+
+      - id: ITSM-002
+        description: ステータス遷移ロジック（isValidStatusTransition）があるか
+        reference: WebUI-Sample/js/modules.js
+        severity: BLOCKING
+
+      - id: ITSM-003
+        description: SLA管理（エスカレーション期限）が考慮されているか
+        reference: docs/機能仕様書(Functional-Specification).md
+        severity: HIGH
+
+      - id: ITSM-004
+        description: 担当者割り当てロジックがあるか
+        severity: MEDIUM
+
+      - id: ITSM-005
+        description: 通知機能（メール・アラート）が実装されているか
+        reference: docs/機能仕様書(Functional-Specification).md
+        severity: MEDIUM
+
+  # ========================================
+  # 7. データ整合性
+  # ========================================
+  - category: データ整合性
+    weight: HIGH
+    checks:
+      - id: DATA-001
+        description: データの保存が確実に行われるか
+        severity: BLOCKING
+
+      - id: DATA-002
+        description: localStorage更新後のエラーハンドリングがあるか
+        severity: HIGH
+
+      - id: DATA-003
+        description: データバックアップ機能と連携しているか
+        reference: WebUI-Sample/js/modules.js (SettingsModule)
+        severity: MEDIUM
+
+      - id: DATA-004
+        description: 削除時の確認ダイアログがあるか
+        severity: HIGH
+
+  # ========================================
+  # 8. UI/UX
+  # ========================================
+  - category: UI/UX
+    weight: MEDIUM
+    checks:
+      - id: UX-001
+        description: 操作完了時のフィードバック（Toast通知）があるか
+        reference: WebUI-Sample/js/components.js
+        severity: MEDIUM
+
+      - id: UX-002
+        description: ローディング表示があるか（長時間処理）
+        reference: WebUI-Sample/js/components.js
+        severity: MEDIUM
+
+      - id: UX-003
+        description: 無効状態（disabled）の適切な制御があるか
+        severity: LOW
+
+      - id: UX-004
+        description: アクセシビリティ（aria属性）が考慮されているか
+        reference: docs/画面設計書(Screen-Design).md
+        severity: LOW
+
+  # ========================================
+  # 9. 将来変更耐性
+  # ========================================
+  - category: 将来変更耐性
+    weight: MEDIUM
+    checks:
+      - id: MAINT-001
+        description: ハードコードされていないか
+        severity: MEDIUM
+
+      - id: MAINT-002
+        description: 設定値が外出しされているか（SettingsModule）
+        reference: WebUI-Sample/js/modules.js (SettingsModule)
+        severity: MEDIUM
+
+      - id: MAINT-003
+        description: モジュール間の結合度が低いか
+        severity: MEDIUM
+
+      - id: MAINT-004
+        description: 共通関数（utils.js, components.js）が活用されているか
+        reference: WebUI-Sample/js/utils.js, WebUI-Sample/js/components.js
+        severity: LOW
+
+  # ========================================
+  # 10. テスト容易性
+  # ========================================
+  - category: テスト容易性
+    weight: MEDIUM
+    checks:
+      - id: TEST-001
+        description: 単体テスト可能な構造か
+        reference: tests/
+        severity: MEDIUM
+
+      - id: TEST-002
+        description: モックデータで動作確認できるか
+        severity: MEDIUM
+
+      - id: TEST-003
+        description: 依存関係が明確か
+        severity: LOW
+
+# ========================================
+# 判定基準
+# ========================================
+scoring_rules:
+  # BLOCKING1件でもFAIL
+  blocking_threshold: 0
+
+  # HIGHが3件以上でFAIL
+  high_threshold: 3
+
+  # MEDIUM/LOWはWARNINGのみ
+  warning_only: ["MEDIUM", "LOW"]
+
+# ========================================
+# カテゴリ別重み付け
+# ========================================
+category_weights:
+  セキュリティ: 10      # 最重要
+  ITSM準拠: 8
+  ログ・証跡: 8
+  権限・SoD: 8
+  仕様準拠: 7
+  データ整合性: 6
+  例外処理: 5
+  将来変更耐性: 3
+  テスト容易性: 3
+  UI/UX: 2

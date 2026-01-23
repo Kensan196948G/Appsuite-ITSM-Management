@@ -51,8 +51,30 @@ build/
 .claude/cache/
 .claude/debug/
 .claude/telemetry/
+.claude/backups/
+
+# Code Review Results (keep structure, exclude actual results)
+reviews/automated/*
+!reviews/automated/README.md
+!reviews/automated/.sample_result.json
+reviews/automated/.pending_review_*.json
+reviews/automated/.review_context_*.json
+
+# CI Auto-Fix Loop Guard Files
+.ci_attempt
+.ci_error_hash
+.ci_consecutive_failures
+
+# CI Logs (ITSM証跡 - keep structure, exclude logs)
+ci_logs/*
+!ci_logs/README.md
+
+# Build logs
+build.log
+build.log.*
 
 # Backup files
 *.bak
 *.backup
 *~
+.claude/locks/

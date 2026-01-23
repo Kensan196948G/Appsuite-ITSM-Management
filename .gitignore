@@ -51,6 +51,14 @@ build/
 .claude/cache/
 .claude/debug/
 .claude/telemetry/
+.claude/backups/
+
+# Code Review Results (keep structure, exclude actual results)
+reviews/automated/*
+!reviews/automated/README.md
+!reviews/automated/.sample_result.json
+reviews/automated/.pending_review_*.json
+reviews/automated/.review_context_*.json
 
 # Backup files
 *.bak

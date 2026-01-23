@@ -28,16 +28,44 @@
     "format": "prettier --write \"WebUI-Production/**/*.{js,css,html}\" \"WebUI-Sample/**/*.{js,css,html}\"",
     "format:check": "prettier --check \"WebUI-Production/**/*.{js,css,html}\" \"WebUI-Sample/**/*.{js,css,html}\"",
     "audit:fix": "npm audit fix --force",
-    "test": "echo \"Tests will be implemented\" && exit 0",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "ci": "npm run lint && npm run format:check && npm run test"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "http-server": "^14.1.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.2.5"
   },
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "roots": [
+      "<rootDir>/tests"
+    ],
+    "testMatch": [
+      "**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "WebUI-Production/js/**/*.js",
+      "WebUI-Sample/js/**/*.js",
+      "!**/node_modules/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "verbose": true
   }
 }

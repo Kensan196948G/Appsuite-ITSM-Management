@@ -133,15 +133,15 @@ const Api = {
         };
 
         switch (ApiConfig.authMethod) {
-            case 'bearer':
-                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-                break;
-            case 'basic':
-                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-                break;
-            case 'apikey':
-                headers['X-API-Key'] = ApiConfig.apiKey;
-                break;
+        case 'bearer':
+            headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+            break;
+        case 'basic':
+            headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+            break;
+        case 'apikey':
+            headers['X-API-Key'] = ApiConfig.apiKey;
+            break;
         }
 
         return headers;
@@ -295,7 +295,7 @@ const DataStore = {
      */
     update(collection, id, updates) {
         const index = this[collection]?.findIndex(item => item.id === id);
-        if (index === -1 || index === undefined) return null;
+        if (index === -1 || index === undefined) {return null;}
 
         this[collection][index] = { ...this[collection][index], ...updates };
         this.save(collection);
@@ -310,7 +310,7 @@ const DataStore = {
      */
     delete(collection, id) {
         const index = this[collection]?.findIndex(item => item.id === id);
-        if (index === -1 || index === undefined) return false;
+        if (index === -1 || index === undefined) {return false;}
 
         this[collection].splice(index, 1);
         this.save(collection);
@@ -368,11 +368,11 @@ const DataStore = {
      * @param {Object} data - インポートデータ
      */
     importAll(data) {
-        if (data.users) this.users = data.users;
-        if (data.apps) this.apps = data.apps;
-        if (data.incidents) this.incidents = data.incidents;
-        if (data.changes) this.changes = data.changes;
-        if (data.logs) this.logs = data.logs;
+        if (data.users) {this.users = data.users;}
+        if (data.apps) {this.apps = data.apps;}
+        if (data.incidents) {this.incidents = data.incidents;}
+        if (data.changes) {this.changes = data.changes;}
+        if (data.logs) {this.logs = data.logs;}
         this.saveAll();
     }
 };
@@ -410,11 +410,11 @@ const ApiSync = {
     applyReadOnlyState() {
         const addUserButton = document.getElementById('addUserButton');
         const addAppButton = document.getElementById('addAppButton');
-        if (addUserButton) addUserButton.disabled = this.isReadOnly;
-        if (addAppButton) addAppButton.disabled = this.isReadOnly;
+        if (addUserButton) {addUserButton.disabled = this.isReadOnly;}
+        if (addAppButton) {addAppButton.disabled = this.isReadOnly;}
 
-        if (window.UserModule) UserModule.refresh();
-        if (window.AppModule) AppModule.refresh();
+        if (window.UserModule) {UserModule.refresh();}
+        if (window.AppModule) {AppModule.refresh();}
     },
 
     startAutoSync(intervalMinutes) {
@@ -443,7 +443,7 @@ const ApiSync = {
             document.getElementById('apiStatus').textContent = '接続中';
             document.getElementById('apiStatus').style.color = '#22c55e';
             document.getElementById('lastSync').textContent = new Date().toLocaleString('ja-JP');
-            if (window.updateDashboard) updateDashboard();
+            if (window.updateDashboard) {updateDashboard();}
             showToast('同期が完了しました', 'success');
         } catch (error) {
             updateConnectionStatus(false);
@@ -466,7 +466,7 @@ const ApiSync = {
             status: 'active',
             lastLogin: '-'
         }));
-        if (window.UserModule) UserModule.refresh();
+        if (window.UserModule) {UserModule.refresh();}
     },
 
     async syncApps() {
@@ -486,7 +486,7 @@ const ApiSync = {
             updated: today,
             description: ''
         }));
-        if (window.AppModule) AppModule.refresh();
+        if (window.AppModule) {AppModule.refresh();}
     }
 };
 

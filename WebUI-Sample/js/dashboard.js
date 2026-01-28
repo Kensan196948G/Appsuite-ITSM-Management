@@ -50,7 +50,7 @@ const DashboardManager = {
         }
 
         // グローバル設定
-        Chart.defaults.font.family = "'Noto Sans JP', 'Hiragino Sans', sans-serif";
+        Chart.defaults.font.family = '\'Noto Sans JP\', \'Hiragino Sans\', sans-serif';
         Chart.defaults.responsive = true;
         Chart.defaults.maintainAspectRatio = false;
 
@@ -67,7 +67,7 @@ const DashboardManager = {
      */
     initIncidentTrendChart() {
         const ctx = document.getElementById('incidentTrendChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         const data = this.getIncidentTrendData();
 
@@ -121,7 +121,7 @@ const DashboardManager = {
      */
     initAppStatusChart() {
         const ctx = document.getElementById('appStatusChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         const data = this.getAppStatusData();
 
@@ -155,7 +155,7 @@ const DashboardManager = {
      */
     initIncidentPriorityChart() {
         const ctx = document.getElementById('incidentPriorityChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         const data = this.getIncidentPriorityData();
 
@@ -188,7 +188,7 @@ const DashboardManager = {
      */
     initChangeTypeChart() {
         const ctx = document.getElementById('changeTypeChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         const data = this.getChangeTypeData();
 
@@ -230,7 +230,7 @@ const DashboardManager = {
      */
     initWeeklyActivityChart() {
         const ctx = document.getElementById('weeklyActivityChart');
-        if (!ctx) return;
+        if (!ctx) {return;}
 
         const data = this.getWeeklyActivityData();
 
@@ -302,7 +302,7 @@ const DashboardManager = {
 
             // その日に解決されたインシデント
             const resolved = incidents.filter(inc => {
-                if (!inc.resolvedAt) return false;
+                if (!inc.resolvedAt) {return false;}
                 const resolvedDate = new Date(inc.resolvedAt);
                 return resolvedDate >= dayStart && resolvedDate <= dayEnd;
             }).length;
@@ -387,7 +387,7 @@ const DashboardManager = {
      * 全チャートを更新
      */
     updateCharts() {
-        if (!this.charts.incidentTrend) return;
+        if (!this.charts.incidentTrend) {return;}
 
         // インシデントトレンド更新
         const trendData = this.getIncidentTrendData();
@@ -423,7 +423,7 @@ const DashboardManager = {
      * 自動更新開始
      */
     startAutoUpdate() {
-        if (this.updateTimer) return;
+        if (this.updateTimer) {return;}
 
         this.updateTimer = setInterval(() => {
             this.refresh();
@@ -490,12 +490,12 @@ const DashboardManager = {
      */
     animateNumber(elementId, targetValue) {
         const element = document.getElementById(elementId);
-        if (!element) return;
+        if (!element) {return;}
 
         const currentValue = parseInt(element.textContent) || 0;
         const diff = targetValue - currentValue;
 
-        if (diff === 0) return;
+        if (diff === 0) {return;}
 
         const duration = 500;
         const startTime = performance.now();
@@ -607,7 +607,7 @@ const DashboardManager = {
      */
     initWidgetControls() {
         const container = document.getElementById('widgetControlList');
-        if (!container) return;
+        if (!container) {return;}
 
         container.innerHTML = this.widgets.map(widget => `
             <label class="widget-control-item">
@@ -677,7 +677,7 @@ const DashboardManager = {
     destroy() {
         this.stopAutoUpdate();
         Object.values(this.charts).forEach(chart => {
-            if (chart) chart.destroy();
+            if (chart) {chart.destroy();}
         });
         this.charts = {};
     }
@@ -740,7 +740,7 @@ const KPIWidget = {
      */
     render() {
         const container = document.getElementById('kpiWidget');
-        if (!container) return;
+        if (!container) {return;}
 
         const kpi = this.calculate();
 
@@ -788,7 +788,7 @@ const QuickActions = {
      */
     render() {
         const container = document.getElementById('quickActions');
-        if (!container) return;
+        if (!container) {return;}
 
         container.innerHTML = `
             <div class="quick-actions-grid">
@@ -836,7 +836,7 @@ const QuickActions = {
      */
     viewMyTasks() {
         const currentUser = AuthModule.getCurrentUser();
-        if (!currentUser) return;
+        if (!currentUser) {return;}
 
         const myIncidents = (DataStore.incidents || []).filter(
             i => i.assignee === currentUser.username && i.status !== 'closed'
@@ -958,7 +958,7 @@ const SystemStatus = {
      */
     render() {
         const container = document.getElementById('systemStatus');
-        if (!container) return;
+        if (!container) {return;}
 
         const status = this.getStatus();
 
@@ -995,8 +995,8 @@ const SystemStatus = {
     getStatus() {
         // localStorage使用量を計算
         let totalSize = 0;
-        for (let key in localStorage) {
-            if (localStorage.hasOwnProperty(key) && key.startsWith('appsuite_')) {
+        for (const key in localStorage) {
+            if (Object.prototype.hasOwnProperty.call(localStorage, key) && key.startsWith('appsuite_')) {
                 totalSize += (localStorage.getItem(key) || '').length * 2; // UTF-16
             }
         }

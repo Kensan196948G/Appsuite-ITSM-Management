@@ -158,7 +158,7 @@ const AuthModule = {
      * @returns {boolean} - 有効な場合true
      */
     isSessionValid(session) {
-        if (!session) return false;
+        if (!session) {return false;}
         const now = Date.now();
         return session.expiresAt > now;
     },
@@ -196,7 +196,7 @@ const AuthModule = {
      * @returns {Object|null} - ユーザーオブジェクトまたはnull
      */
     getCurrentUser() {
-        if (!this.isAuthenticated()) return null;
+        if (!this.isAuthenticated()) {return null;}
         const user = DataStore.users.find(u => u.id === this.currentSession.userId);
         return user ? this.sanitizeUser(user) : null;
     },
@@ -207,7 +207,7 @@ const AuthModule = {
      * @returns {boolean} - 権限がある場合true
      */
     hasPermission(permission) {
-        if (!this.isAuthenticated()) return false;
+        if (!this.isAuthenticated()) {return false;}
 
         const permissions = {
             // 管理者のみ
@@ -227,7 +227,7 @@ const AuthModule = {
         };
 
         const allowedRoles = permissions[permission];
-        if (!allowedRoles) return true; // 未定義の権限は許可
+        if (!allowedRoles) {return true;} // 未定義の権限は許可
 
         return allowedRoles.includes(this.currentSession.role);
     },
@@ -529,7 +529,7 @@ const PasswordValidator = {
         }
 
         // 特殊文字チェック
-        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
             result.errors.push('特殊文字を含めてください');
         } else {
             result.score += 1;

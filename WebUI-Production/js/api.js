@@ -133,15 +133,15 @@ const Api = {
         };
 
         switch (ApiConfig.authMethod) {
-            case 'bearer':
-                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-                break;
-            case 'basic':
-                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-                break;
-            case 'apikey':
-                headers['X-API-Key'] = ApiConfig.apiKey;
-                break;
+        case 'bearer':
+            headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+            break;
+        case 'basic':
+            headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+            break;
+        case 'apikey':
+            headers['X-API-Key'] = ApiConfig.apiKey;
+            break;
         }
 
         return headers;
@@ -239,11 +239,11 @@ const ApiSync = {
     applyReadOnlyState() {
         const addUserButton = document.getElementById('addUserButton');
         const addAppButton = document.getElementById('addAppButton');
-        if (addUserButton) addUserButton.disabled = this.isReadOnly;
-        if (addAppButton) addAppButton.disabled = this.isReadOnly;
+        if (addUserButton) {addUserButton.disabled = this.isReadOnly;}
+        if (addAppButton) {addAppButton.disabled = this.isReadOnly;}
 
-        if (window.UserModule) UserModule.refresh();
-        if (window.AppModule) AppModule.refresh();
+        if (window.UserModule) {UserModule.refresh();}
+        if (window.AppModule) {AppModule.refresh();}
     },
 
     startAutoSync(intervalMinutes) {
@@ -272,7 +272,7 @@ const ApiSync = {
             document.getElementById('apiStatus').textContent = '接続中';
             document.getElementById('apiStatus').style.color = '#22c55e';
             document.getElementById('lastSync').textContent = new Date().toLocaleString('ja-JP');
-            if (window.updateDashboard) updateDashboard();
+            if (window.updateDashboard) {updateDashboard();}
             showToast('同期が完了しました', 'success');
         } catch (error) {
             updateConnectionStatus(false);
@@ -295,7 +295,7 @@ const ApiSync = {
             status: 'active',
             lastLogin: '-'
         }));
-        if (window.UserModule) UserModule.refresh();
+        if (window.UserModule) {UserModule.refresh();}
     },
 
     async syncApps() {
@@ -315,7 +315,7 @@ const ApiSync = {
             updated: today,
             description: ''
         }));
-        if (window.AppModule) AppModule.refresh();
+        if (window.AppModule) {AppModule.refresh();}
     }
 };
 

@@ -115,8 +115,8 @@ const UserModule = {
                 <label>部署</label>
                 <select id="editUserDept">
                     ${['情報システム部', '営業部', '総務部', '開発部', '経理部'].map(d =>
-                        `<option ${d === user.department ? 'selected' : ''}>${d}</option>`
-                    ).join('')}
+        `<option ${d === user.department ? 'selected' : ''}>${d}</option>`
+    ).join('')}
                 </select>
             </div>
             <div class="form-group">
@@ -332,8 +332,8 @@ const AppModule = {
                 <label>カテゴリ</label>
                 <select id="editAppCategory">
                     ${['業務管理', '申請・承認', 'データ管理', 'その他'].map(c =>
-                        `<option ${c === app.category ? 'selected' : ''}>${c}</option>`
-                    ).join('')}
+        `<option ${c === app.category ? 'selected' : ''}>${c}</option>`
+    ).join('')}
                 </select>
             </div>
             <div class="form-group">
@@ -947,7 +947,7 @@ const SettingsModule = {
         this.save(settings);
         showToast('API設定を保存しました', 'success');
         LogModule.addLog('update', 'システム設定', 'system', 'API設定を更新');
-        if (window.ApiSync) ApiSync.applySettings();
+        if (window.ApiSync) {ApiSync.applySettings();}
     },
 
     // API接続テスト
@@ -1145,7 +1145,7 @@ const SettingsModule = {
 
     // バイト数フォーマット
     formatBytes(bytes) {
-        if (bytes === 0) return '0 Bytes';
+        if (bytes === 0) {return '0 Bytes';}
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -1172,12 +1172,12 @@ const SettingsModule = {
                 const data = JSON.parse(e.target.result);
 
                 // データの復元
-                if (data.settings) this.save(data.settings);
-                if (data.users) DataStore.users = data.users;
-                if (data.apps) DataStore.apps = data.apps;
-                if (data.incidents) DataStore.incidents = data.incidents;
-                if (data.changes) DataStore.changes = data.changes;
-                if (data.logs) DataStore.logs = data.logs;
+                if (data.settings) {this.save(data.settings);}
+                if (data.users) {DataStore.users = data.users;}
+                if (data.apps) {DataStore.apps = data.apps;}
+                if (data.incidents) {DataStore.incidents = data.incidents;}
+                if (data.changes) {DataStore.changes = data.changes;}
+                if (data.logs) {DataStore.logs = data.logs;}
 
                 this.loadToForm();
                 refreshAllModules();

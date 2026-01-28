@@ -47,7 +47,7 @@ const Pagination = {
         // ページ番号
         const maxVisiblePages = 5;
         let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
         if (endPage - startPage < maxVisiblePages - 1) {
             startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -182,7 +182,7 @@ const Modal = {
                     class: 'btn-secondary',
                     onclick: () => {
                         Modal.close();
-                        if (onCancel) onCancel();
+                        if (onCancel) {onCancel();}
                     }
                 },
                 {
@@ -190,7 +190,7 @@ const Modal = {
                     class: 'btn-primary',
                     onclick: () => {
                         Modal.close();
-                        if (onConfirm) onConfirm();
+                        if (onConfirm) {onConfirm();}
                     }
                 }
             ]
@@ -265,7 +265,7 @@ const Toast = {
      * @param {number} duration - 表示時間（ミリ秒）
      */
     show(message, type = 'info', duration = 3000) {
-        if (!this.container) this.init();
+        if (!this.container) {this.init();}
 
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
@@ -311,7 +311,7 @@ const Toast = {
      * @param {HTMLElement} toast - トースト要素
      */
     dismiss(toast) {
-        if (!toast || !toast.parentElement) return;
+        if (!toast || !toast.parentElement) {return;}
 
         toast.classList.add('hide');
         setTimeout(() => {
@@ -325,7 +325,7 @@ const Toast = {
      * 全トーストをクリア
      */
     clear() {
-        if (!this.container) return;
+        if (!this.container) {return;}
         const toasts = this.container.querySelectorAll('.toast');
         toasts.forEach(toast => this.dismiss(toast));
     },
@@ -396,7 +396,7 @@ const Tabs = {
      */
     init(containerId, onChange) {
         const container = document.getElementById(containerId);
-        if (!container) return;
+        if (!container) {return;}
 
         const tabs = container.querySelectorAll('.tab-button');
         const panels = container.querySelectorAll('.tab-panel');
@@ -493,7 +493,7 @@ const TableSort = {
      */
     init(tableId, onSort) {
         const table = document.getElementById(tableId);
-        if (!table) return;
+        if (!table) {return;}
 
         const headers = table.querySelectorAll('th[data-sortable]');
         headers.forEach(header => {
@@ -532,7 +532,7 @@ const SearchHighlight = {
      * @returns {string} - ハイライトされたHTML
      */
     highlight(text, search) {
-        if (!search || !text) return escapeHtml(text);
+        if (!search || !text) {return escapeHtml(text);}
 
         const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const regex = new RegExp(`(${escapedSearch})`, 'gi');

@@ -33,9 +33,16 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
-    "claude-in-chrome": {
+    "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-claude-in-chrome"]
+      "args": ["-y", "@anthropic/mcp-server-chrome-devtools"]
+    },
+    "memory-keeper": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-memory-keeper"],
+      "env": {
+        "MEMORY_KEEPER_PATH": ".claude/memory-keeper"
+      }
     }
   }
 }

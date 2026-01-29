@@ -1,0 +1,2 @@
+# This file keeps the ci_logs directory in git
+# CI/CD logs will be stored here during pipeline execution

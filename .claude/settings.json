@@ -80,7 +80,100 @@
     "statusline": {
       "config": ".claude/agents/statusline-agent.yml",
       "enabled": true
+    },
+    "spec-planner": {
+      "config": ".claude/agents/spec-planner.yml",
+      "enabled": true,
+      "role": "要件・運用定義"
+    },
+    "arch-reviewer": {
+      "config": ".claude/agents/arch-reviewer.yml",
+      "enabled": true,
+      "role": "設計レビュー"
+    },
+    "code-implementer": {
+      "config": ".claude/agents/code-implementer.yml",
+      "enabled": true,
+      "role": "実装"
+    },
+    "code-reviewer": {
+      "config": ".claude/agents/code-reviewer.yml",
+      "enabled": true,
+      "role": "コードレビューゲート"
+    },
+    "test-designer": {
+      "config": ".claude/agents/test-designer.yml",
+      "enabled": true,
+      "role": "テスト設計"
+    },
+    "test-reviewer": {
+      "config": ".claude/agents/test-reviewer.yml",
+      "enabled": true,
+      "role": "テストレビュー"
+    },
+    "ci-specialist": {
+      "config": ".claude/agents/ci-specialist.yml",
+      "enabled": true,
+      "role": "CI/リリース"
     }
+  },
+  "workflow": {
+    "enabled": true,
+    "stages": [
+      {
+        "name": "spec",
+        "agent": "spec-planner",
+        "outputs": ["specs/overview.md", "specs/requirements.md"],
+        "next": "arch-review"
+      },
+      {
+        "name": "arch-review",
+        "agent": "arch-reviewer",
+        "inputs": ["specs/*"],
+        "outputs": ["design/architecture.md", "design/security.md"],
+        "next": "implementation",
+        "gate": true
+      },
+      {
+        "name": "implementation",
+        "agent": "code-implementer",
+        "inputs": ["design/*"],
+        "outputs": ["src/**"],
+        "next": "code-review"
+      },
+      {
+        "name": "code-review",
+        "agent": "code-reviewer",
+        "inputs": ["src/**", "specs/*", "design/*"],
+        "outputs": ["reviews/*_feature_*.json"],
+        "next": "test-design",
+        "gate": true,
+        "on_fail": "implementation"
+      },
+      {
+        "name": "test-design",
+        "agent": "test-designer",
+        "inputs": ["specs/*", "src/**"],
+        "outputs": ["tests/test_cases.md", "tests/*.test.js"],
+        "next": "test-review"
+      },
+      {
+        "name": "test-review",
+        "agent": "test-reviewer",
+        "inputs": ["tests/*"],
+        "outputs": ["reviews/*_test_review.json"],
+        "next": "ci",
+        "gate": true,
+        "on_fail": "test-design"
+      },
+      {
+        "name": "ci",
+        "agent": "ci-specialist",
+        "inputs": ["reviews/*"],
+        "outputs": ["ci/pipeline.md"],
+        "gate": true
+      }
+    ]
   },
   "worktree": {
     "enabled": true,
@@ -91,6 +184,18 @@
   "parallel": {
     "enabled": true,
     "maxConcurrentAgents": 3,
-    "conflictDetection": true
+    "conflictDetection": true,
+    "rules": {
+      "singleFileTreePerAgent": true,
+      "sharedConfigPath": "config/*",
+      "onConflict": "escalate-to-spec-planner"
+    }
+  },
+  "policies": {
+    "skipStagesProhibited": true,
+    "bypassHooksProhibited": true,
+    "failMustRevert": true,
+    "unspecifiedImplementationProhibited": true,
+    "undocumentedFeatureIsUnimplemented": true
   }
 }

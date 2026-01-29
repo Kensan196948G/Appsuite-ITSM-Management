@@ -445,7 +445,8 @@ const LogModule = {
             create: 'badge-info',
             update: 'badge-warning',
             delete: 'badge-danger',
-            export: 'badge-info'
+            export: 'badge-info',
+            escalation: 'badge-danger'
         };
         return badges[action] || 'badge-secondary';
     },
@@ -457,7 +458,8 @@ const LogModule = {
             create: '作成',
             update: '更新',
             delete: '削除',
-            export: 'エクスポート'
+            export: 'エクスポート',
+            escalation: 'エスカレート'
         };
         return texts[action] || action;
     },
@@ -517,6 +519,116 @@ const LogModule = {
         a.click();
         showToast('ログをエクスポートしました', 'success');
         this.addLog('export', '監査ログ', 'system', 'CSVエクスポート実行');
+    },
+
+    /**
+     * JSON形式でエクスポート
+     */
+    exportJSON() {
+        const now = new Date();
+        const timestamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
+
+        const data = {
+            exportedAt: now.toISOString(),
+            version: '1.0.0',
+            totalCount: DataStore.logs.length,
+            logs: DataStore.logs.map(log => ({
+                timestamp: log.timestamp,
+                user: log.user,
+                action: log.action,
+                actionLabel: this.getActionText(log.action),
+                target: log.target,
+                targetType: log.targetType,
+                detail: log.detail,
+                ip: log.ip
+            }))
+        };
+
+        const blob = new Blob(
+            [JSON.stringify(data, null, 2)],
+            { type: 'application/json;charset=utf-8' }
+        );
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'audit_log_' + timestamp + '.json';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showToast('ログをJSON形式でエクスポートしました', 'success');
+        this.addLog('export', '監査ログ', 'system', 'JSONエクスポート実行');
+    },
+
+    /**
+     * フィルタ付きエクスポート
+     * @param {string} format - 'csv' または 'json'
+     * @param {Object} filter - フィルタ条件
+     */
+    exportFiltered(format, filter = {}) {
+        let logs = [...DataStore.logs];
+
+        // フィルタ適用
+        if (filter.from) {
+            logs = logs.filter(l => l.timestamp >= filter.from);
+        }
+        if (filter.to) {
+            logs = logs.filter(l => l.timestamp <= filter.to + ' 23:59:59');
+        }
+        if (filter.action) {
+            logs = logs.filter(l => l.action === filter.action);
+        }
+        if (filter.targetType) {
+            logs = logs.filter(l => l.targetType === filter.targetType);
+        }
+
+        const now = new Date();
+        const timestamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
+
+        if (format === 'json') {
+            const data = {
+                exportedAt: now.toISOString(),
+                version: '1.0.0',
+                filter: filter,
+                totalCount: logs.length,
+                logs: logs.map(log => ({
+                    timestamp: log.timestamp,
+                    user: log.user,
+                    action: log.action,
+                    actionLabel: this.getActionText(log.action),
+                    target: log.target,
+                    targetType: log.targetType,
+                    detail: log.detail,
+                    ip: log.ip
+                }))
+            };
+
+            const blob = new Blob(
+                [JSON.stringify(data, null, 2)],
+                { type: 'application/json;charset=utf-8' }
+            );
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'audit_log_filtered_' + timestamp + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        } else {
+            const csv = '\uFEFF日時,ユーザー,操作タイプ,対象,詳細,IPアドレス\n' +
+                logs.map(l =>
+                    `"${l.timestamp}","${l.user}","${this.getActionText(l.action)}","${l.target}","${l.detail}","${l.ip}"`
+                ).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'audit_log_filtered_' + timestamp + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        showToast(`${logs.length}件のログを${format.toUpperCase()}形式でエクスポートしました`, 'success');
+        this.addLog('export', '監査ログ', 'system', `${format.toUpperCase()}エクスポート実行（フィルタ適用）`);
     },
 
     renderRecent() {
@@ -641,6 +753,14 @@ const IncidentModule = {
         showToast('インシデントを登録しました', 'success');
         LogModule.addLog('create', 'インシデント', 'incident', '新規インシデント登録: ' + newInc.title);
         updateDashboard();
+
+        // 通知トリガー
+        if (typeof NotificationManager !== 'undefined') {
+            NotificationManager.notifyIncidentCreated(newInc);
+            if (newInc.priority === 'high') {
+                NotificationManager.notifyHighPriorityIncident(newInc);
+            }
+        }
     },
 
     view(id) {
@@ -718,22 +838,51 @@ const IncidentModule = {
         const appSelect = document.getElementById('editIncApp');
         const selectedOption = appSelect.options[appSelect.selectedIndex];
         const nextStatus = document.getElementById('editIncStatus').value;
-        if (!this.isValidStatusTransition(inc.status, nextStatus)) {
+        const newAssignee = document.getElementById('editIncAssignee').value;
+
+        // ステータス遷移検証（WorkflowEngineまたはローカル検証）
+        if (typeof WorkflowEngine !== 'undefined') {
+            const result = WorkflowEngine.isValidIncidentTransition(inc.status, nextStatus);
+            if (!result.valid) {
+                showToast(result.message, 'error');
+                return;
+            }
+        } else if (!this.isValidStatusTransition(inc.status, nextStatus)) {
             showToast('ステータス遷移ルールに違反しています', 'error');
             return;
         }
+
+        // 変更前の値を保存（通知用）
+        const oldStatus = inc.status;
+        const oldAssignee = inc.assignee;
+
+        // 値を更新
         inc.title = document.getElementById('editIncTitle').value;
         inc.appId = appSelect.value;
         inc.appName = selectedOption.dataset.name;
         inc.priority = document.getElementById('editIncPriority').value;
         inc.status = nextStatus;
-        inc.assignee = document.getElementById('editIncAssignee').value;
+        inc.assignee = newAssignee;
         inc.description = document.getElementById('editIncDesc').value;
+        inc.updatedAt = new Date().toISOString();
+
         this.refresh();
         closeModal();
         showToast('インシデントを更新しました', 'success');
         LogModule.addLog('update', 'インシデント', 'incident', 'インシデント更新: ' + inc.title);
         updateDashboard();
+
+        // 通知トリガー
+        if (typeof NotificationManager !== 'undefined') {
+            // ステータス変更通知
+            if (oldStatus !== nextStatus) {
+                NotificationManager.notifyStatusChange(inc, 'incident', nextStatus);
+            }
+            // 担当者変更通知
+            if (oldAssignee !== newAssignee && newAssignee !== '-') {
+                NotificationManager.notifyAssignment(inc);
+            }
+        }
     },
 
     delete(id) {
@@ -1415,18 +1564,49 @@ const ChangeModule = {
         const chg = DataStore.changes.find(c => c.id === id);
         const appSelect = document.getElementById('editChgApp');
         const selectedOption = appSelect.options[appSelect.selectedIndex];
+        const nextStatus = document.getElementById('editChgStatus').value;
+
+        // ステータス遷移検証（WorkflowEngineが利用可能な場合）
+        if (typeof WorkflowEngine !== 'undefined') {
+            const result = WorkflowEngine.isValidChangeTransition(chg.status, nextStatus);
+            if (!result.valid) {
+                showToast(result.message, 'error');
+                return;
+            }
+        }
+
+        // 変更前の値を保存（通知用）
+        const oldStatus = chg.status;
+
+        // 値を更新
         chg.title = document.getElementById('editChgTitle').value;
         chg.appId = appSelect.value;
         chg.appName = selectedOption.dataset.name;
         chg.type = document.getElementById('editChgType').value;
-        chg.status = document.getElementById('editChgStatus').value;
+        chg.status = nextStatus;
         chg.scheduled = document.getElementById('editChgScheduled').value || '-';
         chg.description = document.getElementById('editChgDesc').value;
+        chg.updatedAt = new Date().toISOString();
+
         this.refresh();
         closeModal();
         showToast('変更要求を更新しました', 'success');
         LogModule.addLog('update', '変更要求', 'change', '変更要求更新: ' + chg.title);
         updateDashboard();
+
+        // 通知トリガー
+        if (typeof NotificationManager !== 'undefined' && oldStatus !== nextStatus) {
+            // 承認待ちになった場合
+            if (nextStatus === 'pending') {
+                NotificationManager.notifyChangeApproval(chg);
+            }
+            // 承認または却下された場合
+            if (nextStatus === 'approved' || nextStatus === 'rejected') {
+                NotificationManager.notifyChangeDecision(chg, nextStatus);
+            }
+            // その他のステータス変更
+            NotificationManager.notifyStatusChange(chg, 'change', nextStatus);
+        }
     },
 
     delete(id) {

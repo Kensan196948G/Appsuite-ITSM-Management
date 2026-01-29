@@ -32,6 +32,29 @@ function initApplication() {
     initApiSync();
     initDashboard();
     refreshAllModules();
+
+    // ワークフローエンジン初期化
+    if (typeof WorkflowEngine !== 'undefined') {
+        WorkflowEngine.init();
+    }
+
+    // 通知システム初期化
+    if (typeof NotificationManager !== 'undefined') {
+        NotificationManager.init();
+    }
+
+    // ページ離脱時のクリーンアップ
+    window.addEventListener('beforeunload', cleanupApplication);
+}
+
+// アプリケーションクリーンアップ
+function cleanupApplication() {
+    if (typeof WorkflowEngine !== 'undefined') {
+        WorkflowEngine.cleanup();
+    }
+    if (typeof NotificationManager !== 'undefined') {
+        NotificationManager.cleanup();
+    }
 }
 
 // ナビゲーション初期化

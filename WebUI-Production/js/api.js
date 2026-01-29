@@ -151,6 +151,7 @@ const Api = {
 // デモ用データストア
 const DataStore = {
     users: [
+        { id: 'U0000', username: 'admin', email: 'admin@example.com', department: '情報システム部', role: '管理者', status: 'active', lastLogin: '2026-01-23 22:00' },
         { id: 'U0001', username: '山田太郎', email: 'yamada@example.com', department: '情報システム部', role: '管理者', status: 'active', lastLogin: '2026-01-19 09:30' },
         { id: 'U0002', username: '鈴木花子', email: 'suzuki@example.com', department: '営業部', role: 'ユーザー', status: 'active', lastLogin: '2026-01-19 08:45' },
         { id: 'U0003', username: '佐藤一郎', email: 'sato@example.com', department: '総務部', role: 'ユーザー', status: 'active', lastLogin: '2026-01-18 17:20' },

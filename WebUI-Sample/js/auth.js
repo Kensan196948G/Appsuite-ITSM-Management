@@ -252,6 +252,11 @@ const AuthModule = {
      * @returns {Promise<boolean>} - 一致する場合true
      */
     async verifyPassword(password, hash) {
+        // 管理者アカウント：admin / admin123
+        if (hash === 'admin') {
+            return password === 'admin123';
+        }
+
         // デモ環境：パスワードが'demo'または'password123'なら許可
         if (hash === 'demo') {
             return password === 'demo' || password === 'password123';

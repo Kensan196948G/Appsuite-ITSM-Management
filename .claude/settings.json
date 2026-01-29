@@ -197,5 +197,9 @@
     "failMustRevert": true,
     "unspecifiedImplementationProhibited": true,
     "undocumentedFeatureIsUnimplemented": true
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node .claude/statusline.js"
   }
 }

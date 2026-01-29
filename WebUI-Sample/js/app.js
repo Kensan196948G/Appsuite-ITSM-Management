@@ -43,6 +43,11 @@ function initApplication() {
         NotificationManager.init();
     }
 
+    // バックアップマネージャー初期化
+    if (typeof BackupManager !== 'undefined') {
+        BackupManager.init();
+    }
+
     // ページ離脱時のクリーンアップ
     window.addEventListener('beforeunload', cleanupApplication);
 }
@@ -54,6 +59,9 @@ function cleanupApplication() {
     }
     if (typeof NotificationManager !== 'undefined') {
         NotificationManager.cleanup();
+    }
+    if (typeof BackupManager !== 'undefined') {
+        BackupManager.cleanup();
     }
 }
 

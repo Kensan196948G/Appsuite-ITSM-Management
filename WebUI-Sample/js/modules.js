@@ -1074,10 +1074,14 @@ const SettingsModule = {
         document.getElementById('allowSkipStatus').checked = settings.workflow?.allowSkipStatus === true;
         document.getElementById('requireComment').checked = settings.workflow?.requireComment !== false;
 
-        // バックアップ設定
-        document.getElementById('autoBackup').checked = settings.backup?.autoBackup !== false;
-        document.getElementById('backupInterval').value = settings.backup?.backupInterval || 'daily';
-        document.getElementById('backupRetention').value = settings.backup?.backupRetention || 7;
+        // バックアップ設定（BackupManagerと連携）
+        if (typeof BackupManager !== 'undefined') {
+            BackupManager.updateAutoBackupUI();
+        } else {
+            document.getElementById('autoBackup').checked = settings.backup?.autoBackup !== false;
+            document.getElementById('backupInterval').value = settings.backup?.backupInterval || 'daily';
+            document.getElementById('backupRetention').value = settings.backup?.backupRetention || 7;
+        }
 
         // バックアップ状態を更新
         this.updateBackupStatus();
@@ -1283,12 +1287,23 @@ const SettingsModule = {
         if (backups.length > 0) {
             listEl.innerHTML = backups.slice(0, 5).map(b => `
                 <div class="backup-item">
-                    <span>${new Date(b.date).toLocaleString('ja-JP')}</span>
+                    <span>${new Date(b.date).toLocaleString('ja-JP')}${b.type === 'auto' ? ' <small>(自動)</small>' : ''}</span>
                     <span>${this.formatBytes(b.size)}</span>
                 </div>
             `).join('');
         } else {
             listEl.innerHTML = '<p class="text-muted">バックアップはありません</p>';
+        }
+
+        // 自動バックアップ状態表示
+        const autoBackupStatusEl = document.getElementById('autoBackupStatus');
+        if (autoBackupStatusEl && typeof BackupManager !== 'undefined') {
+            const stats = BackupManager.getStatistics();
+            if (stats.autoBackupEnabled) {
+                autoBackupStatusEl.innerHTML = '<span class="badge badge-success">有効</span>';
+            } else {
+                autoBackupStatusEl.innerHTML = '<span class="badge badge-secondary">無効</span>';
+            }
         }
     },
 

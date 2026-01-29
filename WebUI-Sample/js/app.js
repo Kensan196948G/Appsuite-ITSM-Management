@@ -48,6 +48,11 @@ function initApplication() {
         BackupManager.init();
     }
 
+    // パフォーマンス最適化初期化
+    if (typeof PerformanceOptimizer !== 'undefined') {
+        PerformanceOptimizer.init();
+    }
+
     // ページ離脱時のクリーンアップ
     window.addEventListener('beforeunload', cleanupApplication);
 }
@@ -62,6 +67,9 @@ function cleanupApplication() {
     }
     if (typeof BackupManager !== 'undefined') {
         BackupManager.cleanup();
+    }
+    if (typeof LazyLoader !== 'undefined') {
+        LazyLoader.disconnect();
     }
 }
 

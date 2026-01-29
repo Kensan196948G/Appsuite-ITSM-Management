@@ -15,7 +15,9 @@ const UserModule = {
     render(users) {
         const readOnly = window.ApiSync?.isReadOnly;
         const tbody = document.getElementById('usersTableBody');
-        tbody.innerHTML = users.map(user => `
+        tbody.innerHTML = users
+            .map(
+                user => `
             <tr>
                 <td>${escapeHtml(user.id)}</td>
                 <td>${escapeHtml(user.username)}</td>
@@ -29,11 +31,15 @@ const UserModule = {
                     <button class="action-btn delete" onclick="UserModule.delete('${escapeHtml(user.id)}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
-        `).join('');
+        `
+            )
+            .join('');
     },
 
     showAddModal() {
-        openModal('ユーザー追加', `
+        openModal(
+            'ユーザー追加',
+            `
             <div class="form-group">
                 <label>ユーザー名</label>
                 <input type="text" id="newUserName" required>
@@ -66,10 +72,12 @@ const UserModule = {
                     <option value="inactive">無効</option>
                 </select>
             </div>
-        `, [
-            { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '追加', class: 'btn-primary', onclick: 'UserModule.add()' }
-        ]);
+        `,
+            [
+                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
+                { text: '追加', class: 'btn-primary', onclick: 'UserModule.add()' },
+            ]
+        );
     },
 
     add() {
@@ -90,7 +98,7 @@ const UserModule = {
             department: document.getElementById('newUserDept').value,
             role: document.getElementById('newUserRole').value,
             status: document.getElementById('newUserStatus').value,
-            lastLogin: '-'
+            lastLogin: '-',
         };
         DataStore.users.push(newUser);
         this.refresh();
@@ -102,7 +110,9 @@ const UserModule = {
 
     edit(id) {
         const user = DataStore.users.find(u => u.id === id);
-        openModal('ユーザー編集', `
+        openModal(
+            'ユーザー編集',
+            `
             <div class="form-group">
                 <label>ユーザー名</label>
                 <input type="text" id="editUserName" value="${escapeHtml(user.username)}">
@@ -114,9 +124,11 @@ const UserModule = {
             <div class="form-group">
                 <label>部署</label>
                 <select id="editUserDept">
-                    ${['情報システム部', '営業部', '総務部', '開発部', '経理部'].map(d =>
-        `<option ${d === user.department ? 'selected' : ''}>${d}</option>`
-    ).join('')}
+                    ${['情報システム部', '営業部', '総務部', '開発部', '経理部']
+                        .map(
+                            d => `<option ${d === user.department ? 'selected' : ''}>${d}</option>`
+                        )
+                        .join('')}
                 </select>
             </div>
             <div class="form-group">
@@ -133,10 +145,12 @@ const UserModule = {
                     <option value="inactive" ${user.status === 'inactive' ? 'selected' : ''}>無効</option>
                 </select>
             </div>
-        `, [
-            { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '保存', class: 'btn-primary', onclick: `UserModule.save('${id}')` }
-        ]);
+        `,
+            [
+                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
+                { text: '保存', class: 'btn-primary', onclick: `UserModule.save('${id}')` },
+            ]
+        );
     },
 
     save(id) {
@@ -183,9 +197,10 @@ const UserModule = {
         let filtered = DataStore.users;
 
         if (search) {
-            filtered = filtered.filter(u =>
-                u.username.toLowerCase().includes(search) ||
-                u.email.toLowerCase().includes(search)
+            filtered = filtered.filter(
+                u =>
+                    u.username.toLowerCase().includes(search) ||
+                    u.email.toLowerCase().includes(search)
             );
         }
         if (status) {
@@ -196,7 +211,7 @@ const UserModule = {
         }
 
         this.render(filtered);
-    }
+    },
 };
 
 // アプリ管理モジュール
@@ -208,7 +223,9 @@ const AppModule = {
     render(apps) {
         const readOnly = window.ApiSync?.isReadOnly;
         const tbody = document.getElementById('appsTableBody');
-        tbody.innerHTML = apps.map(app => `
+        tbody.innerHTML = apps
+            .map(
+                app => `
             <tr>
                 <td>${escapeHtml(app.id)}</td>
                 <td>${escapeHtml(app.name)}</td>
@@ -223,11 +240,17 @@ const AppModule = {
                     <button class="action-btn delete" onclick="AppModule.delete('${escapeHtml(app.id)}')" title="${readOnly ? '参照専用のため削除不可' : '削除'}" ${readOnly ? 'disabled' : ''}><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
-        `).join('');
+        `
+            )
+            .join('');
     },
 
     getStatusBadge(status) {
-        const badges = { active: 'badge-success', maintenance: 'badge-warning', inactive: 'badge-secondary' };
+        const badges = {
+            active: 'badge-success',
+            maintenance: 'badge-warning',
+            inactive: 'badge-secondary',
+        };
         return badges[status] || 'badge-secondary';
     },
 
@@ -237,7 +260,9 @@ const AppModule = {
     },
 
     showAddModal() {
-        openModal('新規アプリ登録', `
+        openModal(
+            '新規アプリ登録',
+            `
             <div class="form-group">
                 <label>アプリ名</label>
                 <input type="text" id="newAppName" required>
@@ -267,10 +292,12 @@ const AppModule = {
                 <label>説明</label>
                 <textarea id="newAppDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;"></textarea>
             </div>
-        `, [
-            { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '登録', class: 'btn-primary', onclick: 'AppModule.add()' }
-        ]);
+        `,
+            [
+                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
+                { text: '登録', class: 'btn-primary', onclick: 'AppModule.add()' },
+            ]
+        );
     },
 
     add() {
@@ -292,7 +319,7 @@ const AppModule = {
             records: 0,
             status: document.getElementById('newAppStatus').value,
             updated: new Date().toISOString().split('T')[0],
-            description: document.getElementById('newAppDesc').value.trim()
+            description: document.getElementById('newAppDesc').value.trim(),
         };
         DataStore.apps.push(newApp);
         this.refresh();
@@ -304,7 +331,9 @@ const AppModule = {
 
     view(id) {
         const app = DataStore.apps.find(a => a.id === id);
-        openModal('アプリ詳細: ' + escapeHtml(app.name), `
+        openModal(
+            'アプリ詳細: ' + escapeHtml(app.name),
+            `
             <div style="line-height: 2;">
                 <p><strong>アプリID:</strong> ${escapeHtml(app.id)}</p>
                 <p><strong>アプリ名:</strong> ${escapeHtml(app.name)}</p>
@@ -316,14 +345,16 @@ const AppModule = {
                 <p><strong>説明:</strong></p>
                 <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(app.description) || '（なし）'}</p>
             </div>
-        `, [
-            { text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }
-        ]);
+        `,
+            [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
+        );
     },
 
     edit(id) {
         const app = DataStore.apps.find(a => a.id === id);
-        openModal('アプリ編集: ' + escapeHtml(app.name), `
+        openModal(
+            'アプリ編集: ' + escapeHtml(app.name),
+            `
             <div class="form-group">
                 <label>アプリ名</label>
                 <input type="text" id="editAppName" value="${escapeHtml(app.name)}">
@@ -331,9 +362,9 @@ const AppModule = {
             <div class="form-group">
                 <label>カテゴリ</label>
                 <select id="editAppCategory">
-                    ${['業務管理', '申請・承認', 'データ管理', 'その他'].map(c =>
-        `<option ${c === app.category ? 'selected' : ''}>${c}</option>`
-    ).join('')}
+                    ${['業務管理', '申請・承認', 'データ管理', 'その他']
+                        .map(c => `<option ${c === app.category ? 'selected' : ''}>${c}</option>`)
+                        .join('')}
                 </select>
             </div>
             <div class="form-group">
@@ -352,10 +383,16 @@ const AppModule = {
                 <label>説明</label>
                 <textarea id="editAppDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(app.description) || ''}</textarea>
             </div>
-        `, [
-            { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '保存', class: 'btn-primary', onclick: `AppModule.save('${escapeHtml(id)}')` }
-        ]);
+        `,
+            [
+                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
+                {
+                    text: '保存',
+                    class: 'btn-primary',
+                    onclick: `AppModule.save('${escapeHtml(id)}')`,
+                },
+            ]
+        );
     },
 
     save(id) {
@@ -385,7 +422,11 @@ const AppModule = {
 
     delete(id) {
         const app = DataStore.apps.find(a => a.id === id);
-        if (confirm(`アプリ「${app.name}」を削除しますか？\n※ ${app.records}件のレコードも削除されます。`)) {
+        if (
+            confirm(
+                `アプリ「${app.name}」を削除しますか？\n※ ${app.records}件のレコードも削除されます。`
+            )
+        ) {
             const idx = DataStore.apps.findIndex(a => a.id === id);
             DataStore.apps.splice(idx, 1);
             this.refresh();
@@ -403,9 +444,7 @@ const AppModule = {
         let filtered = DataStore.apps;
 
         if (search) {
-            filtered = filtered.filter(a =>
-                a.name.toLowerCase().includes(search)
-            );
+            filtered = filtered.filter(a => a.name.toLowerCase().includes(search));
         }
         if (category) {
             filtered = filtered.filter(a => a.category === category);
@@ -415,7 +454,7 @@ const AppModule = {
         }
 
         this.render(filtered);
-    }
+    },
 };
 
 // 監査ログモジュール
@@ -426,7 +465,9 @@ const LogModule = {
 
     render(logs) {
         const tbody = document.getElementById('logsTableBody');
-        tbody.innerHTML = logs.map(log => `
+        tbody.innerHTML = logs
+            .map(
+                log => `
             <tr>
                 <td>${escapeHtml(log.timestamp)}</td>
                 <td>${escapeHtml(log.user)}</td>
@@ -435,7 +476,9 @@ const LogModule = {
                 <td>${escapeHtml(log.detail)}</td>
                 <td>${escapeHtml(log.ip)}</td>
             </tr>
-        `).join('');
+        `
+            )
+            .join('');
     },
 
     getActionBadge(action) {
@@ -445,7 +488,7 @@ const LogModule = {
             create: 'badge-info',
             update: 'badge-warning',
             delete: 'badge-danger',
-            export: 'badge-info'
+            export: 'badge-info',
         };
         return badges[action] || 'badge-secondary';
     },
@@ -457,14 +500,14 @@ const LogModule = {
             create: '作成',
             update: '更新',
             delete: '削除',
-            export: 'エクスポート'
+            export: 'エクスポート',
         };
         return texts[action] || action;
     },
 
     addLog(action, target, targetType, detail) {
         const now = new Date();
-        const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+        const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
         DataStore.logs.unshift({
             timestamp: timestamp,
             user: document.getElementById('currentUser').textContent,
@@ -472,7 +515,7 @@ const LogModule = {
             target: target,
             targetType: targetType,
             detail: detail,
-            ip: '192.168.1.100'
+            ip: '192.168.1.100',
         });
     },
 
@@ -503,11 +546,15 @@ const LogModule = {
 
     export() {
         const now = new Date();
-        const timestamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}${String(now.getSeconds()).padStart(2,'0')}`;
-        const csv = '\uFEFF日時,ユーザー,操作タイプ,対象,詳細,IPアドレス\n' +
-            DataStore.logs.map(l =>
-                `"${l.timestamp}","${l.user}","${this.getActionText(l.action)}","${l.target}","${l.detail}","${l.ip}"`
-            ).join('\n');
+        const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+        const csv =
+            '\uFEFF日時,ユーザー,操作タイプ,対象,詳細,IPアドレス\n' +
+            DataStore.logs
+                .map(
+                    l =>
+                        `"${l.timestamp}","${l.user}","${this.getActionText(l.action)}","${l.target}","${l.detail}","${l.ip}"`
+                )
+                .join('\n');
 
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
         const url = URL.createObjectURL(blob);
@@ -522,15 +569,19 @@ const LogModule = {
     renderRecent() {
         const recentLogs = DataStore.logs.slice(0, 10);
         const container = document.getElementById('recentLogs');
-        container.innerHTML = recentLogs.map(log => `
+        container.innerHTML = recentLogs
+            .map(
+                log => `
             <div class="log-item">
                 <span class="log-time">${escapeHtml(log.timestamp)}</span>
                 <span class="log-user">${escapeHtml(log.user)}</span>が
                 <span class="badge ${this.getActionBadge(log.action)}" style="font-size:0.7rem;">${this.getActionText(log.action)}</span>
                 ${escapeHtml(log.target)}
             </div>
-        `).join('');
-    }
+        `
+            )
+            .join('');
+    },
 };
 
 // インシデント管理モジュール
@@ -541,7 +592,9 @@ const IncidentModule = {
 
     render(incidents) {
         const tbody = document.getElementById('incidentsTableBody');
-        tbody.innerHTML = incidents.map(inc => `
+        tbody.innerHTML = incidents
+            .map(
+                inc => `
             <tr>
                 <td>${escapeHtml(inc.id)}</td>
                 <td>${escapeHtml(inc.title)}</td>
@@ -557,7 +610,9 @@ const IncidentModule = {
                     <button class="action-btn delete" onclick="IncidentModule.delete('${escapeHtml(inc.id)}')" title="削除"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
-        `).join('');
+        `
+            )
+            .join('');
     },
 
     getPriorityBadge(priority) {
@@ -571,20 +626,42 @@ const IncidentModule = {
     },
 
     getStatusBadge(status) {
-        const badges = { open: 'badge-danger', in_progress: 'badge-warning', resolved: 'badge-info', closed: 'badge-success' };
+        const badges = {
+            open: 'badge-danger',
+            in_progress: 'badge-warning',
+            resolved: 'badge-info',
+            closed: 'badge-success',
+        };
         return badges[status] || 'badge-secondary';
     },
 
     getStatusText(status) {
-        const texts = { open: 'オープン', in_progress: '対応中', resolved: '解決済', closed: 'クローズ' };
+        const texts = {
+            open: 'オープン',
+            in_progress: '対応中',
+            resolved: '解決済',
+            closed: 'クローズ',
+        };
         return texts[status] || status;
     },
 
     showAddModal() {
-        const appOptions = DataStore.apps.map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`).join('');
-        const userOptions = DataStore.users.filter(u => u.status === 'active').map(u => `<option value="${escapeHtml(u.username)}">${escapeHtml(u.username)}</option>`).join('');
+        const appOptions = DataStore.apps
+            .map(
+                a =>
+                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`
+            )
+            .join('');
+        const userOptions = DataStore.users
+            .filter(u => u.status === 'active')
+            .map(
+                u => `<option value="${escapeHtml(u.username)}">${escapeHtml(u.username)}</option>`
+            )
+            .join('');
 
-        openModal('インシデント登録', `
+        openModal(
+            'インシデント登録',
+            `
             <div class="form-group">
                 <label>タイトル</label>
                 <input type="text" id="newIncTitle" required>
@@ -614,10 +691,12 @@ const IncidentModule = {
                 <label>説明</label>
                 <textarea id="newIncDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;"></textarea>
             </div>
-        `, [
-            { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '登録', class: 'btn-primary', onclick: 'IncidentModule.add()' }
-        ]);
+        `,
+            [
+                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
+                { text: '登録', class: 'btn-primary', onclick: 'IncidentModule.add()' },
+            ]
+        );
     },
 
     add() {
@@ -633,19 +712,26 @@ const IncidentModule = {
             reporter: document.getElementById('currentUser').textContent,
             assignee: document.getElementById('newIncAssignee').value,
             created: new Date().toISOString().split('T')[0],
-            description: document.getElementById('newIncDesc').value
+            description: document.getElementById('newIncDesc').value,
         };
         DataStore.incidents.push(newInc);
         this.refresh();
         closeModal();
         showToast('インシデントを登録しました', 'success');
-        LogModule.addLog('create', 'インシデント', 'incident', '新規インシデント登録: ' + newInc.title);
+        LogModule.addLog(
+            'create',
+            'インシデント',
+            'incident',
+            '新規インシデント登録: ' + newInc.title
+        );
         updateDashboard();
     },
 
     view(id) {
         const inc = DataStore.incidents.find(i => i.id === id);
-        openModal('インシデント詳細: ' + escapeHtml(inc.id), `
+        openModal(
+            'インシデント詳細: ' + escapeHtml(inc.id),
+            `
             <div style="line-height: 2;">
                 <p><strong>インシデントID:</strong> ${escapeHtml(inc.id)}</p>
                 <p><strong>タイトル:</strong> ${escapeHtml(inc.title)}</p>
@@ -658,17 +744,30 @@ const IncidentModule = {
                 <p><strong>説明:</strong></p>
                 <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(inc.description) || '（なし）'}</p>
             </div>
-        `, [
-            { text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }
-        ]);
+        `,
+            [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
+        );
     },
 
     edit(id) {
         const inc = DataStore.incidents.find(i => i.id === id);
-        const appOptions = DataStore.apps.map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === inc.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('');
-        const userOptions = DataStore.users.filter(u => u.status === 'active').map(u => `<option value="${escapeHtml(u.username)}" ${u.username === inc.assignee ? 'selected' : ''}>${escapeHtml(u.username)}</option>`).join('');
+        const appOptions = DataStore.apps
+            .map(
+                a =>
+                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === inc.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
+            )
+            .join('');
+        const userOptions = DataStore.users
+            .filter(u => u.status === 'active')
+            .map(
+                u =>
+                    `<option value="${escapeHtml(u.username)}" ${u.username === inc.assignee ? 'selected' : ''}>${escapeHtml(u.username)}</option>`
+            )
+            .join('');
 
-        openModal('インシデント編集: ' + escapeHtml(inc.id), `
+        openModal(
+            'インシデント編集: ' + escapeHtml(inc.id),
+            `
             <div class="form-group">
                 <label>タイトル</label>
                 <input type="text" id="editIncTitle" value="${escapeHtml(inc.title)}">
@@ -707,10 +806,16 @@ const IncidentModule = {
                 <label>説明</label>
                 <textarea id="editIncDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(inc.description) || ''}</textarea>
             </div>
-        `, [
-            { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '保存', class: 'btn-primary', onclick: `IncidentModule.save('${escapeHtml(id)}')` }
-        ]);
+        `,
+            [
+                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
+                {
+                    text: '保存',
+                    class: 'btn-primary',
+                    onclick: `IncidentModule.save('${escapeHtml(id)}')`,
+                },
+            ]
+        );
     },
 
     save(id) {
@@ -743,7 +848,12 @@ const IncidentModule = {
             DataStore.incidents.splice(idx, 1);
             this.refresh();
             showToast('インシデントを削除しました', 'success');
-            LogModule.addLog('delete', 'インシデント', 'incident', 'インシデント削除: ' + inc.title);
+            LogModule.addLog(
+                'delete',
+                'インシデント',
+                'incident',
+                'インシデント削除: ' + inc.title
+            );
             updateDashboard();
         }
     },
@@ -756,9 +866,10 @@ const IncidentModule = {
         let filtered = DataStore.incidents;
 
         if (search) {
-            filtered = filtered.filter(i =>
-                i.title.toLowerCase().includes(search) ||
-                (i.description || '').toLowerCase().includes(search)
+            filtered = filtered.filter(
+                i =>
+                    i.title.toLowerCase().includes(search) ||
+                    (i.description || '').toLowerCase().includes(search)
             );
         }
         if (priority) {
@@ -779,10 +890,10 @@ const IncidentModule = {
             open: ['in_progress', 'closed'],
             in_progress: ['resolved', 'open'],
             resolved: ['closed', 'in_progress'],
-            closed: ['in_progress']
+            closed: ['in_progress'],
         };
         return (transitions[currentStatus] || []).includes(nextStatus);
-    }
+    },
 };
 
 // システム設定モジュール
@@ -794,7 +905,7 @@ const SettingsModule = {
             key: '',
             authMethod: 'bearer',
             timeout: 30,
-            syncInterval: 30
+            syncInterval: 30,
         },
         general: {
             systemName: 'AppSuite 管理運用システム',
@@ -803,7 +914,7 @@ const SettingsModule = {
             theme: 'light',
             language: 'ja',
             dateFormat: 'yyyy-MM-dd',
-            pageSize: 25
+            pageSize: 25,
         },
         notification: {
             incidentNew: true,
@@ -814,7 +925,7 @@ const SettingsModule = {
             smtpPort: 587,
             smtpUser: '',
             smtpPass: '',
-            smtpSsl: true
+            smtpSsl: true,
         },
         security: {
             pwMinLength: 8,
@@ -826,7 +937,7 @@ const SettingsModule = {
             maxSessions: 3,
             enableTwoFactor: false,
             maxLoginAttempts: 5,
-            lockoutDuration: 15
+            lockoutDuration: 15,
         },
         workflow: {
             incidentAutoAssign: false,
@@ -836,13 +947,13 @@ const SettingsModule = {
             changeApprover: 'manager',
             changeLeadTime: 3,
             allowSkipStatus: false,
-            requireComment: true
+            requireComment: true,
         },
         backup: {
             autoBackup: true,
             backupInterval: 'daily',
-            backupRetention: 7
-        }
+            backupRetention: 7,
+        },
     },
 
     // 設定読み込み
@@ -861,12 +972,16 @@ const SettingsModule = {
         document.querySelectorAll('.settings-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 // タブのアクティブ状態を切り替え
-                document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                document
+                    .querySelectorAll('.settings-tab')
+                    .forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
 
                 // パネルの表示を切り替え
                 const tabName = tab.dataset.tab;
-                document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+                document
+                    .querySelectorAll('.settings-panel')
+                    .forEach(p => p.classList.remove('active'));
                 document.getElementById('panel-' + tabName).classList.add('active');
             });
         });
@@ -884,7 +999,8 @@ const SettingsModule = {
         document.getElementById('syncInterval').value = settings.api?.syncInterval || 30;
 
         // 基本設定
-        document.getElementById('systemName').value = settings.general?.systemName || 'AppSuite 管理運用システム';
+        document.getElementById('systemName').value =
+            settings.general?.systemName || 'AppSuite 管理運用システム';
         document.getElementById('orgName').value = settings.general?.orgName || '';
         document.getElementById('adminEmail').value = settings.general?.adminEmail || '';
         document.getElementById('themeSelect').value = settings.general?.theme || 'light';
@@ -893,10 +1009,14 @@ const SettingsModule = {
         document.getElementById('pageSize').value = settings.general?.pageSize || 25;
 
         // 通知設定
-        document.getElementById('notifyIncidentNew').checked = settings.notification?.incidentNew !== false;
-        document.getElementById('notifyIncidentHigh').checked = settings.notification?.incidentHigh !== false;
-        document.getElementById('notifyChangeApproval').checked = settings.notification?.changeApproval !== false;
-        document.getElementById('notifyChangeComplete').checked = settings.notification?.changeComplete === true;
+        document.getElementById('notifyIncidentNew').checked =
+            settings.notification?.incidentNew !== false;
+        document.getElementById('notifyIncidentHigh').checked =
+            settings.notification?.incidentHigh !== false;
+        document.getElementById('notifyChangeApproval').checked =
+            settings.notification?.changeApproval !== false;
+        document.getElementById('notifyChangeComplete').checked =
+            settings.notification?.changeComplete === true;
         document.getElementById('smtpHost').value = settings.notification?.smtpHost || '';
         document.getElementById('smtpPort').value = settings.notification?.smtpPort || 587;
         document.getElementById('smtpUser').value = settings.notification?.smtpUser || '';
@@ -905,29 +1025,42 @@ const SettingsModule = {
 
         // セキュリティ設定
         document.getElementById('pwMinLength').value = settings.security?.pwMinLength || 8;
-        document.getElementById('pwRequireUpper').checked = settings.security?.pwRequireUpper !== false;
-        document.getElementById('pwRequireNumber').checked = settings.security?.pwRequireNumber !== false;
-        document.getElementById('pwRequireSpecial').checked = settings.security?.pwRequireSpecial === true;
+        document.getElementById('pwRequireUpper').checked =
+            settings.security?.pwRequireUpper !== false;
+        document.getElementById('pwRequireNumber').checked =
+            settings.security?.pwRequireNumber !== false;
+        document.getElementById('pwRequireSpecial').checked =
+            settings.security?.pwRequireSpecial === true;
         document.getElementById('pwExpireDays').value = settings.security?.pwExpireDays || 90;
         document.getElementById('sessionTimeout').value = settings.security?.sessionTimeout || 30;
         document.getElementById('maxSessions').value = settings.security?.maxSessions || 3;
-        document.getElementById('enableTwoFactor').checked = settings.security?.enableTwoFactor === true;
-        document.getElementById('maxLoginAttempts').value = settings.security?.maxLoginAttempts || 5;
+        document.getElementById('enableTwoFactor').checked =
+            settings.security?.enableTwoFactor === true;
+        document.getElementById('maxLoginAttempts').value =
+            settings.security?.maxLoginAttempts || 5;
         document.getElementById('lockoutDuration').value = settings.security?.lockoutDuration || 15;
 
         // ワークフロー設定
-        document.getElementById('incidentAutoAssign').checked = settings.workflow?.incidentAutoAssign === true;
-        document.getElementById('incidentDefaultAssignee').value = settings.workflow?.incidentDefaultAssignee || '';
-        document.getElementById('incidentEscalation').value = settings.workflow?.incidentEscalation || 24;
-        document.getElementById('changeRequireApproval').checked = settings.workflow?.changeRequireApproval !== false;
-        document.getElementById('changeApprover').value = settings.workflow?.changeApprover || 'manager';
+        document.getElementById('incidentAutoAssign').checked =
+            settings.workflow?.incidentAutoAssign === true;
+        document.getElementById('incidentDefaultAssignee').value =
+            settings.workflow?.incidentDefaultAssignee || '';
+        document.getElementById('incidentEscalation').value =
+            settings.workflow?.incidentEscalation || 24;
+        document.getElementById('changeRequireApproval').checked =
+            settings.workflow?.changeRequireApproval !== false;
+        document.getElementById('changeApprover').value =
+            settings.workflow?.changeApprover || 'manager';
         document.getElementById('changeLeadTime').value = settings.workflow?.changeLeadTime || 3;
-        document.getElementById('allowSkipStatus').checked = settings.workflow?.allowSkipStatus === true;
-        document.getElementById('requireComment').checked = settings.workflow?.requireComment !== false;
+        document.getElementById('allowSkipStatus').checked =
+            settings.workflow?.allowSkipStatus === true;
+        document.getElementById('requireComment').checked =
+            settings.workflow?.requireComment !== false;
 
         // バックアップ設定
         document.getElementById('autoBackup').checked = settings.backup?.autoBackup !== false;
-        document.getElementById('backupInterval').value = settings.backup?.backupInterval || 'daily';
+        document.getElementById('backupInterval').value =
+            settings.backup?.backupInterval || 'daily';
         document.getElementById('backupRetention').value = settings.backup?.backupRetention || 7;
 
         // バックアップ状態を更新
@@ -942,12 +1075,14 @@ const SettingsModule = {
             key: document.getElementById('apiKey').value,
             authMethod: document.getElementById('authMethod').value,
             timeout: parseInt(document.getElementById('timeout').value),
-            syncInterval: parseInt(document.getElementById('syncInterval').value)
+            syncInterval: parseInt(document.getElementById('syncInterval').value),
         };
         this.save(settings);
         showToast('API設定を保存しました', 'success');
         LogModule.addLog('update', 'システム設定', 'system', 'API設定を更新');
-        if (window.ApiSync) {ApiSync.applySettings();}
+        if (window.ApiSync) {
+            ApiSync.applySettings();
+        }
     },
 
     // API接続テスト
@@ -985,12 +1120,13 @@ const SettingsModule = {
             theme: document.getElementById('themeSelect').value,
             language: document.getElementById('langSelect').value,
             dateFormat: document.getElementById('dateFormat').value,
-            pageSize: parseInt(document.getElementById('pageSize').value)
+            pageSize: parseInt(document.getElementById('pageSize').value),
         };
         this.save(settings);
 
         // システム名を反映
-        document.querySelector('.sidebar-header h1').innerHTML = '<i class="fas fa-cogs"></i> ' + settings.general.systemName.substring(0, 15);
+        document.querySelector('.sidebar-header h1').innerHTML =
+            '<i class="fas fa-cogs"></i> ' + settings.general.systemName.substring(0, 15);
 
         showToast('基本設定を保存しました', 'success');
         LogModule.addLog('update', 'システム設定', 'system', '基本設定を更新');
@@ -1019,7 +1155,7 @@ const SettingsModule = {
             smtpPort: parseInt(document.getElementById('smtpPort').value),
             smtpUser: document.getElementById('smtpUser').value,
             smtpPass: document.getElementById('smtpPass').value,
-            smtpSsl: document.getElementById('smtpSsl').checked
+            smtpSsl: document.getElementById('smtpSsl').checked,
         };
         this.save(settings);
         showToast('通知設定を保存しました', 'success');
@@ -1052,7 +1188,7 @@ const SettingsModule = {
             maxSessions: parseInt(document.getElementById('maxSessions').value),
             enableTwoFactor: document.getElementById('enableTwoFactor').checked,
             maxLoginAttempts: parseInt(document.getElementById('maxLoginAttempts').value),
-            lockoutDuration: parseInt(document.getElementById('lockoutDuration').value)
+            lockoutDuration: parseInt(document.getElementById('lockoutDuration').value),
         };
         this.save(settings);
         showToast('セキュリティ設定を保存しました', 'success');
@@ -1070,7 +1206,7 @@ const SettingsModule = {
             changeApprover: document.getElementById('changeApprover').value,
             changeLeadTime: parseInt(document.getElementById('changeLeadTime').value),
             allowSkipStatus: document.getElementById('allowSkipStatus').checked,
-            requireComment: document.getElementById('requireComment').checked
+            requireComment: document.getElementById('requireComment').checked,
         };
         this.save(settings);
         showToast('ワークフロー設定を保存しました', 'success');
@@ -1087,7 +1223,7 @@ const SettingsModule = {
             apps: DataStore.apps,
             incidents: DataStore.incidents,
             changes: DataStore.changes,
-            logs: DataStore.logs
+            logs: DataStore.logs,
         };
 
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1101,7 +1237,7 @@ const SettingsModule = {
         const backups = JSON.parse(localStorage.getItem('backupHistory') || '[]');
         backups.unshift({
             date: new Date().toISOString(),
-            size: blob.size
+            size: blob.size,
         });
         localStorage.setItem('backupHistory', JSON.stringify(backups.slice(0, 10)));
 
@@ -1113,31 +1249,37 @@ const SettingsModule = {
     // バックアップ状態更新
     updateBackupStatus() {
         const backups = JSON.parse(localStorage.getItem('backupHistory') || '[]');
-        document.getElementById('lastBackup').textContent = backups.length > 0
-            ? new Date(backups[0].date).toLocaleString('ja-JP')
-            : '-';
+        document.getElementById('lastBackup').textContent =
+            backups.length > 0 ? new Date(backups[0].date).toLocaleString('ja-JP') : '-';
         document.getElementById('backupCount').textContent = backups.length;
 
         // データサイズを計算
-        const dataSize = new Blob([JSON.stringify({
-            settings: this.load(),
-            users: DataStore.users,
-            apps: DataStore.apps,
-            incidents: DataStore.incidents,
-            changes: DataStore.changes,
-            logs: DataStore.logs
-        })]).size;
+        const dataSize = new Blob([
+            JSON.stringify({
+                settings: this.load(),
+                users: DataStore.users,
+                apps: DataStore.apps,
+                incidents: DataStore.incidents,
+                changes: DataStore.changes,
+                logs: DataStore.logs,
+            }),
+        ]).size;
         document.getElementById('dataSize').textContent = this.formatBytes(dataSize);
 
         // バックアップリスト表示
         const listEl = document.getElementById('backupList');
         if (backups.length > 0) {
-            listEl.innerHTML = backups.slice(0, 5).map(b => `
+            listEl.innerHTML = backups
+                .slice(0, 5)
+                .map(
+                    b => `
                 <div class="backup-item">
                     <span>${new Date(b.date).toLocaleString('ja-JP')}</span>
                     <span>${this.formatBytes(b.size)}</span>
                 </div>
-            `).join('');
+            `
+                )
+                .join('');
         } else {
             listEl.innerHTML = '<p class="text-muted">バックアップはありません</p>';
         }
@@ -1145,7 +1287,9 @@ const SettingsModule = {
 
     // バイト数フォーマット
     formatBytes(bytes) {
-        if (bytes === 0) {return '0 Bytes';}
+        if (bytes === 0) {
+            return '0 Bytes';
+        }
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -1167,17 +1311,29 @@ const SettingsModule = {
         }
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
             try {
                 const data = JSON.parse(e.target.result);
 
                 // データの復元
-                if (data.settings) {this.save(data.settings);}
-                if (data.users) {DataStore.users = data.users;}
-                if (data.apps) {DataStore.apps = data.apps;}
-                if (data.incidents) {DataStore.incidents = data.incidents;}
-                if (data.changes) {DataStore.changes = data.changes;}
-                if (data.logs) {DataStore.logs = data.logs;}
+                if (data.settings) {
+                    this.save(data.settings);
+                }
+                if (data.users) {
+                    DataStore.users = data.users;
+                }
+                if (data.apps) {
+                    DataStore.apps = data.apps;
+                }
+                if (data.incidents) {
+                    DataStore.incidents = data.incidents;
+                }
+                if (data.changes) {
+                    DataStore.changes = data.changes;
+                }
+                if (data.logs) {
+                    DataStore.logs = data.logs;
+                }
 
                 this.loadToForm();
                 refreshAllModules();
@@ -1199,7 +1355,7 @@ const SettingsModule = {
             users: DataStore.users,
             apps: DataStore.apps,
             incidents: DataStore.incidents,
-            changes: DataStore.changes
+            changes: DataStore.changes,
         };
 
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1235,7 +1391,7 @@ const SettingsModule = {
         updateDashboard();
 
         showToast('データを初期化しました', 'warning');
-    }
+    },
 };
 
 // 変更管理モジュール
@@ -1246,7 +1402,9 @@ const ChangeModule = {
 
     render(changes) {
         const tbody = document.getElementById('changesTableBody');
-        tbody.innerHTML = changes.map(chg => `
+        tbody.innerHTML = changes
+            .map(
+                chg => `
             <tr>
                 <td>${escapeHtml(chg.id)}</td>
                 <td>${escapeHtml(chg.title)}</td>
@@ -1261,33 +1419,66 @@ const ChangeModule = {
                     <button class="action-btn delete" onclick="ChangeModule.delete('${escapeHtml(chg.id)}')" title="削除"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
-        `).join('');
+        `
+            )
+            .join('');
     },
 
     getTypeBadge(type) {
-        const badges = { feature: 'badge-success', improvement: 'badge-info', modification: 'badge-warning', bugfix: 'badge-danger' };
+        const badges = {
+            feature: 'badge-success',
+            improvement: 'badge-info',
+            modification: 'badge-warning',
+            bugfix: 'badge-danger',
+        };
         return badges[type] || 'badge-secondary';
     },
 
     getTypeText(type) {
-        const texts = { feature: '新機能', improvement: '改善', modification: '変更', bugfix: 'バグ修正' };
+        const texts = {
+            feature: '新機能',
+            improvement: '改善',
+            modification: '変更',
+            bugfix: 'バグ修正',
+        };
         return texts[type] || type;
     },
 
     getStatusBadge(status) {
-        const badges = { draft: 'badge-secondary', pending: 'badge-warning', approved: 'badge-info', in_progress: 'badge-primary', completed: 'badge-success', rejected: 'badge-danger' };
+        const badges = {
+            draft: 'badge-secondary',
+            pending: 'badge-warning',
+            approved: 'badge-info',
+            in_progress: 'badge-primary',
+            completed: 'badge-success',
+            rejected: 'badge-danger',
+        };
         return badges[status] || 'badge-secondary';
     },
 
     getStatusText(status) {
-        const texts = { draft: '下書き', pending: '申請中', approved: '承認済', in_progress: '実施中', completed: '完了', rejected: '却下' };
+        const texts = {
+            draft: '下書き',
+            pending: '申請中',
+            approved: '承認済',
+            in_progress: '実施中',
+            completed: '完了',
+            rejected: '却下',
+        };
         return texts[status] || status;
     },
 
     showAddModal() {
-        const appOptions = DataStore.apps.map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`).join('');
+        const appOptions = DataStore.apps
+            .map(
+                a =>
+                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`
+            )
+            .join('');
 
-        openModal('変更要求登録', `
+        openModal(
+            '変更要求登録',
+            `
             <div class="form-group">
                 <label>タイトル</label>
                 <input type="text" id="newChgTitle" required>
@@ -1315,10 +1506,12 @@ const ChangeModule = {
                 <label>説明</label>
                 <textarea id="newChgDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;"></textarea>
             </div>
-        `, [
-            { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '登録', class: 'btn-primary', onclick: 'ChangeModule.add()' }
-        ]);
+        `,
+            [
+                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
+                { text: '登録', class: 'btn-primary', onclick: 'ChangeModule.add()' },
+            ]
+        );
     },
 
     add() {
@@ -1333,7 +1526,7 @@ const ChangeModule = {
             status: 'draft',
             requester: document.getElementById('currentUser').textContent,
             scheduled: document.getElementById('newChgScheduled').value || '-',
-            description: document.getElementById('newChgDesc').value
+            description: document.getElementById('newChgDesc').value,
         };
         DataStore.changes.push(newChg);
         this.refresh();
@@ -1345,7 +1538,9 @@ const ChangeModule = {
 
     view(id) {
         const chg = DataStore.changes.find(c => c.id === id);
-        openModal('変更要求詳細: ' + escapeHtml(chg.id), `
+        openModal(
+            '変更要求詳細: ' + escapeHtml(chg.id),
+            `
             <div style="line-height: 2;">
                 <p><strong>変更ID:</strong> ${escapeHtml(chg.id)}</p>
                 <p><strong>タイトル:</strong> ${escapeHtml(chg.title)}</p>
@@ -1357,16 +1552,23 @@ const ChangeModule = {
                 <p><strong>説明:</strong></p>
                 <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(chg.description) || '（なし）'}</p>
             </div>
-        `, [
-            { text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }
-        ]);
+        `,
+            [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
+        );
     },
 
     edit(id) {
         const chg = DataStore.changes.find(c => c.id === id);
-        const appOptions = DataStore.apps.map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === chg.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`).join('');
+        const appOptions = DataStore.apps
+            .map(
+                a =>
+                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === chg.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
+            )
+            .join('');
 
-        openModal('変更要求編集: ' + escapeHtml(chg.id), `
+        openModal(
+            '変更要求編集: ' + escapeHtml(chg.id),
+            `
             <div class="form-group">
                 <label>タイトル</label>
                 <input type="text" id="editChgTitle" value="${escapeHtml(chg.title)}">
@@ -1405,10 +1607,16 @@ const ChangeModule = {
                 <label>説明</label>
                 <textarea id="editChgDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(chg.description) || ''}</textarea>
             </div>
-        `, [
-            { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-            { text: '保存', class: 'btn-primary', onclick: `ChangeModule.save('${escapeHtml(id)}')` }
-        ]);
+        `,
+            [
+                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
+                {
+                    text: '保存',
+                    class: 'btn-primary',
+                    onclick: `ChangeModule.save('${escapeHtml(id)}')`,
+                },
+            ]
+        );
     },
 
     save(id) {
@@ -1449,9 +1657,10 @@ const ChangeModule = {
         let filtered = DataStore.changes;
 
         if (search) {
-            filtered = filtered.filter(c =>
-                c.title.toLowerCase().includes(search) ||
-                (c.description || '').toLowerCase().includes(search)
+            filtered = filtered.filter(
+                c =>
+                    c.title.toLowerCase().includes(search) ||
+                    (c.description || '').toLowerCase().includes(search)
             );
         }
         if (type) {
@@ -1462,5 +1671,5 @@ const ChangeModule = {
         }
 
         this.render(filtered);
-    }
+    },
 };

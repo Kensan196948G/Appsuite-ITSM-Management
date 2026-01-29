@@ -20,7 +20,7 @@ const DashboardManager = {
         appStatus: null,
         incidentPriority: null,
         changeType: null,
-        weeklyActivity: null
+        weeklyActivity: null,
     },
 
     // ウィジェット設定
@@ -50,7 +50,7 @@ const DashboardManager = {
         }
 
         // グローバル設定
-        Chart.defaults.font.family = '\'Noto Sans JP\', \'Hiragino Sans\', sans-serif';
+        Chart.defaults.font.family = "'Noto Sans JP', 'Hiragino Sans', sans-serif";
         Chart.defaults.responsive = true;
         Chart.defaults.maintainAspectRatio = false;
 
@@ -67,7 +67,9 @@ const DashboardManager = {
      */
     initIncidentTrendChart() {
         const ctx = document.getElementById('incidentTrendChart');
-        if (!ctx) {return;}
+        if (!ctx) {
+            return;
+        }
 
         const data = this.getIncidentTrendData();
 
@@ -82,7 +84,7 @@ const DashboardManager = {
                         borderColor: '#f59e0b',
                         backgroundColor: 'rgba(245, 158, 11, 0.1)',
                         fill: true,
-                        tension: 0.4
+                        tension: 0.4,
                     },
                     {
                         label: '解決済み',
@@ -90,29 +92,29 @@ const DashboardManager = {
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         fill: true,
-                        tension: 0.4
-                    }
-                ]
+                        tension: 0.4,
+                    },
+                ],
             },
             options: {
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
                     },
                     title: {
                         display: true,
-                        text: 'インシデント推移（過去7日間）'
-                    }
+                        text: 'インシデント推移（過去7日間）',
+                    },
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
+                            stepSize: 1,
+                        },
+                    },
+                },
+            },
         });
     },
 
@@ -121,7 +123,9 @@ const DashboardManager = {
      */
     initAppStatusChart() {
         const ctx = document.getElementById('appStatusChart');
-        if (!ctx) {return;}
+        if (!ctx) {
+            return;
+        }
 
         const data = this.getAppStatusData();
 
@@ -129,24 +133,26 @@ const DashboardManager = {
             type: 'doughnut',
             data: {
                 labels: ['稼働中', 'メンテナンス', '停止中'],
-                datasets: [{
-                    data: [data.active, data.maintenance, data.inactive],
-                    backgroundColor: ['#10b981', '#f59e0b', '#6b7280'],
-                    borderWidth: 0
-                }]
+                datasets: [
+                    {
+                        data: [data.active, data.maintenance, data.inactive],
+                        backgroundColor: ['#10b981', '#f59e0b', '#6b7280'],
+                        borderWidth: 0,
+                    },
+                ],
             },
             options: {
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
                     },
                     title: {
                         display: true,
-                        text: 'アプリ稼働状況'
-                    }
+                        text: 'アプリ稼働状況',
+                    },
                 },
-                cutout: '60%'
-            }
+                cutout: '60%',
+            },
         });
     },
 
@@ -155,7 +161,9 @@ const DashboardManager = {
      */
     initIncidentPriorityChart() {
         const ctx = document.getElementById('incidentPriorityChart');
-        if (!ctx) {return;}
+        if (!ctx) {
+            return;
+        }
 
         const data = this.getIncidentPriorityData();
 
@@ -163,23 +171,25 @@ const DashboardManager = {
             type: 'pie',
             data: {
                 labels: ['高', '中', '低'],
-                datasets: [{
-                    data: [data.high, data.medium, data.low],
-                    backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6'],
-                    borderWidth: 0
-                }]
+                datasets: [
+                    {
+                        data: [data.high, data.medium, data.low],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6'],
+                        borderWidth: 0,
+                    },
+                ],
             },
             options: {
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
                     },
                     title: {
                         display: true,
-                        text: 'インシデント優先度'
-                    }
-                }
-            }
+                        text: 'インシデント優先度',
+                    },
+                },
+            },
         });
     },
 
@@ -188,7 +198,9 @@ const DashboardManager = {
      */
     initChangeTypeChart() {
         const ctx = document.getElementById('changeTypeChart');
-        if (!ctx) {return;}
+        if (!ctx) {
+            return;
+        }
 
         const data = this.getChangeTypeData();
 
@@ -196,32 +208,34 @@ const DashboardManager = {
             type: 'bar',
             data: {
                 labels: ['機能追加', '機能変更', 'バグ修正', '改善'],
-                datasets: [{
-                    label: '件数',
-                    data: [data.feature, data.modification, data.bugfix, data.improvement],
-                    backgroundColor: ['#8b5cf6', '#3b82f6', '#ef4444', '#10b981'],
-                    borderRadius: 4
-                }]
+                datasets: [
+                    {
+                        label: '件数',
+                        data: [data.feature, data.modification, data.bugfix, data.improvement],
+                        backgroundColor: ['#8b5cf6', '#3b82f6', '#ef4444', '#10b981'],
+                        borderRadius: 4,
+                    },
+                ],
             },
             options: {
                 plugins: {
                     legend: {
-                        display: false
+                        display: false,
                     },
                     title: {
                         display: true,
-                        text: '変更要求タイプ別'
-                    }
+                        text: '変更要求タイプ別',
+                    },
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
+                            stepSize: 1,
+                        },
+                    },
+                },
+            },
         });
     },
 
@@ -230,7 +244,9 @@ const DashboardManager = {
      */
     initWeeklyActivityChart() {
         const ctx = document.getElementById('weeklyActivityChart');
-        if (!ctx) {return;}
+        if (!ctx) {
+            return;
+        }
 
         const data = this.getWeeklyActivityData();
 
@@ -243,32 +259,32 @@ const DashboardManager = {
                         label: 'ログイン',
                         data: data.logins,
                         backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                        borderRadius: 4
+                        borderRadius: 4,
                     },
                     {
                         label: '操作',
                         data: data.actions,
                         backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                        borderRadius: 4
-                    }
-                ]
+                        borderRadius: 4,
+                    },
+                ],
             },
             options: {
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
                     },
                     title: {
                         display: true,
-                        text: '週間アクティビティ'
-                    }
+                        text: '週間アクティビティ',
+                    },
                 },
                 scales: {
                     y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+                        beginAtZero: true,
+                    },
+                },
+            },
         });
     },
 
@@ -302,7 +318,9 @@ const DashboardManager = {
 
             // その日に解決されたインシデント
             const resolved = incidents.filter(inc => {
-                if (!inc.resolvedAt) {return false;}
+                if (!inc.resolvedAt) {
+                    return false;
+                }
                 const resolvedDate = new Date(inc.resolvedAt);
                 return resolvedDate >= dayStart && resolvedDate <= dayEnd;
             }).length;
@@ -320,7 +338,7 @@ const DashboardManager = {
         return {
             active: apps.filter(a => a.status === 'active').length,
             maintenance: apps.filter(a => a.status === 'maintenance').length,
-            inactive: apps.filter(a => a.status === 'inactive').length
+            inactive: apps.filter(a => a.status === 'inactive').length,
         };
     },
 
@@ -333,7 +351,7 @@ const DashboardManager = {
         return {
             high: openIncidents.filter(i => i.priority === 'high').length,
             medium: openIncidents.filter(i => i.priority === 'medium').length,
-            low: openIncidents.filter(i => i.priority === 'low').length
+            low: openIncidents.filter(i => i.priority === 'low').length,
         };
     },
 
@@ -346,7 +364,7 @@ const DashboardManager = {
             feature: changes.filter(c => c.type === 'feature').length,
             modification: changes.filter(c => c.type === 'modification').length,
             bugfix: changes.filter(c => c.type === 'bugfix').length,
-            improvement: changes.filter(c => c.type === 'improvement').length
+            improvement: changes.filter(c => c.type === 'improvement').length,
         };
     },
 
@@ -387,7 +405,9 @@ const DashboardManager = {
      * 全チャートを更新
      */
     updateCharts() {
-        if (!this.charts.incidentTrend) {return;}
+        if (!this.charts.incidentTrend) {
+            return;
+        }
 
         // インシデントトレンド更新
         const trendData = this.getIncidentTrendData();
@@ -398,17 +418,30 @@ const DashboardManager = {
 
         // アプリステータス更新
         const appData = this.getAppStatusData();
-        this.charts.appStatus.data.datasets[0].data = [appData.active, appData.maintenance, appData.inactive];
+        this.charts.appStatus.data.datasets[0].data = [
+            appData.active,
+            appData.maintenance,
+            appData.inactive,
+        ];
         this.charts.appStatus.update('none');
 
         // インシデント優先度更新
         const priorityData = this.getIncidentPriorityData();
-        this.charts.incidentPriority.data.datasets[0].data = [priorityData.high, priorityData.medium, priorityData.low];
+        this.charts.incidentPriority.data.datasets[0].data = [
+            priorityData.high,
+            priorityData.medium,
+            priorityData.low,
+        ];
         this.charts.incidentPriority.update('none');
 
         // 変更タイプ更新
         const changeData = this.getChangeTypeData();
-        this.charts.changeType.data.datasets[0].data = [changeData.feature, changeData.modification, changeData.bugfix, changeData.improvement];
+        this.charts.changeType.data.datasets[0].data = [
+            changeData.feature,
+            changeData.modification,
+            changeData.bugfix,
+            changeData.improvement,
+        ];
         this.charts.changeType.update('none');
 
         // 週間アクティビティ更新
@@ -423,7 +456,9 @@ const DashboardManager = {
      * 自動更新開始
      */
     startAutoUpdate() {
-        if (this.updateTimer) {return;}
+        if (this.updateTimer) {
+            return;
+        }
 
         this.updateTimer = setInterval(() => {
             this.refresh();
@@ -490,17 +525,21 @@ const DashboardManager = {
      */
     animateNumber(elementId, targetValue) {
         const element = document.getElementById(elementId);
-        if (!element) {return;}
+        if (!element) {
+            return;
+        }
 
         const currentValue = parseInt(element.textContent) || 0;
         const diff = targetValue - currentValue;
 
-        if (diff === 0) {return;}
+        if (diff === 0) {
+            return;
+        }
 
         const duration = 500;
         const startTime = performance.now();
 
-        const animate = (currentTime) => {
+        const animate = currentTime => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
@@ -567,7 +606,7 @@ const DashboardManager = {
             { id: 'changeType', name: '変更要求タイプ', visible: true, order: 5 },
             { id: 'weeklyActivity', name: '週間アクティビティ', visible: true, order: 6 },
             { id: 'recentLogs', name: '最近の操作ログ', visible: true, order: 7 },
-            { id: 'appSummary', name: 'アプリ一覧', visible: true, order: 8 }
+            { id: 'appSummary', name: 'アプリ一覧', visible: true, order: 8 },
         ];
     },
 
@@ -607,16 +646,22 @@ const DashboardManager = {
      */
     initWidgetControls() {
         const container = document.getElementById('widgetControlList');
-        if (!container) {return;}
+        if (!container) {
+            return;
+        }
 
-        container.innerHTML = this.widgets.map(widget => `
+        container.innerHTML = this.widgets
+            .map(
+                widget => `
             <label class="widget-control-item">
                 <input type="checkbox"
                        ${widget.visible ? 'checked' : ''}
                        onchange="DashboardManager.toggleWidget('${widget.id}')">
                 <span>${escapeHtml(widget.name)}</span>
             </label>
-        `).join('');
+        `
+            )
+            .join('');
     },
 
     /**
@@ -641,9 +686,9 @@ const DashboardManager = {
                 {
                     text: '閉じる',
                     class: 'btn-primary',
-                    onclick: 'Modal.close()'
-                }
-            ]
+                    onclick: 'Modal.close()',
+                },
+            ],
         });
 
         this.initWidgetControls();
@@ -677,10 +722,12 @@ const DashboardManager = {
     destroy() {
         this.stopAutoUpdate();
         Object.values(this.charts).forEach(chart => {
-            if (chart) {chart.destroy();}
+            if (chart) {
+                chart.destroy();
+            }
         });
         this.charts = {};
-    }
+    },
 };
 
 /**
@@ -702,7 +749,8 @@ const KPIWidget = {
             const totalTime = resolvedIncidents.reduce((sum, inc) => {
                 return sum + (new Date(inc.resolvedAt) - new Date(inc.created));
             }, 0);
-            avgResolutionTime = Math.round(totalTime / resolvedIncidents.length / (1000 * 60 * 60) * 10) / 10;
+            avgResolutionTime =
+                Math.round((totalTime / resolvedIncidents.length / (1000 * 60 * 60)) * 10) / 10;
         }
 
         // SLA達成率（24時間以内に解決した割合）
@@ -711,16 +759,21 @@ const KPIWidget = {
             const resolutionTime = new Date(inc.resolvedAt) - new Date(inc.created);
             return resolutionTime <= slaTarget;
         }).length;
-        const slaRate = resolvedIncidents.length > 0
-            ? Math.round(withinSla / resolvedIncidents.length * 100)
-            : 100;
+        const slaRate =
+            resolvedIncidents.length > 0
+                ? Math.round((withinSla / resolvedIncidents.length) * 100)
+                : 100;
 
         // 変更成功率
         const completedChanges = changes.filter(c => c.status === 'completed');
         const failedChanges = changes.filter(c => c.status === 'rejected');
-        const changeSuccessRate = (completedChanges.length + failedChanges.length) > 0
-            ? Math.round(completedChanges.length / (completedChanges.length + failedChanges.length) * 100)
-            : 100;
+        const changeSuccessRate =
+            completedChanges.length + failedChanges.length > 0
+                ? Math.round(
+                      (completedChanges.length / (completedChanges.length + failedChanges.length)) *
+                          100
+                  )
+                : 100;
 
         // 今月のインシデント数
         const now = new Date();
@@ -731,7 +784,7 @@ const KPIWidget = {
             avgResolutionTime,
             slaRate,
             changeSuccessRate,
-            monthlyIncidents
+            monthlyIncidents,
         };
     },
 
@@ -740,7 +793,9 @@ const KPIWidget = {
      */
     render() {
         const container = document.getElementById('kpiWidget');
-        if (!container) {return;}
+        if (!container) {
+            return;
+        }
 
         const kpi = this.calculate();
 
@@ -776,7 +831,7 @@ const KPIWidget = {
                 </div>
             </div>
         `;
-    }
+    },
 };
 
 /**
@@ -788,7 +843,9 @@ const QuickActions = {
      */
     render() {
         const container = document.getElementById('quickActions');
-        if (!container) {return;}
+        if (!container) {
+            return;
+        }
 
         container.innerHTML = `
             <div class="quick-actions-grid">
@@ -836,7 +893,9 @@ const QuickActions = {
      */
     viewMyTasks() {
         const currentUser = AuthModule.getCurrentUser();
-        if (!currentUser) {return;}
+        if (!currentUser) {
+            return;
+        }
 
         const myIncidents = (DataStore.incidents || []).filter(
             i => i.assignee === currentUser.username && i.status !== 'closed'
@@ -891,9 +950,9 @@ const QuickActions = {
                 {
                     text: '閉じる',
                     class: 'btn-primary',
-                    onclick: 'Modal.close()'
-                }
-            ]
+                    onclick: 'Modal.close()',
+                },
+            ],
         });
     },
 
@@ -921,9 +980,9 @@ const QuickActions = {
                 {
                     text: '閉じる',
                     class: 'btn-secondary',
-                    onclick: 'Modal.close()'
-                }
-            ]
+                    onclick: 'Modal.close()',
+                },
+            ],
         });
     },
 
@@ -946,7 +1005,7 @@ const QuickActions = {
      */
     generateActivityReport() {
         Toast.info('レポート生成機能は今後のアップデートで実装予定です');
-    }
+    },
 };
 
 /**
@@ -958,7 +1017,9 @@ const SystemStatus = {
      */
     render() {
         const container = document.getElementById('systemStatus');
-        if (!container) {return;}
+        if (!container) {
+            return;
+        }
 
         const status = this.getStatus();
 
@@ -996,7 +1057,10 @@ const SystemStatus = {
         // localStorage使用量を計算
         let totalSize = 0;
         for (const key in localStorage) {
-            if (Object.prototype.hasOwnProperty.call(localStorage, key) && key.startsWith('appsuite_')) {
+            if (
+                Object.prototype.hasOwnProperty.call(localStorage, key) &&
+                key.startsWith('appsuite_')
+            ) {
                 totalSize += (localStorage.getItem(key) || '').length * 2; // UTF-16
             }
         }
@@ -1004,7 +1068,7 @@ const SystemStatus = {
         const maxSize = 5 * 1024 * 1024; // 5MB（一般的なlocalStorage上限）
         const usedKB = Math.round(totalSize / 1024);
         const maxKB = Math.round(maxSize / 1024);
-        const percent = Math.round(totalSize / maxSize * 100);
+        const percent = Math.round((totalSize / maxSize) * 100);
 
         return {
             api: 'offline', // 実際の接続状態に応じて変更
@@ -1012,9 +1076,9 @@ const SystemStatus = {
             sync: 'offline',
             storageUsed: `${usedKB}KB`,
             storageMax: `${maxKB}KB`,
-            storagePercent: percent
+            storagePercent: percent,
         };
-    }
+    },
 };
 
 // 初期化はapp.jsから呼び出される

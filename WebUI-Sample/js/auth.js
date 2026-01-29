@@ -40,14 +40,12 @@ const AuthModule = {
             const remainingMinutes = Math.ceil(lockoutInfo.remainingTime / 60000);
             return {
                 success: false,
-                error: `アカウントがロックされています。${remainingMinutes}分後に再試行してください`
+                error: `アカウントがロックされています。${remainingMinutes}分後に再試行してください`,
             };
         }
 
         // ユーザー検索
-        const user = DataStore.users.find(u =>
-            u.username === username || u.email === username
-        );
+        const user = DataStore.users.find(u => u.username === username || u.email === username);
 
         if (!user) {
             this.recordFailedAttempt(username);
@@ -67,7 +65,7 @@ const AuthModule = {
             const remaining = this.MAX_LOGIN_ATTEMPTS - attempts;
             return {
                 success: false,
-                error: `ユーザー名またはパスワードが正しくありません（残り${remaining}回）`
+                error: `ユーザー名またはパスワードが正しくありません（残り${remaining}回）`,
             };
         }
 
@@ -113,7 +111,7 @@ const AuthModule = {
             department: user.department,
             createdAt: now,
             expiresAt: now + this.SESSION_TIMEOUT,
-            lastActivity: now
+            lastActivity: now,
         };
     },
 
@@ -158,7 +156,9 @@ const AuthModule = {
      * @returns {boolean} - 有効な場合true
      */
     isSessionValid(session) {
-        if (!session) {return false;}
+        if (!session) {
+            return false;
+        }
         const now = Date.now();
         return session.expiresAt > now;
     },
@@ -196,7 +196,9 @@ const AuthModule = {
      * @returns {Object|null} - ユーザーオブジェクトまたはnull
      */
     getCurrentUser() {
-        if (!this.isAuthenticated()) {return null;}
+        if (!this.isAuthenticated()) {
+            return null;
+        }
         const user = DataStore.users.find(u => u.id === this.currentSession.userId);
         return user ? this.sanitizeUser(user) : null;
     },
@@ -207,11 +209,13 @@ const AuthModule = {
      * @returns {boolean} - 権限がある場合true
      */
     hasPermission(permission) {
-        if (!this.isAuthenticated()) {return false;}
+        if (!this.isAuthenticated()) {
+            return false;
+        }
 
         const permissions = {
             // 管理者のみ
-            'admin': ['管理者'],
+            admin: ['管理者'],
             'user.create': ['管理者'],
             'user.delete': ['管理者'],
             'settings.edit': ['管理者'],
@@ -223,11 +227,13 @@ const AuthModule = {
             'incident.view': ['管理者', 'ユーザー'],
             'incident.create': ['管理者', 'ユーザー'],
             'change.view': ['管理者', 'ユーザー'],
-            'change.create': ['管理者', 'ユーザー']
+            'change.create': ['管理者', 'ユーザー'],
         };
 
         const allowedRoles = permissions[permission];
-        if (!allowedRoles) {return true;} // 未定義の権限は許可
+        if (!allowedRoles) {
+            return true;
+        } // 未定義の権限は許可
 
         return allowedRoles.includes(this.currentSession.role);
     },
@@ -302,8 +308,12 @@ const AuthModule = {
 
         // ロックアウト時にログ記録
         if (data.attempts >= this.MAX_LOGIN_ATTEMPTS) {
-            LogModule.addLog('security', 'システム', 'system',
-                `アカウントロック: ${username} (${this.MAX_LOGIN_ATTEMPTS}回の失敗)`);
+            LogModule.addLog(
+                'security',
+                'システム',
+                'system',
+                `アカウントロック: ${username} (${this.MAX_LOGIN_ATTEMPTS}回の失敗)`
+            );
         }
     },
 
@@ -330,10 +340,13 @@ const AuthModule = {
         const now = Date.now();
         const timeSinceLastAttempt = now - data.lastAttempt;
 
-        if (data.attempts >= this.MAX_LOGIN_ATTEMPTS && timeSinceLastAttempt < this.LOCKOUT_DURATION) {
+        if (
+            data.attempts >= this.MAX_LOGIN_ATTEMPTS &&
+            timeSinceLastAttempt < this.LOCKOUT_DURATION
+        ) {
             return {
                 locked: true,
-                remainingTime: this.LOCKOUT_DURATION - timeSinceLastAttempt
+                remainingTime: this.LOCKOUT_DURATION - timeSinceLastAttempt,
             };
         }
 
@@ -486,7 +499,7 @@ const AuthModule = {
         exportButtons.forEach(el => {
             el.style.display = this.hasPermission('log.export') ? '' : 'none';
         });
-    }
+    },
 };
 
 // パスワード強度チェッカー
@@ -501,7 +514,7 @@ const PasswordValidator = {
             valid: true,
             score: 0,
             errors: [],
-            strength: 'weak'
+            strength: 'weak',
         };
 
         // 最小長チェック（8文字以上）
@@ -569,19 +582,19 @@ const PasswordValidator = {
         const colors = {
             weak: '#ef4444',
             medium: '#f59e0b',
-            strong: '#22c55e'
+            strong: '#22c55e',
         };
 
         const labels = {
             weak: '弱い',
             medium: '普通',
-            strong: '強い'
+            strong: '強い',
         };
 
         const widths = {
             weak: '33%',
             medium: '66%',
-            strong: '100%'
+            strong: '100%',
         };
 
         if (barElement) {
@@ -593,7 +606,7 @@ const PasswordValidator = {
             textElement.textContent = labels[result.strength];
             textElement.style.color = colors[result.strength];
         }
-    }
+    },
 };
 
 // グローバル関数（HTML onclick用）

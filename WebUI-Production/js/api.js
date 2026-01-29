@@ -14,12 +14,15 @@ const ApiConfig = {
         this.authMethod = document.getElementById('authMethod').value;
         this.timeout = parseInt(document.getElementById('timeout').value) * 1000;
 
-        localStorage.setItem('appsuite_api_config', JSON.stringify({
-            baseUrl: this.baseUrl,
-            apiKey: this.apiKey,
-            authMethod: this.authMethod,
-            timeout: this.timeout
-        }));
+        localStorage.setItem(
+            'appsuite_api_config',
+            JSON.stringify({
+                baseUrl: this.baseUrl,
+                apiKey: this.apiKey,
+                authMethod: this.authMethod,
+                timeout: this.timeout,
+            })
+        );
 
         showToast('API設定を保存しました', 'success');
     },
@@ -70,7 +73,7 @@ const ApiConfig = {
             document.getElementById('apiStatus').style.color = '#ef4444';
             showToast('接続失敗: ' + error.message, 'error');
         }
-    }
+    },
 };
 
 // API通信クラス
@@ -129,73 +132,359 @@ const Api = {
     getHeaders() {
         const headers = {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            Accept: 'application/json',
         };
 
         switch (ApiConfig.authMethod) {
-        case 'bearer':
-            headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-            break;
-        case 'basic':
-            headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-            break;
-        case 'apikey':
-            headers['X-API-Key'] = ApiConfig.apiKey;
-            break;
+            case 'bearer':
+                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+                break;
+            case 'basic':
+                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+                break;
+            case 'apikey':
+                headers['X-API-Key'] = ApiConfig.apiKey;
+                break;
         }
 
         return headers;
-    }
+    },
 };
 
 // デモ用データストア
 const DataStore = {
     users: [
-        { id: 'U0000', username: 'admin', email: 'admin@example.com', department: '情報システム部', role: '管理者', status: 'active', lastLogin: '2026-01-23 22:00' },
-        { id: 'U0001', username: '山田太郎', email: 'yamada@example.com', department: '情報システム部', role: '管理者', status: 'active', lastLogin: '2026-01-19 09:30' },
-        { id: 'U0002', username: '鈴木花子', email: 'suzuki@example.com', department: '営業部', role: 'ユーザー', status: 'active', lastLogin: '2026-01-19 08:45' },
-        { id: 'U0003', username: '佐藤一郎', email: 'sato@example.com', department: '総務部', role: 'ユーザー', status: 'active', lastLogin: '2026-01-18 17:20' },
-        { id: 'U0004', username: '田中美咲', email: 'tanaka@example.com', department: '開発部', role: '管理者', status: 'active', lastLogin: '2026-01-19 10:15' },
-        { id: 'U0005', username: '高橋健二', email: 'takahashi@example.com', department: '情報システム部', role: 'ユーザー', status: 'inactive', lastLogin: '2026-01-10 14:00' },
-        { id: 'U0006', username: '伊藤真由', email: 'ito@example.com', department: '経理部', role: 'ユーザー', status: 'active', lastLogin: '2026-01-19 09:00' },
-        { id: 'U0007', username: '渡辺大輔', email: 'watanabe@example.com', department: '営業部', role: 'ユーザー', status: 'active', lastLogin: '2026-01-18 16:30' }
+        {
+            id: 'U0000',
+            username: 'admin',
+            email: 'admin@example.com',
+            department: '情報システム部',
+            role: '管理者',
+            status: 'active',
+            lastLogin: '2026-01-23 22:00',
+        },
+        {
+            id: 'U0001',
+            username: '山田太郎',
+            email: 'yamada@example.com',
+            department: '情報システム部',
+            role: '管理者',
+            status: 'active',
+            lastLogin: '2026-01-19 09:30',
+        },
+        {
+            id: 'U0002',
+            username: '鈴木花子',
+            email: 'suzuki@example.com',
+            department: '営業部',
+            role: 'ユーザー',
+            status: 'active',
+            lastLogin: '2026-01-19 08:45',
+        },
+        {
+            id: 'U0003',
+            username: '佐藤一郎',
+            email: 'sato@example.com',
+            department: '総務部',
+            role: 'ユーザー',
+            status: 'active',
+            lastLogin: '2026-01-18 17:20',
+        },
+        {
+            id: 'U0004',
+            username: '田中美咲',
+            email: 'tanaka@example.com',
+            department: '開発部',
+            role: '管理者',
+            status: 'active',
+            lastLogin: '2026-01-19 10:15',
+        },
+        {
+            id: 'U0005',
+            username: '高橋健二',
+            email: 'takahashi@example.com',
+            department: '情報システム部',
+            role: 'ユーザー',
+            status: 'inactive',
+            lastLogin: '2026-01-10 14:00',
+        },
+        {
+            id: 'U0006',
+            username: '伊藤真由',
+            email: 'ito@example.com',
+            department: '経理部',
+            role: 'ユーザー',
+            status: 'active',
+            lastLogin: '2026-01-19 09:00',
+        },
+        {
+            id: 'U0007',
+            username: '渡辺大輔',
+            email: 'watanabe@example.com',
+            department: '営業部',
+            role: 'ユーザー',
+            status: 'active',
+            lastLogin: '2026-01-18 16:30',
+        },
     ],
 
     apps: [
-        { id: 'APP001', name: '勤怠管理', category: '業務管理', creator: '山田太郎', records: 1250, status: 'active', updated: '2026-01-19' },
-        { id: 'APP002', name: '経費精算申請', category: '申請・承認', creator: '田中美咲', records: 856, status: 'active', updated: '2026-01-18' },
-        { id: 'APP003', name: '顧客管理', category: 'データ管理', creator: '鈴木花子', records: 3420, status: 'active', updated: '2026-01-19' },
-        { id: 'APP004', name: '備品貸出管理', category: '業務管理', creator: '佐藤一郎', records: 234, status: 'active', updated: '2026-01-17' },
-        { id: 'APP005', name: '休暇申請', category: '申請・承認', creator: '山田太郎', records: 567, status: 'active', updated: '2026-01-16' },
-        { id: 'APP006', name: '会議室予約', category: '業務管理', creator: '田中美咲', records: 1890, status: 'maintenance', updated: '2026-01-15' },
-        { id: 'APP007', name: '在庫管理', category: 'データ管理', creator: '高橋健二', records: 4521, status: 'active', updated: '2026-01-19' }
+        {
+            id: 'APP001',
+            name: '勤怠管理',
+            category: '業務管理',
+            creator: '山田太郎',
+            records: 1250,
+            status: 'active',
+            updated: '2026-01-19',
+        },
+        {
+            id: 'APP002',
+            name: '経費精算申請',
+            category: '申請・承認',
+            creator: '田中美咲',
+            records: 856,
+            status: 'active',
+            updated: '2026-01-18',
+        },
+        {
+            id: 'APP003',
+            name: '顧客管理',
+            category: 'データ管理',
+            creator: '鈴木花子',
+            records: 3420,
+            status: 'active',
+            updated: '2026-01-19',
+        },
+        {
+            id: 'APP004',
+            name: '備品貸出管理',
+            category: '業務管理',
+            creator: '佐藤一郎',
+            records: 234,
+            status: 'active',
+            updated: '2026-01-17',
+        },
+        {
+            id: 'APP005',
+            name: '休暇申請',
+            category: '申請・承認',
+            creator: '山田太郎',
+            records: 567,
+            status: 'active',
+            updated: '2026-01-16',
+        },
+        {
+            id: 'APP006',
+            name: '会議室予約',
+            category: '業務管理',
+            creator: '田中美咲',
+            records: 1890,
+            status: 'maintenance',
+            updated: '2026-01-15',
+        },
+        {
+            id: 'APP007',
+            name: '在庫管理',
+            category: 'データ管理',
+            creator: '高橋健二',
+            records: 4521,
+            status: 'active',
+            updated: '2026-01-19',
+        },
     ],
 
     incidents: [
-        { id: 'INC001', title: '勤怠管理アプリでデータが保存されない', appId: 'APP001', appName: '勤怠管理', priority: 'high', status: 'in_progress', reporter: '鈴木花子', assignee: '山田太郎', created: '2026-01-19', description: '出勤打刻後、データが保存されずエラーが発生する' },
-        { id: 'INC002', title: '経費精算の承認ボタンが反応しない', appId: 'APP002', appName: '経費精算申請', priority: 'medium', status: 'open', reporter: '佐藤一郎', assignee: '-', created: '2026-01-19', description: '承認ボタンをクリックしても何も起こらない' },
-        { id: 'INC003', title: '顧客検索が遅い', appId: 'APP003', appName: '顧客管理', priority: 'low', status: 'resolved', reporter: '渡辺大輔', assignee: '田中美咲', created: '2026-01-18', description: '検索に10秒以上かかることがある' },
-        { id: 'INC004', title: '会議室予約の表示エラー', appId: 'APP006', appName: '会議室予約', priority: 'medium', status: 'closed', reporter: '伊藤真由', assignee: '高橋健二', created: '2026-01-17', description: '予約一覧が正しく表示されない問題' }
+        {
+            id: 'INC001',
+            title: '勤怠管理アプリでデータが保存されない',
+            appId: 'APP001',
+            appName: '勤怠管理',
+            priority: 'high',
+            status: 'in_progress',
+            reporter: '鈴木花子',
+            assignee: '山田太郎',
+            created: '2026-01-19',
+            description: '出勤打刻後、データが保存されずエラーが発生する',
+        },
+        {
+            id: 'INC002',
+            title: '経費精算の承認ボタンが反応しない',
+            appId: 'APP002',
+            appName: '経費精算申請',
+            priority: 'medium',
+            status: 'open',
+            reporter: '佐藤一郎',
+            assignee: '-',
+            created: '2026-01-19',
+            description: '承認ボタンをクリックしても何も起こらない',
+        },
+        {
+            id: 'INC003',
+            title: '顧客検索が遅い',
+            appId: 'APP003',
+            appName: '顧客管理',
+            priority: 'low',
+            status: 'resolved',
+            reporter: '渡辺大輔',
+            assignee: '田中美咲',
+            created: '2026-01-18',
+            description: '検索に10秒以上かかることがある',
+        },
+        {
+            id: 'INC004',
+            title: '会議室予約の表示エラー',
+            appId: 'APP006',
+            appName: '会議室予約',
+            priority: 'medium',
+            status: 'closed',
+            reporter: '伊藤真由',
+            assignee: '高橋健二',
+            created: '2026-01-17',
+            description: '予約一覧が正しく表示されない問題',
+        },
     ],
 
     changes: [
-        { id: 'CHG001', title: '勤怠管理に残業申請機能を追加', appId: 'APP001', appName: '勤怠管理', type: 'feature', status: 'approved', requester: '佐藤一郎', scheduled: '2026-02-01', description: '残業時間の事前申請・承認機能を追加したい' },
-        { id: 'CHG002', title: '経費精算の領収書アップロード機能改善', appId: 'APP002', appName: '経費精算申請', type: 'improvement', status: 'in_progress', requester: '鈴木花子', scheduled: '2026-01-25', description: '複数ファイルの一括アップロードに対応' },
-        { id: 'CHG003', title: '顧客管理の検索条件追加', appId: 'APP003', appName: '顧客管理', type: 'modification', status: 'pending', requester: '渡辺大輔', scheduled: '2026-02-10', description: '取引先担当者での検索を可能にしたい' },
-        { id: 'CHG004', title: '在庫管理のバーコード読取不具合修正', appId: 'APP007', appName: '在庫管理', type: 'bugfix', status: 'completed', requester: '高橋健二', scheduled: '2026-01-15', description: '一部バーコードが読み取れない問題を修正' },
-        { id: 'CHG005', title: '休暇申請に半休機能追加', appId: 'APP005', appName: '休暇申請', type: 'feature', status: 'draft', requester: '伊藤真由', scheduled: '-', description: '午前休・午後休の選択を可能にしたい' }
+        {
+            id: 'CHG001',
+            title: '勤怠管理に残業申請機能を追加',
+            appId: 'APP001',
+            appName: '勤怠管理',
+            type: 'feature',
+            status: 'approved',
+            requester: '佐藤一郎',
+            scheduled: '2026-02-01',
+            description: '残業時間の事前申請・承認機能を追加したい',
+        },
+        {
+            id: 'CHG002',
+            title: '経費精算の領収書アップロード機能改善',
+            appId: 'APP002',
+            appName: '経費精算申請',
+            type: 'improvement',
+            status: 'in_progress',
+            requester: '鈴木花子',
+            scheduled: '2026-01-25',
+            description: '複数ファイルの一括アップロードに対応',
+        },
+        {
+            id: 'CHG003',
+            title: '顧客管理の検索条件追加',
+            appId: 'APP003',
+            appName: '顧客管理',
+            type: 'modification',
+            status: 'pending',
+            requester: '渡辺大輔',
+            scheduled: '2026-02-10',
+            description: '取引先担当者での検索を可能にしたい',
+        },
+        {
+            id: 'CHG004',
+            title: '在庫管理のバーコード読取不具合修正',
+            appId: 'APP007',
+            appName: '在庫管理',
+            type: 'bugfix',
+            status: 'completed',
+            requester: '高橋健二',
+            scheduled: '2026-01-15',
+            description: '一部バーコードが読み取れない問題を修正',
+        },
+        {
+            id: 'CHG005',
+            title: '休暇申請に半休機能追加',
+            appId: 'APP005',
+            appName: '休暇申請',
+            type: 'feature',
+            status: 'draft',
+            requester: '伊藤真由',
+            scheduled: '-',
+            description: '午前休・午後休の選択を可能にしたい',
+        },
     ],
 
     logs: [
-        { timestamp: '2026-01-19 10:30:15', user: '山田太郎', action: 'login', target: 'システム', targetType: 'system', detail: 'ログイン成功', ip: '192.168.1.100' },
-        { timestamp: '2026-01-19 10:25:00', user: '田中美咲', action: 'update', target: '経費精算申請', targetType: 'app', detail: 'アプリ設定を更新', ip: '192.168.1.105' },
-        { timestamp: '2026-01-19 10:20:30', user: '鈴木花子', action: 'create', target: '顧客管理', targetType: 'app', detail: '新規レコード追加（顧客ID: C1234）', ip: '192.168.1.110' },
-        { timestamp: '2026-01-19 10:15:00', user: '佐藤一郎', action: 'export', target: '備品貸出管理', targetType: 'app', detail: 'CSVエクスポート実行', ip: '192.168.1.115' },
-        { timestamp: '2026-01-19 09:45:00', user: '山田太郎', action: 'create', target: 'ユーザー', targetType: 'user', detail: '新規ユーザー追加: 伊藤真由', ip: '192.168.1.100' },
-        { timestamp: '2026-01-19 09:30:00', user: '田中美咲', action: 'login', target: 'システム', targetType: 'system', detail: 'ログイン成功', ip: '192.168.1.105' },
-        { timestamp: '2026-01-18 17:30:00', user: '高橋健二', action: 'logout', target: 'システム', targetType: 'system', detail: 'ログアウト', ip: '192.168.1.120' },
-        { timestamp: '2026-01-18 17:00:00', user: '渡辺大輔', action: 'update', target: '顧客管理', targetType: 'app', detail: 'レコード更新（顧客ID: C0891）', ip: '192.168.1.125' },
-        { timestamp: '2026-01-18 16:30:00', user: '伊藤真由', action: 'delete', target: '経費精算申請', targetType: 'app', detail: 'レコード削除（申請ID: E0234）', ip: '192.168.1.130' }
+        {
+            timestamp: '2026-01-19 10:30:15',
+            user: '山田太郎',
+            action: 'login',
+            target: 'システム',
+            targetType: 'system',
+            detail: 'ログイン成功',
+            ip: '192.168.1.100',
+        },
+        {
+            timestamp: '2026-01-19 10:25:00',
+            user: '田中美咲',
+            action: 'update',
+            target: '経費精算申請',
+            targetType: 'app',
+            detail: 'アプリ設定を更新',
+            ip: '192.168.1.105',
+        },
+        {
+            timestamp: '2026-01-19 10:20:30',
+            user: '鈴木花子',
+            action: 'create',
+            target: '顧客管理',
+            targetType: 'app',
+            detail: '新規レコード追加（顧客ID: C1234）',
+            ip: '192.168.1.110',
+        },
+        {
+            timestamp: '2026-01-19 10:15:00',
+            user: '佐藤一郎',
+            action: 'export',
+            target: '備品貸出管理',
+            targetType: 'app',
+            detail: 'CSVエクスポート実行',
+            ip: '192.168.1.115',
+        },
+        {
+            timestamp: '2026-01-19 09:45:00',
+            user: '山田太郎',
+            action: 'create',
+            target: 'ユーザー',
+            targetType: 'user',
+            detail: '新規ユーザー追加: 伊藤真由',
+            ip: '192.168.1.100',
+        },
+        {
+            timestamp: '2026-01-19 09:30:00',
+            user: '田中美咲',
+            action: 'login',
+            target: 'システム',
+            targetType: 'system',
+            detail: 'ログイン成功',
+            ip: '192.168.1.105',
+        },
+        {
+            timestamp: '2026-01-18 17:30:00',
+            user: '高橋健二',
+            action: 'logout',
+            target: 'システム',
+            targetType: 'system',
+            detail: 'ログアウト',
+            ip: '192.168.1.120',
+        },
+        {
+            timestamp: '2026-01-18 17:00:00',
+            user: '渡辺大輔',
+            action: 'update',
+            target: '顧客管理',
+            targetType: 'app',
+            detail: 'レコード更新（顧客ID: C0891）',
+            ip: '192.168.1.125',
+        },
+        {
+            timestamp: '2026-01-18 16:30:00',
+            user: '伊藤真由',
+            action: 'delete',
+            target: '経費精算申請',
+            targetType: 'app',
+            detail: 'レコード削除（申請ID: E0234）',
+            ip: '192.168.1.130',
+        },
     ],
 
     getStats() {
@@ -205,9 +494,9 @@ const DataStore = {
             totalApps: this.apps.length,
             activeApps: this.apps.filter(a => a.status === 'active').length,
             openIncidents: this.incidents.filter(i => i.status !== 'closed').length,
-            pendingChanges: this.changes.filter(c => c.status === 'pending').length
+            pendingChanges: this.changes.filter(c => c.status === 'pending').length,
         };
-    }
+    },
 };
 
 const ApiSync = {
@@ -240,17 +529,28 @@ const ApiSync = {
     applyReadOnlyState() {
         const addUserButton = document.getElementById('addUserButton');
         const addAppButton = document.getElementById('addAppButton');
-        if (addUserButton) {addUserButton.disabled = this.isReadOnly;}
-        if (addAppButton) {addAppButton.disabled = this.isReadOnly;}
+        if (addUserButton) {
+            addUserButton.disabled = this.isReadOnly;
+        }
+        if (addAppButton) {
+            addAppButton.disabled = this.isReadOnly;
+        }
 
-        if (window.UserModule) {UserModule.refresh();}
-        if (window.AppModule) {AppModule.refresh();}
+        if (window.UserModule) {
+            UserModule.refresh();
+        }
+        if (window.AppModule) {
+            AppModule.refresh();
+        }
     },
 
     startAutoSync(intervalMinutes) {
-        this.timerId = setInterval(async () => {
-            await this.syncAll();
-        }, intervalMinutes * 60 * 1000);
+        this.timerId = setInterval(
+            async () => {
+                await this.syncAll();
+            },
+            intervalMinutes * 60 * 1000
+        );
     },
 
     stopAutoSync() {
@@ -273,7 +573,9 @@ const ApiSync = {
             document.getElementById('apiStatus').textContent = '接続中';
             document.getElementById('apiStatus').style.color = '#22c55e';
             document.getElementById('lastSync').textContent = new Date().toLocaleString('ja-JP');
-            if (window.updateDashboard) {updateDashboard();}
+            if (window.updateDashboard) {
+                updateDashboard();
+            }
             showToast('同期が完了しました', 'success');
         } catch (error) {
             updateConnectionStatus(false);
@@ -294,9 +596,11 @@ const ApiSync = {
             department: user.dept || '',
             role: 'ユーザー',
             status: 'active',
-            lastLogin: '-'
+            lastLogin: '-',
         }));
-        if (window.UserModule) {UserModule.refresh();}
+        if (window.UserModule) {
+            UserModule.refresh();
+        }
     },
 
     async syncApps() {
@@ -314,10 +618,12 @@ const ApiSync = {
             records: app.recordcount || 0,
             status: 'active',
             updated: today,
-            description: ''
+            description: '',
         }));
-        if (window.AppModule) {AppModule.refresh();}
-    }
+        if (window.AppModule) {
+            AppModule.refresh();
+        }
+    },
 };
 
 function initApiSync() {
@@ -345,7 +651,7 @@ function showToast(message, type = 'info') {
         success: 'fa-check-circle',
         error: 'fa-exclamation-circle',
         warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
+        info: 'fa-info-circle',
     };
 
     toast.innerHTML = `

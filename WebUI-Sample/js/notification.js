@@ -152,7 +152,7 @@ const NotificationManager = {
             type,
             data: data || {},
             timestamp: new Date().toISOString(),
-            read: false
+            read: false,
         };
 
         // 履歴に追加
@@ -165,7 +165,7 @@ const NotificationManager = {
                     body,
                     icon: icon || '/favicon.ico',
                     tag: notification.id,
-                    requireInteraction: type === 'high_priority' || type === 'sla_violation'
+                    requireInteraction: type === 'high_priority' || type === 'sla_violation',
                 });
 
                 browserNotif.onclick = () => {
@@ -200,17 +200,17 @@ const NotificationManager = {
      */
     getToastType(type) {
         switch (type) {
-        case 'sla_violation':
-        case 'high_priority':
-        case 'escalation':
-            return 'error';
-        case 'sla_warning':
-            return 'warning';
-        case 'change_approved':
-        case 'incident_resolved':
-            return 'success';
-        default:
-            return 'info';
+            case 'sla_violation':
+            case 'high_priority':
+            case 'escalation':
+                return 'error';
+            case 'sla_warning':
+                return 'warning';
+            case 'change_approved':
+            case 'incident_resolved':
+                return 'success';
+            default:
+                return 'info';
         }
     },
 
@@ -227,7 +227,7 @@ const NotificationManager = {
             title: '新規インシデント',
             body: `${incident.id}: ${incident.title}`,
             type: 'incident_new',
-            data: { section: 'incidents', id: incident.id }
+            data: { section: 'incidents', id: incident.id },
         });
     },
 
@@ -240,7 +240,7 @@ const NotificationManager = {
             title: '緊急: 高優先度インシデント',
             body: `${incident.id}: ${incident.title}`,
             type: 'high_priority',
-            data: { section: 'incidents', id: incident.id }
+            data: { section: 'incidents', id: incident.id },
         });
     },
 
@@ -253,7 +253,7 @@ const NotificationManager = {
             title: 'インシデント割当',
             body: `${incident.id} が ${incident.assignee} に割り当てられました`,
             type: 'assignment',
-            data: { section: 'incidents', id: incident.id }
+            data: { section: 'incidents', id: incident.id },
         });
     },
 
@@ -271,7 +271,7 @@ const NotificationManager = {
             title: `${typeLabel}ステータス更新`,
             body: `${item.id}: ${statusLabel}`,
             type: `${type}_status_change`,
-            data: { section: type === 'incident' ? 'incidents' : 'changes', id: item.id }
+            data: { section: type === 'incident' ? 'incidents' : 'changes', id: item.id },
         });
     },
 
@@ -280,13 +280,15 @@ const NotificationManager = {
      * @param {Array} incidents - 警告対象のインシデント配列
      */
     notifySlaWarning(incidents) {
-        if (incidents.length === 0) {return;}
+        if (incidents.length === 0) {
+            return;
+        }
 
         this.send({
             title: 'SLA警告',
             body: `${incidents.length}件のインシデントがSLA期限に近づいています`,
             type: 'sla_warning',
-            data: { section: 'incidents', ids: incidents.map(i => i.id) }
+            data: { section: 'incidents', ids: incidents.map(i => i.id) },
         });
     },
 
@@ -295,13 +297,15 @@ const NotificationManager = {
      * @param {Array} incidents - 違反インシデント配列
      */
     notifySlaViolation(incidents) {
-        if (incidents.length === 0) {return;}
+        if (incidents.length === 0) {
+            return;
+        }
 
         this.send({
             title: 'SLA違反',
             body: `${incidents.length}件のインシデントがSLAを超過しています`,
             type: 'sla_violation',
-            data: { section: 'incidents', ids: incidents.map(i => i.id) }
+            data: { section: 'incidents', ids: incidents.map(i => i.id) },
         });
     },
 
@@ -314,7 +318,7 @@ const NotificationManager = {
             title: '承認依頼',
             body: `${change.id}: ${change.title} の承認が必要です`,
             type: 'change_approval',
-            data: { section: 'changes', id: change.id }
+            data: { section: 'changes', id: change.id },
         });
     },
 
@@ -330,7 +334,7 @@ const NotificationManager = {
             title: isApproved ? '変更要求承認' : '変更要求却下',
             body: `${change.id}: ${change.title}`,
             type: isApproved ? 'change_approved' : 'change_rejected',
-            data: { section: 'changes', id: change.id }
+            data: { section: 'changes', id: change.id },
         });
     },
 
@@ -343,7 +347,7 @@ const NotificationManager = {
             title: 'エスカレーション',
             body: `${incident.id}: ${incident.title} がエスカレートされました`,
             type: 'escalation',
-            data: { section: 'incidents', id: incident.id }
+            data: { section: 'incidents', id: incident.id },
         });
     },
 
@@ -443,7 +447,7 @@ const NotificationManager = {
      * すべての通知を既読にする
      */
     markAllAsRead() {
-        this.history.forEach(n => n.read = true);
+        this.history.forEach(n => (n.read = true));
         this.saveHistory();
         this.renderNotificationBell();
     },
@@ -465,7 +469,9 @@ const NotificationManager = {
      */
     renderNotificationBell() {
         const bellElement = document.getElementById('notificationBell');
-        if (!bellElement) {return;}
+        if (!bellElement) {
+            return;
+        }
 
         const unread = this.getUnreadCount();
         let badge = bellElement.querySelector('.notification-badge');
@@ -520,18 +526,20 @@ const NotificationManager = {
                 </div>
             </div>
             <div class="notification-panel-body">
-                ${notifications.length === 0
-        ? '<p class="notification-empty">通知はありません</p>'
-        : notifications.map(n => this.renderNotificationItem(n)).join('')
-}
+                ${
+                    notifications.length === 0
+                        ? '<p class="notification-empty">通知はありません</p>'
+                        : notifications.map(n => this.renderNotificationItem(n)).join('')
+                }
             </div>
             <div class="notification-panel-footer">
-                ${this.permission !== 'granted'
-        ? `<button class="btn btn-primary btn-sm" onclick="NotificationManager.requestPermission()">
+                ${
+                    this.permission !== 'granted'
+                        ? `<button class="btn btn-primary btn-sm" onclick="NotificationManager.requestPermission()">
                         <i class="fas fa-bell"></i> デスクトップ通知を有効化
                        </button>`
-        : '<span class="text-muted"><i class="fas fa-check"></i> デスクトップ通知: 有効</span>'
-}
+                        : '<span class="text-muted"><i class="fas fa-check"></i> デスクトップ通知: 有効</span>'
+                }
             </div>
         `;
 
@@ -540,7 +548,7 @@ const NotificationManager = {
         if (bellElement) {
             const rect = bellElement.getBoundingClientRect();
             panel.style.position = 'fixed';
-            panel.style.top = (rect.bottom + 10) + 'px';
+            panel.style.top = rect.bottom + 10 + 'px';
             panel.style.right = '20px';
         }
 
@@ -608,7 +616,9 @@ const NotificationManager = {
      */
     handleNotificationClick(id) {
         const notification = this.history.find(n => n.id === id);
-        if (!notification) {return;}
+        if (!notification) {
+            return;
+        }
 
         // 既読にする
         this.markAsRead(id);
@@ -639,7 +649,7 @@ const NotificationManager = {
             change_approval: 'fa-clipboard-check',
             change_approved: 'fa-check-circle',
             change_rejected: 'fa-times-circle',
-            escalation: 'fa-arrow-up'
+            escalation: 'fa-arrow-up',
         };
 
         return icons[type] || 'fa-bell';
@@ -686,7 +696,7 @@ const NotificationManager = {
                 change_approval: notification.notifyChangeApproval !== false,
                 change_approved: notification.notifyChangeComplete !== false,
                 change_rejected: notification.notifyChangeComplete !== false,
-                escalation: notification.notifyIncidentNew !== false
+                escalation: notification.notifyIncidentNew !== false,
             };
 
             return settingMap[type] !== false;
@@ -740,14 +750,16 @@ const NotificationManager = {
      * @returns {string} エスケープされた文字列
      */
     escapeHtml(str) {
-        if (typeof str !== 'string') {return '';}
+        if (typeof str !== 'string') {
+            return '';
+        }
         return str
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
-    }
+    },
 };
 
 // グローバルに公開

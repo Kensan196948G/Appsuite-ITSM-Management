@@ -16,7 +16,9 @@ const ApiCache = {
      */
     get(key) {
         const entry = this.cache.get(key);
-        if (!entry) {return null;}
+        if (!entry) {
+            return null;
+        }
 
         // 有効期限チェック
         if (Date.now() > entry.expiresAt) {
@@ -41,7 +43,7 @@ const ApiCache = {
             data,
             createdAt: Date.now(),
             expiresAt: Date.now() + ttl,
-            hits: 0
+            hits: 0,
         });
     },
 
@@ -96,16 +98,18 @@ const ApiCache = {
 
         for (const entry of this.cache.values()) {
             totalHits += entry.hits;
-            if (now > entry.expiresAt) {expiredCount++;}
+            if (now > entry.expiresAt) {
+                expiredCount++;
+            }
         }
 
         return {
             size: this.cache.size,
             maxSize: this.maxSize,
             totalHits,
-            expiredCount
+            expiredCount,
         };
-    }
+    },
 };
 
 // ========================================
@@ -123,10 +127,9 @@ const RequestDeduplicator = {
             return this.pending.get(key);
         }
 
-        const promise = requestFn()
-            .finally(() => {
-                this.pending.delete(key);
-            });
+        const promise = requestFn().finally(() => {
+            this.pending.delete(key);
+        });
 
         this.pending.set(key, promise);
         return promise;
@@ -137,7 +140,7 @@ const RequestDeduplicator = {
      */
     getPendingCount() {
         return this.pending.size;
-    }
+    },
 };
 
 // ========================================
@@ -224,7 +227,9 @@ const EnhancedApi = {
                     // 最後の試行でない場合は待機
                     if (attempt < maxRetries) {
                         const delay = this.calculateDelay(attempt);
-                        console.log(`[EnhancedApi] Retry ${attempt + 1}/${maxRetries} after ${delay}ms`);
+                        console.log(
+                            `[EnhancedApi] Retry ${attempt + 1}/${maxRetries} after ${delay}ms`
+                        );
                         await this.sleep(delay);
                     }
                 }
@@ -240,7 +245,8 @@ const EnhancedApi = {
     async executeRequest(method, endpoint, options) {
         // ApiConfigが存在しない場合のフォールバック
         const baseUrl = typeof ApiConfig !== 'undefined' ? ApiConfig.baseUrl : '';
-        const timeout = options.timeout || (typeof ApiConfig !== 'undefined' ? ApiConfig.timeout : 30000);
+        const timeout =
+            options.timeout || (typeof ApiConfig !== 'undefined' ? ApiConfig.timeout : 30000);
 
         if (!baseUrl) {
             // ローカルデモモード - DataStoreを使用
@@ -252,7 +258,7 @@ const EnhancedApi = {
 
         const fetchOptions = {
             method,
-            headers
+            headers,
         };
 
         if (options.params && method === 'GET') {
@@ -303,23 +309,23 @@ const EnhancedApi = {
         }
 
         switch (method) {
-        case 'GET':
-            if (id) {
-                return DataStore.findById(resource, id);
-            }
-            return DataStore[resource] || [];
+            case 'GET':
+                if (id) {
+                    return DataStore.findById(resource, id);
+                }
+                return DataStore[resource] || [];
 
-        case 'POST':
-            return DataStore.create(resource, options.data);
+            case 'POST':
+                return DataStore.create(resource, options.data);
 
-        case 'PUT':
-            return DataStore.update(resource, id, options.data);
+            case 'PUT':
+                return DataStore.update(resource, id, options.data);
 
-        case 'DELETE':
-            return DataStore.delete(resource, id);
+            case 'DELETE':
+                return DataStore.delete(resource, id);
 
-        default:
-            throw new Error(`Unsupported method: ${method}`);
+            default:
+                throw new Error(`Unsupported method: ${method}`);
         }
     },
 
@@ -329,20 +335,20 @@ const EnhancedApi = {
     getHeaders() {
         const headers = {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            Accept: 'application/json',
         };
 
         if (typeof ApiConfig !== 'undefined' && ApiConfig.apiKey) {
             switch (ApiConfig.authMethod) {
-            case 'bearer':
-                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-                break;
-            case 'basic':
-                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-                break;
-            case 'apikey':
-                headers['X-API-Key'] = ApiConfig.apiKey;
-                break;
+                case 'bearer':
+                    headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+                    break;
+                case 'basic':
+                    headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+                    break;
+                case 'apikey':
+                    headers['X-API-Key'] = ApiConfig.apiKey;
+                    break;
             }
         }
 
@@ -374,7 +380,7 @@ const EnhancedApi = {
      */
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    },
 };
 
 // ========================================
@@ -386,7 +392,7 @@ const PerformanceMetrics = {
         cacheHits: 0,
         cacheMisses: 0,
         renderTimes: [],
-        errors: []
+        errors: [],
     },
     maxHistory: 100,
 
@@ -398,7 +404,7 @@ const PerformanceMetrics = {
             endpoint,
             duration,
             success,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         });
 
         // 履歴制限
@@ -425,7 +431,7 @@ const PerformanceMetrics = {
         this.metrics.renderTimes.push({
             component,
             duration,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         });
 
         if (this.metrics.renderTimes.length > this.maxHistory) {
@@ -441,7 +447,7 @@ const PerformanceMetrics = {
             message: error.message,
             stack: error.stack,
             context,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         });
 
         if (this.metrics.errors.length > this.maxHistory) {
@@ -460,15 +466,18 @@ const PerformanceMetrics = {
             totalApiCalls: apiCalls.length,
             successfulApiCalls: successfulCalls.length,
             failedApiCalls: apiCalls.length - successfulCalls.length,
-            averageResponseTime: successfulCalls.length > 0
-                ? successfulCalls.reduce((sum, c) => sum + c.duration, 0) / successfulCalls.length
-                : 0,
-            cacheHitRate: this.metrics.cacheHits + this.metrics.cacheMisses > 0
-                ? this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses)
-                : 0,
+            averageResponseTime:
+                successfulCalls.length > 0
+                    ? successfulCalls.reduce((sum, c) => sum + c.duration, 0) /
+                      successfulCalls.length
+                    : 0,
+            cacheHitRate:
+                this.metrics.cacheHits + this.metrics.cacheMisses > 0
+                    ? this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses)
+                    : 0,
             cacheHits: this.metrics.cacheHits,
             cacheMisses: this.metrics.cacheMisses,
-            recentErrors: this.metrics.errors.slice(-10)
+            recentErrors: this.metrics.errors.slice(-10),
         };
     },
 
@@ -481,9 +490,9 @@ const PerformanceMetrics = {
             cacheHits: 0,
             cacheMisses: 0,
             renderTimes: [],
-            errors: []
+            errors: [],
         };
-    }
+    },
 };
 
 // ========================================
@@ -502,18 +511,21 @@ const LazyLoader = {
             return;
         }
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    callback(entry.target);
-                    observer.unobserve(entry.target);
-                    this.observers.delete(element);
-                }
-            });
-        }, {
-            rootMargin: options.rootMargin || '100px',
-            threshold: options.threshold || 0.1
-        });
+        const observer = new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        callback(entry.target);
+                        observer.unobserve(entry.target);
+                        this.observers.delete(element);
+                    }
+                });
+            },
+            {
+                rootMargin: options.rootMargin || '100px',
+                threshold: options.threshold || 0.1,
+            }
+        );
 
         observer.observe(element);
         this.observers.set(element, observer);
@@ -536,7 +548,7 @@ const LazyLoader = {
     disconnect() {
         this.observers.forEach(observer => observer.disconnect());
         this.observers.clear();
-    }
+    },
 };
 
 // ========================================
@@ -563,7 +575,7 @@ const RateLimitUtils = {
             if (!inThrottle) {
                 fn.apply(this, args);
                 inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
+                setTimeout(() => (inThrottle = false), limit);
             }
         };
     },
@@ -579,7 +591,7 @@ const RateLimitUtils = {
                 return fn.apply(this, args);
             }
         };
-    }
+    },
 };
 
 // ========================================
@@ -622,11 +634,11 @@ const Memoize = {
             const result = fn.apply(this, args);
             cache.set(key, {
                 value: result,
-                expiresAt: Date.now() + ttl
+                expiresAt: Date.now() + ttl,
             });
             return result;
         };
-    }
+    },
 };
 
 // ========================================
@@ -640,7 +652,9 @@ const PerformanceMonitor = {
      * 計測開始
      */
     start(name) {
-        if (!this.enabled) {return;}
+        if (!this.enabled) {
+            return;
+        }
         this.marks.set(name, performance.now());
     },
 
@@ -648,10 +662,14 @@ const PerformanceMonitor = {
      * 計測終了して時間を返す
      */
     end(name) {
-        if (!this.enabled) {return 0;}
+        if (!this.enabled) {
+            return 0;
+        }
 
         const startTime = this.marks.get(name);
-        if (!startTime) {return 0;}
+        if (!startTime) {
+            return 0;
+        }
 
         const duration = performance.now() - startTime;
         this.marks.delete(name);
@@ -688,7 +706,7 @@ const PerformanceMonitor = {
                 console.warn(`[Performance] ${name} took ${duration.toFixed(2)}ms`);
             }
         }
-    }
+    },
 };
 
 // ========================================
@@ -702,7 +720,9 @@ const PerformanceOptimizer = {
         setInterval(() => {
             const stats = ApiCache.getStats();
             if (stats.expiredCount > 0) {
-                console.log(`[PerformanceOptimizer] Cleaning ${stats.expiredCount} expired cache entries`);
+                console.log(
+                    `[PerformanceOptimizer] Cleaning ${stats.expiredCount} expired cache entries`
+                );
                 // 期限切れエントリを削除
                 for (const [key, entry] of ApiCache.cache.entries()) {
                     if (Date.now() > entry.expiresAt) {
@@ -720,7 +740,7 @@ const PerformanceOptimizer = {
         return {
             cache: ApiCache.getStats(),
             metrics: PerformanceMetrics.getStats(),
-            pendingRequests: RequestDeduplicator.getPendingCount()
+            pendingRequests: RequestDeduplicator.getPendingCount(),
         };
     },
 
@@ -730,7 +750,7 @@ const PerformanceOptimizer = {
     reset() {
         ApiCache.clear();
         PerformanceMetrics.reset();
-    }
+    },
 };
 
 // グローバルエクスポート

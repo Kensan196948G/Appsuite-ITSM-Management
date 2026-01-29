@@ -41,28 +41,28 @@ function showSection(sectionName) {
         target.classList.remove('hidden');
     }
 
-    switch(sectionName) {
-    case 'dashboard':
-        updateDashboard();
-        break;
-    case 'users':
-        UserModule.refresh();
-        break;
-    case 'apps':
-        AppModule.refresh();
-        break;
-    case 'incidents':
-        IncidentModule.refresh();
-        break;
-    case 'changes':
-        ChangeModule.refresh();
-        break;
-    case 'logs':
-        LogModule.refresh();
-        break;
-    case 'settings':
-        SettingsModule.loadToForm();
-        break;
+    switch (sectionName) {
+        case 'dashboard':
+            updateDashboard();
+            break;
+        case 'users':
+            UserModule.refresh();
+            break;
+        case 'apps':
+            AppModule.refresh();
+            break;
+        case 'incidents':
+            IncidentModule.refresh();
+            break;
+        case 'changes':
+            ChangeModule.refresh();
+            break;
+        case 'logs':
+            LogModule.refresh();
+            break;
+        case 'settings':
+            SettingsModule.loadToForm();
+            break;
     }
 }
 
@@ -75,7 +75,7 @@ function initSidebar() {
         sidebar.classList.toggle('active');
     });
 
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', e => {
         if (window.innerWidth <= 1024) {
             if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
                 sidebar.classList.remove('active');
@@ -88,23 +88,37 @@ function initSidebar() {
 function initFilters() {
     // ユーザー検索・フィルター
     document.getElementById('userSearch').addEventListener('input', () => UserModule.filter());
-    document.getElementById('userStatusFilter').addEventListener('change', () => UserModule.filter());
+    document
+        .getElementById('userStatusFilter')
+        .addEventListener('change', () => UserModule.filter());
     document.getElementById('userRoleFilter').addEventListener('change', () => UserModule.filter());
 
     // アプリ検索・フィルター
     document.getElementById('appSearch').addEventListener('input', () => AppModule.filter());
-    document.getElementById('appCategoryFilter').addEventListener('change', () => AppModule.filter());
+    document
+        .getElementById('appCategoryFilter')
+        .addEventListener('change', () => AppModule.filter());
     document.getElementById('appStatusFilter').addEventListener('change', () => AppModule.filter());
 
     // インシデント検索・フィルター
-    document.getElementById('incidentSearch').addEventListener('input', () => IncidentModule.filter());
-    document.getElementById('incidentPriorityFilter').addEventListener('change', () => IncidentModule.filter());
-    document.getElementById('incidentStatusFilter').addEventListener('change', () => IncidentModule.filter());
+    document
+        .getElementById('incidentSearch')
+        .addEventListener('input', () => IncidentModule.filter());
+    document
+        .getElementById('incidentPriorityFilter')
+        .addEventListener('change', () => IncidentModule.filter());
+    document
+        .getElementById('incidentStatusFilter')
+        .addEventListener('change', () => IncidentModule.filter());
 
     // 変更要求検索・フィルター
     document.getElementById('changeSearch').addEventListener('input', () => ChangeModule.filter());
-    document.getElementById('changeTypeFilter').addEventListener('change', () => ChangeModule.filter());
-    document.getElementById('changeStatusFilter').addEventListener('change', () => ChangeModule.filter());
+    document
+        .getElementById('changeTypeFilter')
+        .addEventListener('change', () => ChangeModule.filter());
+    document
+        .getElementById('changeStatusFilter')
+        .addEventListener('change', () => ChangeModule.filter());
 }
 
 // API設定読み込み（互換性のため残す）
@@ -146,13 +160,17 @@ function renderAppSummary() {
     const apps = [...DataStore.apps]
         .sort((a, b) => new Date(b.updated) - new Date(a.updated))
         .slice(0, 5);
-    container.innerHTML = apps.map(app => `
+    container.innerHTML = apps
+        .map(
+            app => `
         <div class="app-summary-item">
             <span class="app-name">${app.name}</span>
             <span class="app-records">${app.records.toLocaleString()}件</span>
             <span class="badge ${AppModule.getStatusBadge(app.status)}">${AppModule.getStatusText(app.status)}</span>
         </div>
-    `).join('');
+    `
+        )
+        .join('');
 }
 
 // 全モジュール初期化
@@ -170,9 +188,11 @@ function openModal(title, bodyContent, buttons = []) {
     document.getElementById('modalBody').innerHTML = bodyContent;
 
     const footer = document.getElementById('modalFooter');
-    footer.innerHTML = buttons.map(btn =>
-        `<button class="btn ${btn.class}" onclick="${btn.onclick}">${btn.text}</button>`
-    ).join('');
+    footer.innerHTML = buttons
+        .map(
+            btn => `<button class="btn ${btn.class}" onclick="${btn.onclick}">${btn.text}</button>`
+        )
+        .join('');
 
     document.getElementById('modalOverlay').classList.add('active');
 }
@@ -182,14 +202,14 @@ function closeModal() {
 }
 
 // ESCキーでモーダルを閉じる
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         closeModal();
     }
 });
 
 // モーダルオーバーレイクリックで閉じる
-document.getElementById('modalOverlay').addEventListener('click', (e) => {
+document.getElementById('modalOverlay').addEventListener('click', e => {
     if (e.target === document.getElementById('modalOverlay')) {
         closeModal();
     }

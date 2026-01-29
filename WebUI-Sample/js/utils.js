@@ -14,9 +14,13 @@ const DateUtils = {
      * @returns {string} - フォーマットされた日付
      */
     format(date, format = 'yyyy-MM-dd') {
-        if (!date) {return '';}
+        if (!date) {
+            return '';
+        }
         const d = date instanceof Date ? date : new Date(date);
-        if (isNaN(d.getTime())) {return '';}
+        if (isNaN(d.getTime())) {
+            return '';
+        }
 
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -49,7 +53,9 @@ const DateUtils = {
      * @returns {string} - 相対時間
      */
     relativeTime(date) {
-        if (!date) {return '';}
+        if (!date) {
+            return '';
+        }
         const d = date instanceof Date ? date : new Date(date);
         const now = new Date();
         const diff = now - d;
@@ -61,12 +67,24 @@ const DateUtils = {
         const weeks = Math.floor(days / 7);
         const months = Math.floor(days / 30);
 
-        if (seconds < 60) {return 'たった今';}
-        if (minutes < 60) {return `${minutes}分前`;}
-        if (hours < 24) {return `${hours}時間前`;}
-        if (days < 7) {return `${days}日前`;}
-        if (weeks < 4) {return `${weeks}週間前`;}
-        if (months < 12) {return `${months}ヶ月前`;}
+        if (seconds < 60) {
+            return 'たった今';
+        }
+        if (minutes < 60) {
+            return `${minutes}分前`;
+        }
+        if (hours < 24) {
+            return `${hours}時間前`;
+        }
+        if (days < 7) {
+            return `${days}日前`;
+        }
+        if (weeks < 4) {
+            return `${weeks}週間前`;
+        }
+        if (months < 12) {
+            return `${months}ヶ月前`;
+        }
         return this.format(d);
     },
 
@@ -84,7 +102,7 @@ const DateUtils = {
      */
     now() {
         return this.formatDateTime(new Date());
-    }
+    },
 };
 
 /**
@@ -97,7 +115,9 @@ const NumberUtils = {
      * @returns {string} - フォーマットされた数値
      */
     format(num) {
-        if (num === null || num === undefined || isNaN(num)) {return '';}
+        if (num === null || num === undefined || isNaN(num)) {
+            return '';
+        }
         return Number(num).toLocaleString('ja-JP');
     },
 
@@ -109,7 +129,9 @@ const NumberUtils = {
      * @returns {string} - パーセンテージ
      */
     percentage(value, total, decimals = 1) {
-        if (!total) {return '0%';}
+        if (!total) {
+            return '0%';
+        }
         const percent = (value / total) * 100;
         return `${percent.toFixed(decimals)}%`;
     },
@@ -120,12 +142,14 @@ const NumberUtils = {
      * @returns {string} - フォーマットされたサイズ
      */
     formatBytes(bytes) {
-        if (bytes === 0) {return '0 B';}
+        if (bytes === 0) {
+            return '0 B';
+        }
         const k = 1024;
         const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-    }
+    },
 };
 
 /**
@@ -140,8 +164,12 @@ const StringUtils = {
      * @returns {string} - 切り詰められた文字列
      */
     truncate(str, maxLength = 50, suffix = '...') {
-        if (!str) {return '';}
-        if (str.length <= maxLength) {return str;}
+        if (!str) {
+            return '';
+        }
+        if (str.length <= maxLength) {
+            return str;
+        }
         return str.substring(0, maxLength - suffix.length) + suffix;
     },
 
@@ -174,7 +202,9 @@ const StringUtils = {
      * @returns {string} - 正規化された文字列
      */
     normalizeWhitespace(str) {
-        if (!str) {return '';}
+        if (!str) {
+            return '';
+        }
         return str.replace(/\s+/g, ' ').trim();
     },
 
@@ -188,7 +218,9 @@ const StringUtils = {
         const search = queryString.startsWith('?') ? queryString.slice(1) : queryString;
         search.split('&').forEach(pair => {
             const [key, value] = pair.split('=').map(decodeURIComponent);
-            if (key) {params[key] = value || '';}
+            if (key) {
+                params[key] = value || '';
+            }
         });
         return params;
     },
@@ -203,7 +235,7 @@ const StringUtils = {
             .filter(([, v]) => v !== undefined && v !== null && v !== '')
             .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
             .join('&');
-    }
+    },
 };
 
 /**
@@ -237,15 +269,27 @@ const ArrayUtils = {
             let valB = b[key];
 
             // 日付の場合
-            if (valA instanceof Date) {valA = valA.getTime();}
-            if (valB instanceof Date) {valB = valB.getTime();}
+            if (valA instanceof Date) {
+                valA = valA.getTime();
+            }
+            if (valB instanceof Date) {
+                valB = valB.getTime();
+            }
 
             // 文字列の場合
-            if (typeof valA === 'string') {valA = valA.toLowerCase();}
-            if (typeof valB === 'string') {valB = valB.toLowerCase();}
+            if (typeof valA === 'string') {
+                valA = valA.toLowerCase();
+            }
+            if (typeof valB === 'string') {
+                valB = valB.toLowerCase();
+            }
 
-            if (valA < valB) {return direction === 'asc' ? -1 : 1;}
-            if (valA > valB) {return direction === 'asc' ? 1 : -1;}
+            if (valA < valB) {
+                return direction === 'asc' ? -1 : 1;
+            }
+            if (valA > valB) {
+                return direction === 'asc' ? 1 : -1;
+            }
             return 0;
         });
     },
@@ -257,11 +301,15 @@ const ArrayUtils = {
      * @returns {Array} - 重複除去された配列
      */
     unique(array, key) {
-        if (!key) {return [...new Set(array)];}
+        if (!key) {
+            return [...new Set(array)];
+        }
         const seen = new Set();
         return array.filter(item => {
             const value = item[key];
-            if (seen.has(value)) {return false;}
+            if (seen.has(value)) {
+                return false;
+            }
             seen.add(value);
             return true;
         });
@@ -279,7 +327,7 @@ const ArrayUtils = {
             chunks.push(array.slice(i, i + size));
         }
         return chunks;
-    }
+    },
 };
 
 /**
@@ -292,9 +340,15 @@ const ObjectUtils = {
      * @returns {any} - コピー
      */
     deepCopy(obj) {
-        if (obj === null || typeof obj !== 'object') {return obj;}
-        if (obj instanceof Date) {return new Date(obj);}
-        if (Array.isArray(obj)) {return obj.map(item => this.deepCopy(item));}
+        if (obj === null || typeof obj !== 'object') {
+            return obj;
+        }
+        if (obj instanceof Date) {
+            return new Date(obj);
+        }
+        if (Array.isArray(obj)) {
+            return obj.map(item => this.deepCopy(item));
+        }
 
         const copy = {};
         for (const key in obj) {
@@ -312,13 +366,17 @@ const ObjectUtils = {
      * @returns {Object} - マージされたオブジェクト
      */
     deepMerge(target, ...sources) {
-        if (!sources.length) {return target;}
+        if (!sources.length) {
+            return target;
+        }
 
         const source = sources.shift();
         if (this.isObject(target) && this.isObject(source)) {
             for (const key in source) {
                 if (this.isObject(source[key])) {
-                    if (!target[key]) {Object.assign(target, { [key]: {} });}
+                    if (!target[key]) {
+                        Object.assign(target, { [key]: {} });
+                    }
                     this.deepMerge(target[key], source[key]);
                 } else {
                     Object.assign(target, { [key]: source[key] });
@@ -376,7 +434,7 @@ const ObjectUtils = {
             }
         }
         return result;
-    }
+    },
 };
 
 /**
@@ -454,9 +512,9 @@ const StorageUtils = {
             used: total,
             usedFormatted: NumberUtils.formatBytes(total),
             max: 5 * 1024 * 1024, // 5MB想定
-            percentage: (total / (5 * 1024 * 1024)) * 100
+            percentage: (total / (5 * 1024 * 1024)) * 100,
         };
-    }
+    },
 };
 
 /**
@@ -492,7 +550,7 @@ const FunctionUtils = {
                 setTimeout(() => (inThrottle = false), limit);
             }
         };
-    }
+    },
 };
 
 /**
@@ -529,7 +587,7 @@ const IdUtils = {
         }, 0);
 
         return prefix + String(maxNum + 1).padStart(padLength, '0');
-    }
+    },
 };
 
 // グローバルにエクスポート

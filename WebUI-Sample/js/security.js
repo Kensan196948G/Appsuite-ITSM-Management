@@ -10,18 +10,22 @@ const Security = {
      * @returns {string} - エスケープされた文字列
      */
     escapeHtml(str) {
-        if (str === null || str === undefined) {return '';}
-        if (typeof str !== 'string') {str = String(str);}
+        if (str === null || str === undefined) {
+            return '';
+        }
+        if (typeof str !== 'string') {
+            str = String(str);
+        }
 
         const escapeMap = {
             '&': '&amp;',
             '<': '&lt;',
             '>': '&gt;',
             '"': '&quot;',
-            '\'': '&#039;',
+            "'": '&#039;',
             '/': '&#x2F;',
             '`': '&#x60;',
-            '=': '&#x3D;'
+            '=': '&#x3D;',
         };
 
         return str.replace(/[&<>"'`=/]/g, char => escapeMap[char]);
@@ -33,21 +37,25 @@ const Security = {
      * @returns {string} - アンエスケープされた文字列
      */
     unescapeHtml(str) {
-        if (!str) {return '';}
+        if (!str) {
+            return '';
+        }
 
         const unescapeMap = {
             '&amp;': '&',
             '&lt;': '<',
             '&gt;': '>',
             '&quot;': '"',
-            '&#039;': '\'',
+            '&#039;': "'",
             '&#x2F;': '/',
             '&#x60;': '`',
-            '&#x3D;': '='
+            '&#x3D;': '=',
         };
 
-        return str.replace(/&amp;|&lt;|&gt;|&quot;|&#039;|&#x2F;|&#x60;|&#x3D;/g,
-            match => unescapeMap[match]);
+        return str.replace(
+            /&amp;|&lt;|&gt;|&quot;|&#039;|&#x2F;|&#x60;|&#x3D;/g,
+            match => unescapeMap[match]
+        );
     },
 
     /**
@@ -79,10 +87,12 @@ const Security = {
      * @returns {string} - サニタイズされた文字列
      */
     sanitizeSql(str) {
-        if (!str) {return '';}
+        if (!str) {
+            return '';
+        }
         // シングルクォートをエスケープ
-        return str.replace(/'/g, '\'\'');
-    }
+        return str.replace(/'/g, "''");
+    },
 };
 
 /**
@@ -95,9 +105,15 @@ const Validator = {
      * @returns {boolean} - 値がある場合true
      */
     required(value) {
-        if (value === null || value === undefined) {return false;}
-        if (typeof value === 'string') {return value.trim().length > 0;}
-        if (Array.isArray(value)) {return value.length > 0;}
+        if (value === null || value === undefined) {
+            return false;
+        }
+        if (typeof value === 'string') {
+            return value.trim().length > 0;
+        }
+        if (Array.isArray(value)) {
+            return value.length > 0;
+        }
         return true;
     },
 
@@ -108,7 +124,9 @@ const Validator = {
      * @returns {boolean} - 条件を満たす場合true
      */
     minLength(value, min) {
-        if (!value) {return false;}
+        if (!value) {
+            return false;
+        }
         return String(value).length >= min;
     },
 
@@ -119,7 +137,9 @@ const Validator = {
      * @returns {boolean} - 条件を満たす場合true
      */
     maxLength(value, max) {
-        if (!value) {return true;}
+        if (!value) {
+            return true;
+        }
         return String(value).length <= max;
     },
 
@@ -129,7 +149,9 @@ const Validator = {
      * @returns {boolean} - 有効な形式の場合true
      */
     email(email) {
-        if (!email) {return false;}
+        if (!email) {
+            return false;
+        }
         const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return pattern.test(email);
     },
@@ -140,7 +162,9 @@ const Validator = {
      * @returns {boolean} - 有効な形式の場合true
      */
     phone(phone) {
-        if (!phone) {return false;}
+        if (!phone) {
+            return false;
+        }
         // ハイフンあり・なし両対応
         const pattern = /^0\d{1,4}-?\d{1,4}-?\d{4}$/;
         return pattern.test(phone.replace(/\s/g, ''));
@@ -183,7 +207,9 @@ const Validator = {
      * @returns {boolean} - パターンにマッチする場合true
      */
     pattern(value, pattern) {
-        if (!value) {return false;}
+        if (!value) {
+            return false;
+        }
         return pattern.test(value);
     },
 
@@ -193,9 +219,13 @@ const Validator = {
      * @returns {boolean} - 有効な日付の場合true
      */
     date(date) {
-        if (!date) {return false;}
+        if (!date) {
+            return false;
+        }
         const pattern = /^\d{4}-\d{2}-\d{2}$/;
-        if (!pattern.test(date)) {return false;}
+        if (!pattern.test(date)) {
+            return false;
+        }
 
         const d = new Date(date);
         return d instanceof Date && !isNaN(d);
@@ -207,9 +237,13 @@ const Validator = {
      * @returns {boolean} - 有効な日時の場合true
      */
     datetime(datetime) {
-        if (!datetime) {return false;}
+        if (!datetime) {
+            return false;
+        }
         const pattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
-        if (!pattern.test(datetime)) {return false;}
+        if (!pattern.test(datetime)) {
+            return false;
+        }
 
         const d = new Date(datetime.replace(' ', 'T'));
         return d instanceof Date && !isNaN(d);
@@ -221,7 +255,9 @@ const Validator = {
      * @returns {boolean} - 有効なURLの場合true
      */
     url(url) {
-        if (!url) {return false;}
+        if (!url) {
+            return false;
+        }
         try {
             new URL(url);
             return true;
@@ -236,7 +272,9 @@ const Validator = {
      * @returns {boolean} - 英数字のみの場合true
      */
     alphanumeric(value) {
-        if (!value) {return false;}
+        if (!value) {
+            return false;
+        }
         return /^[a-zA-Z0-9]+$/.test(value);
     },
 
@@ -246,7 +284,9 @@ const Validator = {
      * @returns {boolean} - 日本語を含む場合true
      */
     containsJapanese(value) {
-        if (!value) {return false;}
+        if (!value) {
+            return false;
+        }
         return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(value);
     },
 
@@ -257,10 +297,12 @@ const Validator = {
      * @returns {boolean} - 禁止文字を含まない場合true
      */
     noForbiddenChars(value, chars = '<>"\'/\\') {
-        if (!value) {return true;}
+        if (!value) {
+            return true;
+        }
         const pattern = new RegExp(`[${chars.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}]`);
         return !pattern.test(value);
-    }
+    },
 };
 
 /**
@@ -279,7 +321,9 @@ const FormValidator = {
 
         for (const [fieldName, fieldRules] of Object.entries(rules)) {
             const input = form.querySelector(`[name="${fieldName}"]`);
-            if (!input) {continue;}
+            if (!input) {
+                continue;
+            }
 
             const value = input.value;
             const fieldErrors = [];
@@ -289,27 +333,27 @@ const FormValidator = {
 
                 let valid = true;
                 switch (type) {
-                case 'required':
-                    valid = Validator.required(value);
-                    break;
-                case 'minLength':
-                    valid = Validator.minLength(value, params.min);
-                    break;
-                case 'maxLength':
-                    valid = Validator.maxLength(value, params.max);
-                    break;
-                case 'email':
-                    valid = !value || Validator.email(value);
-                    break;
-                case 'pattern':
-                    valid = !value || Validator.pattern(value, params.pattern);
-                    break;
-                case 'range':
-                    valid = !value || Validator.range(value, params.min, params.max);
-                    break;
-                case 'custom':
-                    valid = params.fn(value, form);
-                    break;
+                    case 'required':
+                        valid = Validator.required(value);
+                        break;
+                    case 'minLength':
+                        valid = Validator.minLength(value, params.min);
+                        break;
+                    case 'maxLength':
+                        valid = Validator.maxLength(value, params.max);
+                        break;
+                    case 'email':
+                        valid = !value || Validator.email(value);
+                        break;
+                    case 'pattern':
+                        valid = !value || Validator.pattern(value, params.pattern);
+                        break;
+                    case 'range':
+                        valid = !value || Validator.range(value, params.min, params.max);
+                        break;
+                    case 'custom':
+                        valid = params.fn(value, form);
+                        break;
                 }
 
                 if (!valid) {
@@ -338,7 +382,9 @@ const FormValidator = {
 
         for (const [fieldName, messages] of Object.entries(errors)) {
             const input = form.querySelector(`[name="${fieldName}"]`);
-            if (!input) {continue;}
+            if (!input) {
+                continue;
+            }
 
             input.classList.add('input-error');
 
@@ -356,7 +402,7 @@ const FormValidator = {
     clearErrors(form) {
         form.querySelectorAll('.field-error').forEach(el => el.remove());
         form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-    }
+    },
 };
 
 /**
@@ -408,7 +454,7 @@ const CsrfProtection = {
             form.appendChild(input);
         }
         input.value = this.getToken() || this.generateToken();
-    }
+    },
 };
 
 /**
@@ -438,7 +484,7 @@ const RateLimiter = {
             return {
                 allowed: false,
                 remaining: 0,
-                resetAt: record.blockUntil
+                resetAt: record.blockUntil,
             };
         }
 
@@ -461,14 +507,14 @@ const RateLimiter = {
             return {
                 allowed: false,
                 remaining: 0,
-                resetAt: record.blockUntil
+                resetAt: record.blockUntil,
             };
         }
 
         return {
             allowed: true,
             remaining: maxRequests - record.requests.length,
-            resetAt: now + windowMs
+            resetAt: now + windowMs,
         };
     },
 
@@ -478,7 +524,7 @@ const RateLimiter = {
      */
     reset(key) {
         this.limits.delete(key);
-    }
+    },
 };
 
 // グローバル関数としてエクスポート（既存コードとの互換性）

@@ -1,928 +1,1192 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AppSuite 管理運用システム</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%234f46e5'/%3E%3Ctext x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial'%3EAS%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="app-container">
-        <!-- サイドバー -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h1><i class="fas fa-cogs"></i> AppSuite管理</h1>
-                <small>DeskNet's Neo連携</small>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item active" data-section="dashboard">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>ダッシュボード</span>
-                    </li>
-                    <li class="nav-item" data-section="users">
-                        <i class="fas fa-users"></i>
-                        <span>ユーザー管理</span>
-                    </li>
-                    <li class="nav-item" data-section="apps">
-                        <i class="fas fa-th-large"></i>
-                        <span>アプリ管理</span>
-                    </li>
-                    <li class="nav-item" data-section="incidents">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span>インシデント管理</span>
-                    </li>
-                    <li class="nav-item" data-section="changes">
-                        <i class="fas fa-code-branch"></i>
-                        <span>変更管理</span>
-                    </li>
-                    <li class="nav-item" data-section="logs">
-                        <i class="fas fa-history"></i>
-                        <span>監査ログ</span>
-                    </li>
-                    <li class="nav-item" data-section="settings">
-                        <i class="fas fa-cog"></i>
-                        <span>システム設定</span>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-
-        <!-- メインコンテンツ -->
-        <main class="main-content">
-            <header class="top-header">
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="header-right">
-                    <span class="connection-status" id="connectionStatus">
-                        <i class="fas fa-circle"></i> 未接続
-                    </span>
-                    <div class="user-info">
-                        <i class="fas fa-user-circle"></i>
-                        <span id="currentUser">管理者</span>
-                    </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AppSuite 管理運用システム</title>
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%234f46e5'/%3E%3Ctext x='50' y='68' font-size='50' text-anchor='middle' fill='white' font-family='Arial'%3EAS%3C/text%3E%3C/svg%3E"
+        />
+        <link rel="stylesheet" href="css/styles.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+    </head>
+    <body>
+        <div class="app-container">
+            <!-- サイドバー -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h1><i class="fas fa-cogs"></i> AppSuite管理</h1>
+                    <small>DeskNet's Neo連携</small>
                 </div>
-            </header>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li class="nav-item active" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>ダッシュボード</span>
+                        </li>
+                        <li class="nav-item" data-section="users">
+                            <i class="fas fa-users"></i>
+                            <span>ユーザー管理</span>
+                        </li>
+                        <li class="nav-item" data-section="apps">
+                            <i class="fas fa-th-large"></i>
+                            <span>アプリ管理</span>
+                        </li>
+                        <li class="nav-item" data-section="incidents">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>インシデント管理</span>
+                        </li>
+                        <li class="nav-item" data-section="changes">
+                            <i class="fas fa-code-branch"></i>
+                            <span>変更管理</span>
+                        </li>
+                        <li class="nav-item" data-section="logs">
+                            <i class="fas fa-history"></i>
+                            <span>監査ログ</span>
+                        </li>
+                        <li class="nav-item" data-section="settings">
+                            <i class="fas fa-cog"></i>
+                            <span>システム設定</span>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
 
-            <div class="content-area" id="contentArea">
-                <!-- ダッシュボードセクション -->
-                <section class="section" id="section-dashboard">
-                    <h2><i class="fas fa-tachometer-alt"></i> ダッシュボード</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon users"><i class="fas fa-users"></i></div>
-                            <div class="stat-info">
-                                <h3 id="totalUsers">0</h3>
-                                <p>総ユーザー数</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon active-users"><i class="fas fa-user-check"></i></div>
-                            <div class="stat-info">
-                                <h3 id="activeUsers">0</h3>
-                                <p>有効ユーザー</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon apps"><i class="fas fa-th-large"></i></div>
-                            <div class="stat-info">
-                                <h3 id="totalApps">0</h3>
-                                <p>アプリ数</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon active-apps"><i class="fas fa-check-circle"></i></div>
-                            <div class="stat-info">
-                                <h3 id="activeApps">0</h3>
-                                <p>稼働中アプリ</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon incidents"><i class="fas fa-exclamation-triangle"></i></div>
-                            <div class="stat-info">
-                                <h3 id="openIncidents">0</h3>
-                                <p>未解決インシデント</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon changes"><i class="fas fa-code-branch"></i></div>
-                            <div class="stat-info">
-                                <h3 id="pendingChanges">0</h3>
-                                <p>保留中の変更</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-panels">
-                        <div class="panel">
-                            <h3><i class="fas fa-clock"></i> 最近の操作ログ</h3>
-                            <div class="recent-logs" id="recentLogs"></div>
-                        </div>
-                        <div class="panel">
-                            <h3><i class="fas fa-th-large"></i> アプリ一覧</h3>
-                            <div class="app-summary" id="appSummary"></div>
+            <!-- メインコンテンツ -->
+            <main class="main-content">
+                <header class="top-header">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-right">
+                        <span class="connection-status" id="connectionStatus">
+                            <i class="fas fa-circle"></i> 未接続
+                        </span>
+                        <div class="user-info">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="currentUser">管理者</span>
                         </div>
                     </div>
-                </section>
+                </header>
 
-                <!-- ユーザー管理セクション -->
-                <section class="section hidden" id="section-users">
-                    <h2><i class="fas fa-users"></i> ユーザー管理</h2>
-                    <div class="section-info-box">
-                        <p class="info-line"><i class="fas fa-bullseye"></i><span class="info-label">目的</span>：AppSuiteを利用するユーザーのアカウント登録・編集・削除と権限設定を一元管理する</p>
-                        <p class="info-line"><i class="fas fa-lightbulb"></i><span class="info-label">意味</span>：誰がどの権限でシステムにアクセスできるかを可視化し、適切なアクセス制御を実現する</p>
-                        <p class="info-line"><i class="fas fa-check-circle"></i><span class="info-label">必要性</span>：セキュリティ確保・不正アクセス防止・監査対応のために不可欠な機能</p>
-                    </div>
-                    <div class="toolbar">
-                        <button class="btn btn-primary" id="addUserButton" onclick="UserModule.showAddModal()">
-                            <i class="fas fa-plus"></i> 新規ユーザー
-                        </button>
-                        <input type="text" class="search-input" placeholder="ユーザー検索..." id="userSearch">
-                        <select class="filter-select" id="userStatusFilter">
-                            <option value="">すべてのステータス</option>
-                            <option value="active">有効</option>
-                            <option value="inactive">無効</option>
-                        </select>
-                        <select class="filter-select" id="userRoleFilter">
-                            <option value="">すべての権限</option>
-                            <option value="管理者">管理者</option>
-                            <option value="ユーザー">ユーザー</option>
-                        </select>
-                        <button class="btn btn-secondary" onclick="UserModule.refresh()">
-                            <i class="fas fa-sync"></i> 更新
-                        </button>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table" id="usersTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>ユーザー名</th>
-                                    <th>メールアドレス</th>
-                                    <th>部署</th>
-                                    <th>権限</th>
-                                    <th>ステータス</th>
-                                    <th>最終ログイン</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody"></tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="usersPagination"></div>
-                </section>
-
-                <!-- アプリ管理セクション -->
-                <section class="section hidden" id="section-apps">
-                    <h2><i class="fas fa-th-large"></i> アプリ管理</h2>
-                    <div class="section-info-box">
-                        <p class="info-line"><i class="fas fa-bullseye"></i><span class="info-label">目的</span>：AppSuiteで作成された業務アプリの一覧管理・登録・稼働状況の把握を行う</p>
-                        <p class="info-line"><i class="fas fa-lightbulb"></i><span class="info-label">意味</span>：組織内で稼働するアプリを可視化し、重複や管理漏れを防ぎ運用効率を向上させる</p>
-                        <p class="info-line"><i class="fas fa-check-circle"></i><span class="info-label">必要性</span>：アプリの棚卸・メンテナンス計画・リソース配分の判断材料として必須</p>
-                    </div>
-                    <div class="toolbar">
-                        <button class="btn btn-primary" id="addAppButton" onclick="AppModule.showAddModal()">
-                            <i class="fas fa-plus"></i> 新規アプリ
-                        </button>
-                        <input type="text" class="search-input" placeholder="アプリ検索..." id="appSearch">
-                        <select class="filter-select" id="appCategoryFilter">
-                            <option value="">すべてのカテゴリ</option>
-                            <option value="業務管理">業務管理</option>
-                            <option value="申請・承認">申請・承認</option>
-                            <option value="データ管理">データ管理</option>
-                            <option value="その他">その他</option>
-                        </select>
-                        <select class="filter-select" id="appStatusFilter">
-                            <option value="">すべてのステータス</option>
-                            <option value="active">稼働中</option>
-                            <option value="maintenance">メンテナンス</option>
-                            <option value="inactive">停止中</option>
-                        </select>
-                        <button class="btn btn-secondary" onclick="AppModule.refresh()">
-                            <i class="fas fa-sync"></i> 更新
-                        </button>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table" id="appsTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>アプリ名</th>
-                                    <th>カテゴリ</th>
-                                    <th>作成者</th>
-                                    <th>レコード数</th>
-                                    <th>ステータス</th>
-                                    <th>最終更新</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="appsTableBody"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- インシデント管理セクション -->
-                <section class="section hidden" id="section-incidents">
-                    <h2><i class="fas fa-exclamation-triangle"></i> インシデント管理</h2>
-                    <div class="section-info-box">
-                        <p class="info-line"><i class="fas fa-bullseye"></i><span class="info-label">目的</span>：アプリの障害・不具合・問い合わせを記録し、対応状況を追跡・管理する</p>
-                        <p class="info-line"><i class="fas fa-lightbulb"></i><span class="info-label">意味</span>：問題の発生から解決までを可視化し、対応漏れや遅延を防ぎサービス品質を維持する</p>
-                        <p class="info-line"><i class="fas fa-check-circle"></i><span class="info-label">必要性</span>：迅速な問題解決・再発防止・SLA遵守のために運用上不可欠な機能</p>
-                    </div>
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="IncidentModule.showAddModal()">
-                            <i class="fas fa-plus"></i> 新規インシデント
-                        </button>
-                        <input type="text" class="search-input" placeholder="インシデント検索..." id="incidentSearch">
-                        <select class="filter-select" id="incidentStatusFilter">
-                            <option value="">すべてのステータス</option>
-                            <option value="open">オープン</option>
-                            <option value="in_progress">対応中</option>
-                            <option value="resolved">解決済み</option>
-                            <option value="closed">クローズ</option>
-                        </select>
-                        <select class="filter-select" id="incidentPriorityFilter">
-                            <option value="">すべての優先度</option>
-                            <option value="high">高</option>
-                            <option value="medium">中</option>
-                            <option value="low">低</option>
-                        </select>
-                        <button class="btn btn-secondary" onclick="IncidentModule.refresh()">
-                            <i class="fas fa-sync"></i> 更新
-                        </button>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table" id="incidentsTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>タイトル</th>
-                                    <th>対象アプリ</th>
-                                    <th>優先度</th>
-                                    <th>ステータス</th>
-                                    <th>報告者</th>
-                                    <th>担当者</th>
-                                    <th>報告日</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="incidentsTableBody"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- 変更管理セクション -->
-                <section class="section hidden" id="section-changes">
-                    <h2><i class="fas fa-code-branch"></i> 変更管理</h2>
-                    <div class="section-info-box">
-                        <p class="info-line"><i class="fas fa-bullseye"></i><span class="info-label">目的</span>：アプリの機能追加・改善・修正要求を登録し、承認フローを通じて計画的に変更を実施する</p>
-                        <p class="info-line"><i class="fas fa-lightbulb"></i><span class="info-label">意味</span>：変更履歴を記録し影響範囲を把握することで、無計画な変更によるリスクを低減する</p>
-                        <p class="info-line"><i class="fas fa-check-circle"></i><span class="info-label">必要性</span>：変更の追跡・承認管理・ロールバック対応のために必要不可欠な管理プロセス</p>
-                    </div>
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="ChangeModule.showAddModal()">
-                            <i class="fas fa-plus"></i> 新規変更要求
-                        </button>
-                        <input type="text" class="search-input" placeholder="変更要求検索..." id="changeSearch">
-                        <select class="filter-select" id="changeTypeFilter">
-                            <option value="">すべてのタイプ</option>
-                            <option value="feature">機能追加</option>
-                            <option value="modification">機能変更</option>
-                            <option value="bugfix">バグ修正</option>
-                            <option value="improvement">改善</option>
-                        </select>
-                        <select class="filter-select" id="changeStatusFilter">
-                            <option value="">すべてのステータス</option>
-                            <option value="draft">下書き</option>
-                            <option value="pending">承認待ち</option>
-                            <option value="approved">承認済み</option>
-                            <option value="in_progress">実装中</option>
-                            <option value="completed">完了</option>
-                            <option value="rejected">却下</option>
-                        </select>
-                        <button class="btn btn-secondary" onclick="ChangeModule.refresh()">
-                            <i class="fas fa-sync"></i> 更新
-                        </button>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table" id="changesTable">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>タイトル</th>
-                                    <th>対象アプリ</th>
-                                    <th>タイプ</th>
-                                    <th>ステータス</th>
-                                    <th>申請者</th>
-                                    <th>予定日</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="changesTableBody"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- 監査ログセクション -->
-                <section class="section hidden" id="section-logs">
-                    <h2><i class="fas fa-history"></i> 監査ログ</h2>
-                    <div class="section-info-box">
-                        <p class="info-line"><i class="fas fa-bullseye"></i><span class="info-label">目的</span>：システム上の全ての操作履歴を記録・保管し、検索・エクスポート可能にする</p>
-                        <p class="info-line"><i class="fas fa-lightbulb"></i><span class="info-label">意味</span>：誰がいつ何をしたかを追跡可能にし、セキュリティ監査やトラブル発生時の原因調査に活用する</p>
-                        <p class="info-line"><i class="fas fa-check-circle"></i><span class="info-label">必要性</span>：コンプライアンス対応・内部統制・情報セキュリティ管理の観点から必須の機能</p>
-                    </div>
-                    <div class="toolbar">
-                        <input type="date" class="date-input" id="logDateFrom">
-                        <span>〜</span>
-                        <input type="date" class="date-input" id="logDateTo">
-                        <select class="filter-select" id="logTypeFilter">
-                            <option value="">すべてのタイプ</option>
-                            <option value="login">ログイン</option>
-                            <option value="logout">ログアウト</option>
-                            <option value="create">作成</option>
-                            <option value="update">更新</option>
-                            <option value="delete">削除</option>
-                            <option value="export">エクスポート</option>
-                        </select>
-                        <select class="filter-select" id="logTargetFilter">
-                            <option value="">すべての対象</option>
-                            <option value="user">ユーザー</option>
-                            <option value="app">アプリ</option>
-                            <option value="incident">インシデント</option>
-                            <option value="change">変更要求</option>
-                            <option value="system">システム</option>
-                        </select>
-                        <button class="btn btn-primary" onclick="LogModule.search()">
-                            <i class="fas fa-search"></i> 検索
-                        </button>
-                        <button class="btn btn-secondary" onclick="LogModule.export()">
-                            <i class="fas fa-download"></i> エクスポート
-                        </button>
-                    </div>
-                    <div class="table-container">
-                        <table class="data-table" id="logsTable">
-                            <thead>
-                                <tr>
-                                    <th>日時</th>
-                                    <th>ユーザー</th>
-                                    <th>操作タイプ</th>
-                                    <th>対象</th>
-                                    <th>詳細</th>
-                                    <th>IPアドレス</th>
-                                </tr>
-                            </thead>
-                            <tbody id="logsTableBody"></tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="logsPagination"></div>
-                </section>
-
-                <!-- システム設定セクション -->
-                <section class="section hidden" id="section-settings">
-                    <h2><i class="fas fa-cog"></i> システム設定</h2>
-                    <div class="section-info-box">
-                        <p class="info-line"><i class="fas fa-bullseye"></i><span class="info-label">目的</span>：API接続・セキュリティ・通知・ワークフロー等、本システムの動作に関わる全設定を管理する</p>
-                        <p class="info-line"><i class="fas fa-lightbulb"></i><span class="info-label">意味</span>：システムの動作環境を一元管理し、運用ポリシーに合わせた柔軟なカスタマイズを可能にする</p>
-                        <p class="info-line"><i class="fas fa-check-circle"></i><span class="info-label">必要性</span>：DeskNet's Neo連携・セキュリティポリシー適用・バックアップ管理に必須の設定画面</p>
-                    </div>
-
-                    <!-- 設定タブ -->
-                    <div class="settings-tabs">
-                        <button class="settings-tab active" data-tab="api">
-                            <i class="fas fa-plug"></i> API接続
-                        </button>
-                        <button class="settings-tab" data-tab="general">
-                            <i class="fas fa-sliders-h"></i> 基本設定
-                        </button>
-                        <button class="settings-tab" data-tab="notification">
-                            <i class="fas fa-bell"></i> 通知設定
-                        </button>
-                        <button class="settings-tab" data-tab="security">
-                            <i class="fas fa-shield-alt"></i> セキュリティ
-                        </button>
-                        <button class="settings-tab" data-tab="workflow">
-                            <i class="fas fa-project-diagram"></i> ワークフロー
-                        </button>
-                        <button class="settings-tab" data-tab="backup">
-                            <i class="fas fa-database"></i> バックアップ
-                        </button>
-                    </div>
-
-                    <!-- API接続設定 -->
-                    <div class="settings-panel active" id="panel-api">
-                        <div class="settings-container">
-                            <div class="settings-form">
-                                <h3><i class="fas fa-plug"></i> DeskNet's Neo API接続</h3>
-                                <div class="form-group">
-                                    <label>API URL</label>
-                                    <input type="url" id="apiUrl" placeholder="https://your-domain.desknets.com/cgi-bin/dneo/zap.cgi">
-                                    <small>DeskNet's NeoのAPIエンドポイントURL</small>
+                <div class="content-area" id="contentArea">
+                    <!-- ダッシュボードセクション -->
+                    <section class="section" id="section-dashboard">
+                        <h2><i class="fas fa-tachometer-alt"></i> ダッシュボード</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon users"><i class="fas fa-users"></i></div>
+                                <div class="stat-info">
+                                    <h3 id="totalUsers">0</h3>
+                                    <p>総ユーザー数</p>
                                 </div>
-                                <div class="form-group">
-                                    <label>APIキー / トークン</label>
-                                    <div class="input-with-btn">
-                                        <input type="password" id="apiKey" placeholder="APIキーを入力">
-                                        <button class="btn btn-small" onclick="toggleApiKey()">
-                                            <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon active-users">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="activeUsers">0</h3>
+                                    <p>有効ユーザー</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon apps"><i class="fas fa-th-large"></i></div>
+                                <div class="stat-info">
+                                    <h3 id="totalApps">0</h3>
+                                    <p>アプリ数</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon active-apps">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="activeApps">0</h3>
+                                    <p>稼働中アプリ</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon incidents">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="openIncidents">0</h3>
+                                    <p>未解決インシデント</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon changes">
+                                    <i class="fas fa-code-branch"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3 id="pendingChanges">0</h3>
+                                    <p>保留中の変更</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-panels">
+                            <div class="panel">
+                                <h3><i class="fas fa-clock"></i> 最近の操作ログ</h3>
+                                <div class="recent-logs" id="recentLogs"></div>
+                            </div>
+                            <div class="panel">
+                                <h3><i class="fas fa-th-large"></i> アプリ一覧</h3>
+                                <div class="app-summary" id="appSummary"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ユーザー管理セクション -->
+                    <section class="section hidden" id="section-users">
+                        <h2><i class="fas fa-users"></i> ユーザー管理</h2>
+                        <div class="section-info-box">
+                            <p class="info-line">
+                                <i class="fas fa-bullseye"></i
+                                ><span class="info-label">目的</span
+                                >：AppSuiteを利用するユーザーのアカウント登録・編集・削除と権限設定を一元管理する
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-lightbulb"></i
+                                ><span class="info-label">意味</span
+                                >：誰がどの権限でシステムにアクセスできるかを可視化し、適切なアクセス制御を実現する
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-check-circle"></i
+                                ><span class="info-label">必要性</span
+                                >：セキュリティ確保・不正アクセス防止・監査対応のために不可欠な機能
+                            </p>
+                        </div>
+                        <div class="toolbar">
+                            <button
+                                class="btn btn-primary"
+                                id="addUserButton"
+                                onclick="UserModule.showAddModal()"
+                            >
+                                <i class="fas fa-plus"></i> 新規ユーザー
+                            </button>
+                            <input
+                                type="text"
+                                class="search-input"
+                                placeholder="ユーザー検索..."
+                                id="userSearch"
+                            />
+                            <select class="filter-select" id="userStatusFilter">
+                                <option value="">すべてのステータス</option>
+                                <option value="active">有効</option>
+                                <option value="inactive">無効</option>
+                            </select>
+                            <select class="filter-select" id="userRoleFilter">
+                                <option value="">すべての権限</option>
+                                <option value="管理者">管理者</option>
+                                <option value="ユーザー">ユーザー</option>
+                            </select>
+                            <button class="btn btn-secondary" onclick="UserModule.refresh()">
+                                <i class="fas fa-sync"></i> 更新
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>ユーザー名</th>
+                                        <th>メールアドレス</th>
+                                        <th>部署</th>
+                                        <th>権限</th>
+                                        <th>ステータス</th>
+                                        <th>最終ログイン</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="usersPagination"></div>
+                    </section>
+
+                    <!-- アプリ管理セクション -->
+                    <section class="section hidden" id="section-apps">
+                        <h2><i class="fas fa-th-large"></i> アプリ管理</h2>
+                        <div class="section-info-box">
+                            <p class="info-line">
+                                <i class="fas fa-bullseye"></i
+                                ><span class="info-label">目的</span
+                                >：AppSuiteで作成された業務アプリの一覧管理・登録・稼働状況の把握を行う
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-lightbulb"></i
+                                ><span class="info-label">意味</span
+                                >：組織内で稼働するアプリを可視化し、重複や管理漏れを防ぎ運用効率を向上させる
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-check-circle"></i
+                                ><span class="info-label">必要性</span
+                                >：アプリの棚卸・メンテナンス計画・リソース配分の判断材料として必須
+                            </p>
+                        </div>
+                        <div class="toolbar">
+                            <button
+                                class="btn btn-primary"
+                                id="addAppButton"
+                                onclick="AppModule.showAddModal()"
+                            >
+                                <i class="fas fa-plus"></i> 新規アプリ
+                            </button>
+                            <input
+                                type="text"
+                                class="search-input"
+                                placeholder="アプリ検索..."
+                                id="appSearch"
+                            />
+                            <select class="filter-select" id="appCategoryFilter">
+                                <option value="">すべてのカテゴリ</option>
+                                <option value="業務管理">業務管理</option>
+                                <option value="申請・承認">申請・承認</option>
+                                <option value="データ管理">データ管理</option>
+                                <option value="その他">その他</option>
+                            </select>
+                            <select class="filter-select" id="appStatusFilter">
+                                <option value="">すべてのステータス</option>
+                                <option value="active">稼働中</option>
+                                <option value="maintenance">メンテナンス</option>
+                                <option value="inactive">停止中</option>
+                            </select>
+                            <button class="btn btn-secondary" onclick="AppModule.refresh()">
+                                <i class="fas fa-sync"></i> 更新
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="appsTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>アプリ名</th>
+                                        <th>カテゴリ</th>
+                                        <th>作成者</th>
+                                        <th>レコード数</th>
+                                        <th>ステータス</th>
+                                        <th>最終更新</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- インシデント管理セクション -->
+                    <section class="section hidden" id="section-incidents">
+                        <h2><i class="fas fa-exclamation-triangle"></i> インシデント管理</h2>
+                        <div class="section-info-box">
+                            <p class="info-line">
+                                <i class="fas fa-bullseye"></i
+                                ><span class="info-label">目的</span
+                                >：アプリの障害・不具合・問い合わせを記録し、対応状況を追跡・管理する
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-lightbulb"></i
+                                ><span class="info-label">意味</span
+                                >：問題の発生から解決までを可視化し、対応漏れや遅延を防ぎサービス品質を維持する
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-check-circle"></i
+                                ><span class="info-label">必要性</span
+                                >：迅速な問題解決・再発防止・SLA遵守のために運用上不可欠な機能
+                            </p>
+                        </div>
+                        <div class="toolbar">
+                            <button class="btn btn-primary" onclick="IncidentModule.showAddModal()">
+                                <i class="fas fa-plus"></i> 新規インシデント
+                            </button>
+                            <input
+                                type="text"
+                                class="search-input"
+                                placeholder="インシデント検索..."
+                                id="incidentSearch"
+                            />
+                            <select class="filter-select" id="incidentStatusFilter">
+                                <option value="">すべてのステータス</option>
+                                <option value="open">オープン</option>
+                                <option value="in_progress">対応中</option>
+                                <option value="resolved">解決済み</option>
+                                <option value="closed">クローズ</option>
+                            </select>
+                            <select class="filter-select" id="incidentPriorityFilter">
+                                <option value="">すべての優先度</option>
+                                <option value="high">高</option>
+                                <option value="medium">中</option>
+                                <option value="low">低</option>
+                            </select>
+                            <button class="btn btn-secondary" onclick="IncidentModule.refresh()">
+                                <i class="fas fa-sync"></i> 更新
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="incidentsTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>タイトル</th>
+                                        <th>対象アプリ</th>
+                                        <th>優先度</th>
+                                        <th>ステータス</th>
+                                        <th>報告者</th>
+                                        <th>担当者</th>
+                                        <th>報告日</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="incidentsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- 変更管理セクション -->
+                    <section class="section hidden" id="section-changes">
+                        <h2><i class="fas fa-code-branch"></i> 変更管理</h2>
+                        <div class="section-info-box">
+                            <p class="info-line">
+                                <i class="fas fa-bullseye"></i
+                                ><span class="info-label">目的</span
+                                >：アプリの機能追加・改善・修正要求を登録し、承認フローを通じて計画的に変更を実施する
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-lightbulb"></i
+                                ><span class="info-label">意味</span
+                                >：変更履歴を記録し影響範囲を把握することで、無計画な変更によるリスクを低減する
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-check-circle"></i
+                                ><span class="info-label">必要性</span
+                                >：変更の追跡・承認管理・ロールバック対応のために必要不可欠な管理プロセス
+                            </p>
+                        </div>
+                        <div class="toolbar">
+                            <button class="btn btn-primary" onclick="ChangeModule.showAddModal()">
+                                <i class="fas fa-plus"></i> 新規変更要求
+                            </button>
+                            <input
+                                type="text"
+                                class="search-input"
+                                placeholder="変更要求検索..."
+                                id="changeSearch"
+                            />
+                            <select class="filter-select" id="changeTypeFilter">
+                                <option value="">すべてのタイプ</option>
+                                <option value="feature">機能追加</option>
+                                <option value="modification">機能変更</option>
+                                <option value="bugfix">バグ修正</option>
+                                <option value="improvement">改善</option>
+                            </select>
+                            <select class="filter-select" id="changeStatusFilter">
+                                <option value="">すべてのステータス</option>
+                                <option value="draft">下書き</option>
+                                <option value="pending">承認待ち</option>
+                                <option value="approved">承認済み</option>
+                                <option value="in_progress">実装中</option>
+                                <option value="completed">完了</option>
+                                <option value="rejected">却下</option>
+                            </select>
+                            <button class="btn btn-secondary" onclick="ChangeModule.refresh()">
+                                <i class="fas fa-sync"></i> 更新
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="changesTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>タイトル</th>
+                                        <th>対象アプリ</th>
+                                        <th>タイプ</th>
+                                        <th>ステータス</th>
+                                        <th>申請者</th>
+                                        <th>予定日</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="changesTableBody"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- 監査ログセクション -->
+                    <section class="section hidden" id="section-logs">
+                        <h2><i class="fas fa-history"></i> 監査ログ</h2>
+                        <div class="section-info-box">
+                            <p class="info-line">
+                                <i class="fas fa-bullseye"></i
+                                ><span class="info-label">目的</span
+                                >：システム上の全ての操作履歴を記録・保管し、検索・エクスポート可能にする
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-lightbulb"></i
+                                ><span class="info-label">意味</span
+                                >：誰がいつ何をしたかを追跡可能にし、セキュリティ監査やトラブル発生時の原因調査に活用する
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-check-circle"></i
+                                ><span class="info-label">必要性</span
+                                >：コンプライアンス対応・内部統制・情報セキュリティ管理の観点から必須の機能
+                            </p>
+                        </div>
+                        <div class="toolbar">
+                            <input type="date" class="date-input" id="logDateFrom" />
+                            <span>〜</span>
+                            <input type="date" class="date-input" id="logDateTo" />
+                            <select class="filter-select" id="logTypeFilter">
+                                <option value="">すべてのタイプ</option>
+                                <option value="login">ログイン</option>
+                                <option value="logout">ログアウト</option>
+                                <option value="create">作成</option>
+                                <option value="update">更新</option>
+                                <option value="delete">削除</option>
+                                <option value="export">エクスポート</option>
+                            </select>
+                            <select class="filter-select" id="logTargetFilter">
+                                <option value="">すべての対象</option>
+                                <option value="user">ユーザー</option>
+                                <option value="app">アプリ</option>
+                                <option value="incident">インシデント</option>
+                                <option value="change">変更要求</option>
+                                <option value="system">システム</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="LogModule.search()">
+                                <i class="fas fa-search"></i> 検索
+                            </button>
+                            <button class="btn btn-secondary" onclick="LogModule.export()">
+                                <i class="fas fa-download"></i> エクスポート
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="logsTable">
+                                <thead>
+                                    <tr>
+                                        <th>日時</th>
+                                        <th>ユーザー</th>
+                                        <th>操作タイプ</th>
+                                        <th>対象</th>
+                                        <th>詳細</th>
+                                        <th>IPアドレス</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logsTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination" id="logsPagination"></div>
+                    </section>
+
+                    <!-- システム設定セクション -->
+                    <section class="section hidden" id="section-settings">
+                        <h2><i class="fas fa-cog"></i> システム設定</h2>
+                        <div class="section-info-box">
+                            <p class="info-line">
+                                <i class="fas fa-bullseye"></i
+                                ><span class="info-label">目的</span
+                                >：API接続・セキュリティ・通知・ワークフロー等、本システムの動作に関わる全設定を管理する
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-lightbulb"></i
+                                ><span class="info-label">意味</span
+                                >：システムの動作環境を一元管理し、運用ポリシーに合わせた柔軟なカスタマイズを可能にする
+                            </p>
+                            <p class="info-line">
+                                <i class="fas fa-check-circle"></i
+                                ><span class="info-label">必要性</span>：DeskNet's
+                                Neo連携・セキュリティポリシー適用・バックアップ管理に必須の設定画面
+                            </p>
+                        </div>
+
+                        <!-- 設定タブ -->
+                        <div class="settings-tabs">
+                            <button class="settings-tab active" data-tab="api">
+                                <i class="fas fa-plug"></i> API接続
+                            </button>
+                            <button class="settings-tab" data-tab="general">
+                                <i class="fas fa-sliders-h"></i> 基本設定
+                            </button>
+                            <button class="settings-tab" data-tab="notification">
+                                <i class="fas fa-bell"></i> 通知設定
+                            </button>
+                            <button class="settings-tab" data-tab="security">
+                                <i class="fas fa-shield-alt"></i> セキュリティ
+                            </button>
+                            <button class="settings-tab" data-tab="workflow">
+                                <i class="fas fa-project-diagram"></i> ワークフロー
+                            </button>
+                            <button class="settings-tab" data-tab="backup">
+                                <i class="fas fa-database"></i> バックアップ
+                            </button>
+                        </div>
+
+                        <!-- API接続設定 -->
+                        <div class="settings-panel active" id="panel-api">
+                            <div class="settings-container">
+                                <div class="settings-form">
+                                    <h3><i class="fas fa-plug"></i> DeskNet's Neo API接続</h3>
+                                    <div class="form-group">
+                                        <label>API URL</label>
+                                        <input
+                                            type="url"
+                                            id="apiUrl"
+                                            placeholder="https://your-domain.desknets.com/cgi-bin/dneo/zap.cgi"
+                                        />
+                                        <small>DeskNet's NeoのAPIエンドポイントURL</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>APIキー / トークン</label>
+                                        <div class="input-with-btn">
+                                            <input
+                                                type="password"
+                                                id="apiKey"
+                                                placeholder="APIキーを入力"
+                                            />
+                                            <button class="btn btn-small" onclick="toggleApiKey()">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>認証方式</label>
+                                        <select id="authMethod">
+                                            <option value="bearer">Bearer Token</option>
+                                            <option value="basic">Basic認証</option>
+                                            <option value="apikey">APIキー（ヘッダー）</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>タイムアウト（秒）</label>
+                                        <input
+                                            type="number"
+                                            id="timeout"
+                                            value="30"
+                                            min="5"
+                                            max="120"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>自動同期間隔（分）</label>
+                                        <select id="syncInterval">
+                                            <option value="0">無効</option>
+                                            <option value="5">5分</option>
+                                            <option value="15">15分</option>
+                                            <option value="30" selected>30分</option>
+                                            <option value="60">1時間</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="SettingsModule.saveApi()"
+                                        >
+                                            <i class="fas fa-save"></i> 保存
+                                        </button>
+                                        <button
+                                            class="btn btn-secondary"
+                                            onclick="SettingsModule.testApi()"
+                                        >
+                                            <i class="fas fa-plug"></i> 接続テスト
+                                        </button>
+                                        <button
+                                            class="btn btn-secondary"
+                                            onclick="SettingsModule.syncNow()"
+                                        >
+                                            <i class="fas fa-sync"></i> 手動同期
                                         </button>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>認証方式</label>
-                                    <select id="authMethod">
-                                        <option value="bearer">Bearer Token</option>
-                                        <option value="basic">Basic認証</option>
-                                        <option value="apikey">APIキー（ヘッダー）</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>タイムアウト（秒）</label>
-                                    <input type="number" id="timeout" value="30" min="5" max="120">
-                                </div>
-                                <div class="form-group">
-                                    <label>自動同期間隔（分）</label>
-                                    <select id="syncInterval">
-                                        <option value="0">無効</option>
-                                        <option value="5">5分</option>
-                                        <option value="15">15分</option>
-                                        <option value="30" selected>30分</option>
-                                        <option value="60">1時間</option>
-                                    </select>
-                                </div>
-                                <div class="form-actions">
-                                    <button class="btn btn-primary" onclick="SettingsModule.saveApi()">
-                                        <i class="fas fa-save"></i> 保存
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="SettingsModule.testApi()">
-                                        <i class="fas fa-plug"></i> 接続テスト
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="SettingsModule.syncNow()">
-                                        <i class="fas fa-sync"></i> 手動同期
-                                    </button>
-                                </div>
-                            </div>
 
-                            <div class="settings-info">
-                                <h3>接続ステータス</h3>
-                                <div class="status-panel">
-                                    <div class="status-item">
-                                        <span class="status-label">API接続</span>
-                                        <span class="status-value" id="apiStatus">未接続</span>
+                                <div class="settings-info">
+                                    <h3>接続ステータス</h3>
+                                    <div class="status-panel">
+                                        <div class="status-item">
+                                            <span class="status-label">API接続</span>
+                                            <span class="status-value" id="apiStatus">未接続</span>
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">最終同期</span>
+                                            <span class="status-value" id="lastSync">-</span>
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">バージョン</span>
+                                            <span class="status-value" id="apiVersion">-</span>
+                                        </div>
                                     </div>
-                                    <div class="status-item">
-                                        <span class="status-label">最終同期</span>
-                                        <span class="status-value" id="lastSync">-</span>
-                                    </div>
-                                    <div class="status-item">
-                                        <span class="status-label">バージョン</span>
-                                        <span class="status-value" id="apiVersion">-</span>
-                                    </div>
-                                </div>
 
-                                <h3>API情報</h3>
-                                <div class="info-box">
-                                    <p><strong>対応バージョン:</strong> DeskNet's Neo V7.0以降</p>
-                                    <p><strong>必要な権限:</strong> システム管理者</p>
-                                    <p>APIキーはDeskNet's Neoの管理画面から取得できます。</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 基本設定 -->
-                    <div class="settings-panel" id="panel-general">
-                        <div class="settings-container">
-                            <div class="settings-form">
-                                <h3><i class="fas fa-sliders-h"></i> 基本設定</h3>
-
-                                <h4>システム情報</h4>
-                                <div class="form-group">
-                                    <label>システム名</label>
-                                    <input type="text" id="systemName" value="AppSuite 管理運用システム">
-                                </div>
-                                <div class="form-group">
-                                    <label>組織名</label>
-                                    <input type="text" id="orgName" placeholder="株式会社〇〇">
-                                </div>
-                                <div class="form-group">
-                                    <label>管理者メールアドレス</label>
-                                    <input type="email" id="adminEmail" placeholder="admin@example.com">
-                                </div>
-
-                                <h4>表示設定</h4>
-                                <div class="form-group">
-                                    <label>テーマ</label>
-                                    <select id="themeSelect">
-                                        <option value="light">ライト</option>
-                                        <option value="dark">ダーク</option>
-                                        <option value="system">システム設定に従う</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>言語</label>
-                                    <select id="langSelect">
-                                        <option value="ja" selected>日本語</option>
-                                        <option value="en">English</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>日付形式</label>
-                                    <select id="dateFormat">
-                                        <option value="yyyy-MM-dd" selected>2026-01-20</option>
-                                        <option value="yyyy/MM/dd">2026/01/20</option>
-                                        <option value="MM/dd/yyyy">01/20/2026</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>1ページあたりの表示件数</label>
-                                    <select id="pageSize">
-                                        <option value="10">10件</option>
-                                        <option value="25" selected>25件</option>
-                                        <option value="50">50件</option>
-                                        <option value="100">100件</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-actions">
-                                    <button class="btn btn-primary" onclick="SettingsModule.saveGeneral()">
-                                        <i class="fas fa-save"></i> 保存
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="SettingsModule.resetGeneral()">
-                                        <i class="fas fa-undo"></i> リセット
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="settings-info">
-                                <h3>システム情報</h3>
-                                <div class="status-panel">
-                                    <div class="status-item">
-                                        <span class="status-label">バージョン</span>
-                                        <span class="status-value">1.0.0</span>
-                                    </div>
-                                    <div class="status-item">
-                                        <span class="status-label">最終更新</span>
-                                        <span class="status-value">2026-01-20</span>
-                                    </div>
-                                    <div class="status-item">
-                                        <span class="status-label">データベース</span>
-                                        <span class="status-value">localStorage</span>
+                                    <h3>API情報</h3>
+                                    <div class="info-box">
+                                        <p>
+                                            <strong>対応バージョン:</strong> DeskNet's Neo V7.0以降
+                                        </p>
+                                        <p><strong>必要な権限:</strong> システム管理者</p>
+                                        <p>APIキーはDeskNet's Neoの管理画面から取得できます。</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 通知設定 -->
-                    <div class="settings-panel" id="panel-notification">
-                        <div class="settings-container">
-                            <div class="settings-form">
-                                <h3><i class="fas fa-bell"></i> 通知設定</h3>
+                        <!-- 基本設定 -->
+                        <div class="settings-panel" id="panel-general">
+                            <div class="settings-container">
+                                <div class="settings-form">
+                                    <h3><i class="fas fa-sliders-h"></i> 基本設定</h3>
 
-                                <h4>メール通知</h4>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="notifyIncidentNew" checked>
-                                        <span>新規インシデント登録時</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="notifyIncidentHigh" checked>
-                                        <span>高優先度インシデント発生時</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="notifyChangeApproval" checked>
-                                        <span>変更要求の承認依頼時</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="notifyChangeComplete">
-                                        <span>変更完了時</span>
-                                    </label>
-                                </div>
-
-                                <h4>SMTPサーバー設定</h4>
-                                <div class="form-group">
-                                    <label>SMTPホスト</label>
-                                    <input type="text" id="smtpHost" placeholder="smtp.example.com">
-                                </div>
-                                <div class="form-group">
-                                    <label>SMTPポート</label>
-                                    <input type="number" id="smtpPort" value="587">
-                                </div>
-                                <div class="form-group">
-                                    <label>SMTPユーザー名</label>
-                                    <input type="text" id="smtpUser" placeholder="user@example.com">
-                                </div>
-                                <div class="form-group">
-                                    <label>SMTPパスワード</label>
-                                    <input type="password" id="smtpPass" placeholder="パスワード">
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="smtpSsl" checked>
-                                        <span>SSL/TLSを使用</span>
-                                    </label>
-                                </div>
-
-                                <div class="form-actions">
-                                    <button class="btn btn-primary" onclick="SettingsModule.saveNotification()">
-                                        <i class="fas fa-save"></i> 保存
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="SettingsModule.testEmail()">
-                                        <i class="fas fa-paper-plane"></i> テスト送信
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="settings-info">
-                                <h3>通知履歴</h3>
-                                <div class="info-box">
-                                    <p><strong>本日の通知:</strong> 3件</p>
-                                    <p><strong>今週の通知:</strong> 15件</p>
-                                    <p><strong>最終通知:</strong> 2026-01-20 10:30</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- セキュリティ設定 -->
-                    <div class="settings-panel" id="panel-security">
-                        <div class="settings-container">
-                            <div class="settings-form">
-                                <h3><i class="fas fa-shield-alt"></i> セキュリティ設定</h3>
-
-                                <h4>パスワードポリシー</h4>
-                                <div class="form-group">
-                                    <label>最小文字数</label>
-                                    <input type="number" id="pwMinLength" value="8" min="6" max="32">
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="pwRequireUpper" checked>
-                                        <span>大文字を必須にする</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="pwRequireNumber" checked>
-                                        <span>数字を必須にする</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="pwRequireSpecial">
-                                        <span>特殊文字を必須にする</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>パスワード有効期限（日）</label>
-                                    <input type="number" id="pwExpireDays" value="90" min="0" max="365">
-                                    <small>0の場合は無期限</small>
-                                </div>
-
-                                <h4>セッション設定</h4>
-                                <div class="form-group">
-                                    <label>セッションタイムアウト（分）</label>
-                                    <input type="number" id="sessionTimeout" value="30" min="5" max="480">
-                                </div>
-                                <div class="form-group">
-                                    <label>最大同時ログイン数</label>
-                                    <input type="number" id="maxSessions" value="3" min="1" max="10">
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="enableTwoFactor">
-                                        <span>二要素認証を有効にする</span>
-                                    </label>
-                                </div>
-
-                                <h4>ログイン制限</h4>
-                                <div class="form-group">
-                                    <label>ログイン失敗許容回数</label>
-                                    <input type="number" id="maxLoginAttempts" value="5" min="3" max="10">
-                                </div>
-                                <div class="form-group">
-                                    <label>アカウントロック時間（分）</label>
-                                    <input type="number" id="lockoutDuration" value="15" min="5" max="60">
-                                </div>
-
-                                <div class="form-actions">
-                                    <button class="btn btn-primary" onclick="SettingsModule.saveSecurity()">
-                                        <i class="fas fa-save"></i> 保存
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="settings-info">
-                                <h3>セキュリティ状態</h3>
-                                <div class="status-panel">
-                                    <div class="status-item">
-                                        <span class="status-label">二要素認証</span>
-                                        <span class="status-value badge badge-secondary">無効</span>
+                                    <h4>システム情報</h4>
+                                    <div class="form-group">
+                                        <label>システム名</label>
+                                        <input
+                                            type="text"
+                                            id="systemName"
+                                            value="AppSuite 管理運用システム"
+                                        />
                                     </div>
-                                    <div class="status-item">
-                                        <span class="status-label">SSL/TLS</span>
-                                        <span class="status-value badge badge-success">有効</span>
+                                    <div class="form-group">
+                                        <label>組織名</label>
+                                        <input
+                                            type="text"
+                                            id="orgName"
+                                            placeholder="株式会社〇〇"
+                                        />
                                     </div>
-                                    <div class="status-item">
-                                        <span class="status-label">ロックアウト中</span>
-                                        <span class="status-value">0ユーザー</span>
+                                    <div class="form-group">
+                                        <label>管理者メールアドレス</label>
+                                        <input
+                                            type="email"
+                                            id="adminEmail"
+                                            placeholder="admin@example.com"
+                                        />
+                                    </div>
+
+                                    <h4>表示設定</h4>
+                                    <div class="form-group">
+                                        <label>テーマ</label>
+                                        <select id="themeSelect">
+                                            <option value="light">ライト</option>
+                                            <option value="dark">ダーク</option>
+                                            <option value="system">システム設定に従う</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>言語</label>
+                                        <select id="langSelect">
+                                            <option value="ja" selected>日本語</option>
+                                            <option value="en">English</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>日付形式</label>
+                                        <select id="dateFormat">
+                                            <option value="yyyy-MM-dd" selected>2026-01-20</option>
+                                            <option value="yyyy/MM/dd">2026/01/20</option>
+                                            <option value="MM/dd/yyyy">01/20/2026</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>1ページあたりの表示件数</label>
+                                        <select id="pageSize">
+                                            <option value="10">10件</option>
+                                            <option value="25" selected>25件</option>
+                                            <option value="50">50件</option>
+                                            <option value="100">100件</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="SettingsModule.saveGeneral()"
+                                        >
+                                            <i class="fas fa-save"></i> 保存
+                                        </button>
+                                        <button
+                                            class="btn btn-secondary"
+                                            onclick="SettingsModule.resetGeneral()"
+                                        >
+                                            <i class="fas fa-undo"></i> リセット
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="settings-info">
+                                    <h3>システム情報</h3>
+                                    <div class="status-panel">
+                                        <div class="status-item">
+                                            <span class="status-label">バージョン</span>
+                                            <span class="status-value">1.0.0</span>
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">最終更新</span>
+                                            <span class="status-value">2026-01-20</span>
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">データベース</span>
+                                            <span class="status-value">localStorage</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- ワークフロー設定 -->
-                    <div class="settings-panel" id="panel-workflow">
-                        <div class="settings-container">
-                            <div class="settings-form">
-                                <h3><i class="fas fa-project-diagram"></i> ワークフロー設定</h3>
+                        <!-- 通知設定 -->
+                        <div class="settings-panel" id="panel-notification">
+                            <div class="settings-container">
+                                <div class="settings-form">
+                                    <h3><i class="fas fa-bell"></i> 通知設定</h3>
 
-                                <h4>インシデント管理</h4>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="incidentAutoAssign">
-                                        <span>インシデントを自動割当する</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>デフォルト担当者</label>
-                                    <select id="incidentDefaultAssignee">
-                                        <option value="">未割当</option>
-                                        <option value="admin">管理者</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>エスカレーション期限（時間）</label>
-                                    <input type="number" id="incidentEscalation" value="24" min="1" max="168">
-                                    <small>高優先度インシデントの対応期限</small>
+                                    <h4>メール通知</h4>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="notifyIncidentNew" checked />
+                                            <span>新規インシデント登録時</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input
+                                                type="checkbox"
+                                                id="notifyIncidentHigh"
+                                                checked
+                                            />
+                                            <span>高優先度インシデント発生時</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input
+                                                type="checkbox"
+                                                id="notifyChangeApproval"
+                                                checked
+                                            />
+                                            <span>変更要求の承認依頼時</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="notifyChangeComplete" />
+                                            <span>変更完了時</span>
+                                        </label>
+                                    </div>
+
+                                    <h4>SMTPサーバー設定</h4>
+                                    <div class="form-group">
+                                        <label>SMTPホスト</label>
+                                        <input
+                                            type="text"
+                                            id="smtpHost"
+                                            placeholder="smtp.example.com"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>SMTPポート</label>
+                                        <input type="number" id="smtpPort" value="587" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>SMTPユーザー名</label>
+                                        <input
+                                            type="text"
+                                            id="smtpUser"
+                                            placeholder="user@example.com"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>SMTPパスワード</label>
+                                        <input
+                                            type="password"
+                                            id="smtpPass"
+                                            placeholder="パスワード"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="smtpSsl" checked />
+                                            <span>SSL/TLSを使用</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="SettingsModule.saveNotification()"
+                                        >
+                                            <i class="fas fa-save"></i> 保存
+                                        </button>
+                                        <button
+                                            class="btn btn-secondary"
+                                            onclick="SettingsModule.testEmail()"
+                                        >
+                                            <i class="fas fa-paper-plane"></i> テスト送信
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <h4>変更管理</h4>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="changeRequireApproval" checked>
-                                        <span>変更要求に承認を必須にする</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>承認者</label>
-                                    <select id="changeApprover">
-                                        <option value="manager">マネージャー</option>
-                                        <option value="admin">管理者</option>
-                                        <option value="both">マネージャー＋管理者</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>リードタイム（日）</label>
-                                    <input type="number" id="changeLeadTime" value="3" min="0" max="30">
-                                    <small>変更実施の最低準備期間</small>
-                                </div>
-
-                                <h4>ステータス遷移</h4>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="allowSkipStatus">
-                                        <span>ステータスのスキップを許可する</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="requireComment" checked>
-                                        <span>ステータス変更時にコメントを必須にする</span>
-                                    </label>
-                                </div>
-
-                                <div class="form-actions">
-                                    <button class="btn btn-primary" onclick="SettingsModule.saveWorkflow()">
-                                        <i class="fas fa-save"></i> 保存
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="settings-info">
-                                <h3>ワークフロー状態</h3>
-                                <div class="info-box">
-                                    <p><strong>有効なルール:</strong> 5件</p>
-                                    <p><strong>自動割当:</strong> 無効</p>
-                                    <p><strong>承認必須:</strong> 有効</p>
+                                <div class="settings-info">
+                                    <h3>通知履歴</h3>
+                                    <div class="info-box">
+                                        <p><strong>本日の通知:</strong> 3件</p>
+                                        <p><strong>今週の通知:</strong> 15件</p>
+                                        <p><strong>最終通知:</strong> 2026-01-20 10:30</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- バックアップ設定 -->
-                    <div class="settings-panel" id="panel-backup">
-                        <div class="settings-container">
-                            <div class="settings-form">
-                                <h3><i class="fas fa-database"></i> バックアップ・リストア</h3>
+                        <!-- セキュリティ設定 -->
+                        <div class="settings-panel" id="panel-security">
+                            <div class="settings-container">
+                                <div class="settings-form">
+                                    <h3><i class="fas fa-shield-alt"></i> セキュリティ設定</h3>
 
-                                <h4>自動バックアップ</h4>
-                                <div class="form-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="autoBackup" checked>
-                                        <span>自動バックアップを有効にする</span>
-                                    </label>
-                                </div>
-                                <div class="form-group">
-                                    <label>バックアップ間隔</label>
-                                    <select id="backupInterval">
-                                        <option value="daily" selected>毎日</option>
-                                        <option value="weekly">毎週</option>
-                                        <option value="monthly">毎月</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>保持世代数</label>
-                                    <input type="number" id="backupRetention" value="7" min="1" max="30">
-                                </div>
-
-                                <h4>手動バックアップ</h4>
-                                <div class="form-actions" style="margin-bottom:20px;">
-                                    <button class="btn btn-primary" onclick="SettingsModule.createBackup()">
-                                        <i class="fas fa-download"></i> バックアップ作成
-                                    </button>
-                                </div>
-
-                                <h4>データリストア</h4>
-                                <div class="form-group">
-                                    <label>バックアップファイル</label>
-                                    <input type="file" id="restoreFile" accept=".json">
-                                </div>
-                                <div class="form-actions">
-                                    <button class="btn btn-warning" onclick="SettingsModule.restoreBackup()">
-                                        <i class="fas fa-upload"></i> リストア実行
-                                    </button>
-                                </div>
-
-                                <h4>データ管理</h4>
-                                <div class="form-actions">
-                                    <button class="btn btn-secondary" onclick="SettingsModule.exportData()">
-                                        <i class="fas fa-file-export"></i> データエクスポート
-                                    </button>
-                                    <button class="btn btn-danger" onclick="SettingsModule.clearData()">
-                                        <i class="fas fa-trash-alt"></i> データ初期化
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="settings-info">
-                                <h3>バックアップ状態</h3>
-                                <div class="status-panel">
-                                    <div class="status-item">
-                                        <span class="status-label">最終バックアップ</span>
-                                        <span class="status-value" id="lastBackup">-</span>
+                                    <h4>パスワードポリシー</h4>
+                                    <div class="form-group">
+                                        <label>最小文字数</label>
+                                        <input
+                                            type="number"
+                                            id="pwMinLength"
+                                            value="8"
+                                            min="6"
+                                            max="32"
+                                        />
                                     </div>
-                                    <div class="status-item">
-                                        <span class="status-label">バックアップ数</span>
-                                        <span class="status-value" id="backupCount">0</span>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="pwRequireUpper" checked />
+                                            <span>大文字を必須にする</span>
+                                        </label>
                                     </div>
-                                    <div class="status-item">
-                                        <span class="status-label">データサイズ</span>
-                                        <span class="status-value" id="dataSize">-</span>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="pwRequireNumber" checked />
+                                            <span>数字を必須にする</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="pwRequireSpecial" />
+                                            <span>特殊文字を必須にする</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>パスワード有効期限（日）</label>
+                                        <input
+                                            type="number"
+                                            id="pwExpireDays"
+                                            value="90"
+                                            min="0"
+                                            max="365"
+                                        />
+                                        <small>0の場合は無期限</small>
+                                    </div>
+
+                                    <h4>セッション設定</h4>
+                                    <div class="form-group">
+                                        <label>セッションタイムアウト（分）</label>
+                                        <input
+                                            type="number"
+                                            id="sessionTimeout"
+                                            value="30"
+                                            min="5"
+                                            max="480"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>最大同時ログイン数</label>
+                                        <input
+                                            type="number"
+                                            id="maxSessions"
+                                            value="3"
+                                            min="1"
+                                            max="10"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="enableTwoFactor" />
+                                            <span>二要素認証を有効にする</span>
+                                        </label>
+                                    </div>
+
+                                    <h4>ログイン制限</h4>
+                                    <div class="form-group">
+                                        <label>ログイン失敗許容回数</label>
+                                        <input
+                                            type="number"
+                                            id="maxLoginAttempts"
+                                            value="5"
+                                            min="3"
+                                            max="10"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>アカウントロック時間（分）</label>
+                                        <input
+                                            type="number"
+                                            id="lockoutDuration"
+                                            value="15"
+                                            min="5"
+                                            max="60"
+                                        />
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="SettingsModule.saveSecurity()"
+                                        >
+                                            <i class="fas fa-save"></i> 保存
+                                        </button>
                                     </div>
                                 </div>
 
-                                <h3>バックアップ履歴</h3>
-                                <div class="backup-list" id="backupList">
-                                    <p class="text-muted">バックアップはありません</p>
+                                <div class="settings-info">
+                                    <h3>セキュリティ状態</h3>
+                                    <div class="status-panel">
+                                        <div class="status-item">
+                                            <span class="status-label">二要素認証</span>
+                                            <span class="status-value badge badge-secondary"
+                                                >無効</span
+                                            >
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">SSL/TLS</span>
+                                            <span class="status-value badge badge-success"
+                                                >有効</span
+                                            >
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">ロックアウト中</span>
+                                            <span class="status-value">0ユーザー</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-    </div>
 
-    <!-- モーダル -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal" id="modal">
-            <div class="modal-header">
-                <h3 id="modalTitle">タイトル</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer" id="modalFooter"></div>
+                        <!-- ワークフロー設定 -->
+                        <div class="settings-panel" id="panel-workflow">
+                            <div class="settings-container">
+                                <div class="settings-form">
+                                    <h3><i class="fas fa-project-diagram"></i> ワークフロー設定</h3>
+
+                                    <h4>インシデント管理</h4>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="incidentAutoAssign" />
+                                            <span>インシデントを自動割当する</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>デフォルト担当者</label>
+                                        <select id="incidentDefaultAssignee">
+                                            <option value="">未割当</option>
+                                            <option value="admin">管理者</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>エスカレーション期限（時間）</label>
+                                        <input
+                                            type="number"
+                                            id="incidentEscalation"
+                                            value="24"
+                                            min="1"
+                                            max="168"
+                                        />
+                                        <small>高優先度インシデントの対応期限</small>
+                                    </div>
+
+                                    <h4>変更管理</h4>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input
+                                                type="checkbox"
+                                                id="changeRequireApproval"
+                                                checked
+                                            />
+                                            <span>変更要求に承認を必須にする</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>承認者</label>
+                                        <select id="changeApprover">
+                                            <option value="manager">マネージャー</option>
+                                            <option value="admin">管理者</option>
+                                            <option value="both">マネージャー＋管理者</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>リードタイム（日）</label>
+                                        <input
+                                            type="number"
+                                            id="changeLeadTime"
+                                            value="3"
+                                            min="0"
+                                            max="30"
+                                        />
+                                        <small>変更実施の最低準備期間</small>
+                                    </div>
+
+                                    <h4>ステータス遷移</h4>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="allowSkipStatus" />
+                                            <span>ステータスのスキップを許可する</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="requireComment" checked />
+                                            <span>ステータス変更時にコメントを必須にする</span>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="SettingsModule.saveWorkflow()"
+                                        >
+                                            <i class="fas fa-save"></i> 保存
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="settings-info">
+                                    <h3>ワークフロー状態</h3>
+                                    <div class="info-box">
+                                        <p><strong>有効なルール:</strong> 5件</p>
+                                        <p><strong>自動割当:</strong> 無効</p>
+                                        <p><strong>承認必須:</strong> 有効</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- バックアップ設定 -->
+                        <div class="settings-panel" id="panel-backup">
+                            <div class="settings-container">
+                                <div class="settings-form">
+                                    <h3><i class="fas fa-database"></i> バックアップ・リストア</h3>
+
+                                    <h4>自動バックアップ</h4>
+                                    <div class="form-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="autoBackup" checked />
+                                            <span>自動バックアップを有効にする</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>バックアップ間隔</label>
+                                        <select id="backupInterval">
+                                            <option value="daily" selected>毎日</option>
+                                            <option value="weekly">毎週</option>
+                                            <option value="monthly">毎月</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>保持世代数</label>
+                                        <input
+                                            type="number"
+                                            id="backupRetention"
+                                            value="7"
+                                            min="1"
+                                            max="30"
+                                        />
+                                    </div>
+
+                                    <h4>手動バックアップ</h4>
+                                    <div class="form-actions" style="margin-bottom: 20px">
+                                        <button
+                                            class="btn btn-primary"
+                                            onclick="SettingsModule.createBackup()"
+                                        >
+                                            <i class="fas fa-download"></i> バックアップ作成
+                                        </button>
+                                    </div>
+
+                                    <h4>データリストア</h4>
+                                    <div class="form-group">
+                                        <label>バックアップファイル</label>
+                                        <input type="file" id="restoreFile" accept=".json" />
+                                    </div>
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-warning"
+                                            onclick="SettingsModule.restoreBackup()"
+                                        >
+                                            <i class="fas fa-upload"></i> リストア実行
+                                        </button>
+                                    </div>
+
+                                    <h4>データ管理</h4>
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-secondary"
+                                            onclick="SettingsModule.exportData()"
+                                        >
+                                            <i class="fas fa-file-export"></i> データエクスポート
+                                        </button>
+                                        <button
+                                            class="btn btn-danger"
+                                            onclick="SettingsModule.clearData()"
+                                        >
+                                            <i class="fas fa-trash-alt"></i> データ初期化
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="settings-info">
+                                    <h3>バックアップ状態</h3>
+                                    <div class="status-panel">
+                                        <div class="status-item">
+                                            <span class="status-label">最終バックアップ</span>
+                                            <span class="status-value" id="lastBackup">-</span>
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">バックアップ数</span>
+                                            <span class="status-value" id="backupCount">0</span>
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">データサイズ</span>
+                                            <span class="status-value" id="dataSize">-</span>
+                                        </div>
+                                    </div>
+
+                                    <h3>バックアップ履歴</h3>
+                                    <div class="backup-list" id="backupList">
+                                        <p class="text-muted">バックアップはありません</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
         </div>
-    </div>
 
-    <!-- トースト通知 -->
-    <div class="toast-container" id="toastContainer"></div>
+        <!-- モーダル -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal" id="modal">
+                <div class="modal-header">
+                    <h3 id="modalTitle">タイトル</h3>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer" id="modalFooter"></div>
+            </div>
+        </div>
 
-    <!-- スクリプト -->
-    <script src="js/api.js"></script>
-    <script src="js/security.js"></script>
-    <script src="js/modules.js"></script>
-    <script src="js/app.js"></script>
-</body>
+        <!-- トースト通知 -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- スクリプト -->
+        <script src="js/api.js"></script>
+        <script src="js/security.js"></script>
+        <script src="js/modules.js"></script>
+        <script src="js/app.js"></script>
+    </body>
 </html>

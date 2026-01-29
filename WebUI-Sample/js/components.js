@@ -115,7 +115,7 @@ const Pagination = {
         if (handler) {
             handler(page);
         }
-    }
+    },
 };
 
 /**
@@ -138,12 +138,15 @@ const Modal = {
         document.getElementById('modalBody').innerHTML = content;
 
         const footer = document.getElementById('modalFooter');
-        footer.innerHTML = buttons.map(btn => {
-            const onclick = typeof btn.onclick === 'function'
-                ? `(${btn.onclick.toString()})()`
-                : btn.onclick;
-            return `<button class="btn ${btn.class || ''}" onclick="${onclick}">${escapeHtml(btn.text)}</button>`;
-        }).join('');
+        footer.innerHTML = buttons
+            .map(btn => {
+                const onclick =
+                    typeof btn.onclick === 'function'
+                        ? `(${btn.onclick.toString()})()`
+                        : btn.onclick;
+                return `<button class="btn ${btn.class || ''}" onclick="${onclick}">${escapeHtml(btn.text)}</button>`;
+            })
+            .join('');
 
         const modal = document.getElementById('modal');
         modal.className = `modal modal-${size}`;
@@ -182,18 +185,22 @@ const Modal = {
                     class: 'btn-secondary',
                     onclick: () => {
                         Modal.close();
-                        if (onCancel) {onCancel();}
-                    }
+                        if (onCancel) {
+                            onCancel();
+                        }
+                    },
                 },
                 {
                     text: '確認',
                     class: 'btn-primary',
                     onclick: () => {
                         Modal.close();
-                        if (onConfirm) {onConfirm();}
-                    }
-                }
-            ]
+                        if (onConfirm) {
+                            onConfirm();
+                        }
+                    },
+                },
+            ],
         });
     },
 
@@ -207,14 +214,14 @@ const Modal = {
             info: 'fa-info-circle',
             success: 'fa-check-circle',
             warning: 'fa-exclamation-triangle',
-            error: 'fa-times-circle'
+            error: 'fa-times-circle',
         };
 
         const colors = {
             info: 'var(--info-color)',
             success: 'var(--success-color)',
             warning: 'var(--warning-color)',
-            error: 'var(--danger-color)'
+            error: 'var(--danger-color)',
         };
 
         this.open({
@@ -230,11 +237,11 @@ const Modal = {
                 {
                     text: 'OK',
                     class: 'btn-primary',
-                    onclick: 'Modal.close()'
-                }
-            ]
+                    onclick: 'Modal.close()',
+                },
+            ],
         });
-    }
+    },
 };
 
 /**
@@ -265,7 +272,9 @@ const Toast = {
      * @param {number} duration - 表示時間（ミリ秒）
      */
     show(message, type = 'info', duration = 3000) {
-        if (!this.container) {this.init();}
+        if (!this.container) {
+            this.init();
+        }
 
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
@@ -274,7 +283,7 @@ const Toast = {
             success: 'fa-check-circle',
             error: 'fa-exclamation-circle',
             warning: 'fa-exclamation-triangle',
-            info: 'fa-info-circle'
+            info: 'fa-info-circle',
         };
 
         toast.innerHTML = `
@@ -311,7 +320,9 @@ const Toast = {
      * @param {HTMLElement} toast - トースト要素
      */
     dismiss(toast) {
-        if (!toast || !toast.parentElement) {return;}
+        if (!toast || !toast.parentElement) {
+            return;
+        }
 
         toast.classList.add('hide');
         setTimeout(() => {
@@ -325,16 +336,26 @@ const Toast = {
      * 全トーストをクリア
      */
     clear() {
-        if (!this.container) {return;}
+        if (!this.container) {
+            return;
+        }
         const toasts = this.container.querySelectorAll('.toast');
         toasts.forEach(toast => this.dismiss(toast));
     },
 
     // ショートカットメソッド
-    success(message, duration) { this.show(message, 'success', duration); },
-    error(message, duration) { this.show(message, 'error', duration); },
-    warning(message, duration) { this.show(message, 'warning', duration); },
-    info(message, duration) { this.show(message, 'info', duration); }
+    success(message, duration) {
+        this.show(message, 'success', duration);
+    },
+    error(message, duration) {
+        this.show(message, 'error', duration);
+    },
+    warning(message, duration) {
+        this.show(message, 'warning', duration);
+    },
+    info(message, duration) {
+        this.show(message, 'info', duration);
+    },
 };
 
 /**
@@ -382,7 +403,7 @@ const Loading = {
         if (this.overlay) {
             this.overlay.querySelector('.loading-message').textContent = message;
         }
-    }
+    },
 };
 
 /**
@@ -396,7 +417,9 @@ const Tabs = {
      */
     init(containerId, onChange) {
         const container = document.getElementById(containerId);
-        if (!container) {return;}
+        if (!container) {
+            return;
+        }
 
         const tabs = container.querySelectorAll('.tab-button');
         const panels = container.querySelectorAll('.tab-panel');
@@ -419,7 +442,7 @@ const Tabs = {
                 }
             });
         });
-    }
+    },
 };
 
 /**
@@ -432,7 +455,7 @@ const Dropdown = {
      * 初期化
      */
     init() {
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', e => {
             if (this.activeDropdown && !this.activeDropdown.contains(e.target)) {
                 this.close();
             }
@@ -479,7 +502,7 @@ const Dropdown = {
         } else {
             this.open(trigger, dropdown);
         }
-    }
+    },
 };
 
 /**
@@ -493,7 +516,9 @@ const TableSort = {
      */
     init(tableId, onSort) {
         const table = document.getElementById(tableId);
-        if (!table) {return;}
+        if (!table) {
+            return;
+        }
 
         const headers = table.querySelectorAll('th[data-sortable]');
         headers.forEach(header => {
@@ -518,7 +543,7 @@ const TableSort = {
                 }
             });
         });
-    }
+    },
 };
 
 /**
@@ -532,14 +557,16 @@ const SearchHighlight = {
      * @returns {string} - ハイライトされたHTML
      */
     highlight(text, search) {
-        if (!search || !text) {return escapeHtml(text);}
+        if (!search || !text) {
+            return escapeHtml(text);
+        }
 
         const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const regex = new RegExp(`(${escapedSearch})`, 'gi');
         const escaped = escapeHtml(text);
 
         return escaped.replace(regex, '<mark class="search-highlight">$1</mark>');
-    }
+    },
 };
 
 // 初期化

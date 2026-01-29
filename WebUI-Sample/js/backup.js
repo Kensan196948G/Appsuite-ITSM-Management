@@ -14,7 +14,7 @@ const BackupManager = {
     SCHEMA: {
         requiredFields: ['version', 'timestamp'],
         dataFields: ['settings', 'users', 'apps', 'incidents', 'changes', 'logs'],
-        settingsFields: ['api', 'general', 'notification', 'security', 'workflow', 'backup']
+        settingsFields: ['api', 'general', 'notification', 'security', 'workflow', 'backup'],
     },
 
     /**
@@ -52,9 +52,9 @@ const BackupManager = {
                 apps: true,
                 incidents: true,
                 changes: true,
-                logs: true
+                logs: true,
             },
-            lastAutoBackup: null
+            lastAutoBackup: null,
         };
     },
 
@@ -127,16 +127,18 @@ const BackupManager = {
                 date: new Date().toISOString(),
                 type: 'auto',
                 size: new Blob([JSON.stringify(backupData)]).size,
-                data: backupData
+                data: backupData,
             });
 
             // 保持期間を超えた古いバックアップを削除
             const retentionMs = config.retentionDays * 24 * 60 * 60 * 1000;
             const now = new Date();
-            const filteredBackups = backups.filter(b => {
-                const backupDate = new Date(b.date);
-                return (now - backupDate) < retentionMs;
-            }).slice(0, 20); // 最大20件
+            const filteredBackups = backups
+                .filter(b => {
+                    const backupDate = new Date(b.date);
+                    return now - backupDate < retentionMs;
+                })
+                .slice(0, 20); // 最大20件
 
             this.saveBackupHistory(filteredBackups);
 
@@ -172,14 +174,14 @@ const BackupManager = {
             apps: true,
             incidents: true,
             changes: true,
-            logs: true
+            logs: true,
         };
 
         const data = {
             version: this.VERSION,
             timestamp: new Date().toISOString(),
             appVersion: '1.0.0',
-            exportedBy: 'BackupManager'
+            exportedBy: 'BackupManager',
         };
 
         if (include.settings && typeof SettingsModule !== 'undefined') {
@@ -229,7 +231,7 @@ const BackupManager = {
             apps: true,
             incidents: true,
             changes: true,
-            logs: true
+            logs: true,
         };
 
         const backupData = this.createBackupData(includeData);
@@ -254,7 +256,7 @@ const BackupManager = {
             date: new Date().toISOString(),
             type: 'manual',
             size: blob.size,
-            filename: a.download
+            filename: a.download,
         });
         this.saveBackupHistory(backups.slice(0, 50));
 
@@ -278,13 +280,13 @@ const BackupManager = {
             incidents: data.incidents?.length || 0,
             changes: data.changes?.length || 0,
             logs: data.logs?.length || 0,
-            timestamp: data.timestamp
+            timestamp: data.timestamp,
         });
 
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
             const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
+            hash = (hash << 5) - hash + char;
             hash = hash & hash;
         }
         return Math.abs(hash).toString(16);
@@ -309,7 +311,9 @@ const BackupManager = {
             const [major] = data.version.split('.');
             const [currentMajor] = this.VERSION.split('.');
             if (parseInt(major) > parseInt(currentMajor)) {
-                warnings.push(`バックアップバージョン(${data.version})が現在のバージョン(${this.VERSION})より新しいです`);
+                warnings.push(
+                    `バックアップバージョン(${data.version})が現在のバージョン(${this.VERSION})より新しいです`
+                );
             }
         }
 
@@ -348,8 +352,8 @@ const BackupManager = {
                 apps: data.apps?.length || 0,
                 incidents: data.incidents?.length || 0,
                 changes: data.changes?.length || 0,
-                logs: data.logs?.length || 0
-            }
+                logs: data.logs?.length || 0,
+            },
         };
     },
 
@@ -364,14 +368,14 @@ const BackupManager = {
             incidents: options.incidents !== false,
             changes: options.changes !== false,
             logs: options.logs !== false,
-            merge: options.merge || false // true: マージ, false: 上書き
+            merge: options.merge || false, // true: マージ, false: 上書き
         };
 
         const validation = this.validateBackup(data);
         if (!validation.valid) {
             return {
                 success: false,
-                errors: validation.errors
+                errors: validation.errors,
             };
         }
 
@@ -381,7 +385,7 @@ const BackupManager = {
             apps: 0,
             incidents: 0,
             changes: 0,
-            logs: 0
+            logs: 0,
         };
 
         try {
@@ -415,7 +419,11 @@ const BackupManager = {
 
                 if (restoreOptions.incidents && data.incidents) {
                     if (restoreOptions.merge) {
-                        DataStore.incidents = this.mergeArrays(DataStore.incidents, data.incidents, 'id');
+                        DataStore.incidents = this.mergeArrays(
+                            DataStore.incidents,
+                            data.incidents,
+                            'id'
+                        );
                     } else {
                         DataStore.incidents = data.incidents;
                     }
@@ -453,21 +461,25 @@ const BackupManager = {
             }
 
             if (typeof LogModule !== 'undefined') {
-                LogModule.addLog('update', 'バックアップ', 'system',
+                LogModule.addLog(
+                    'update',
+                    'バックアップ',
+                    'system',
                     `選択的リストア実行: Users=${restored.users}, Apps=${restored.apps}, ` +
-                    `Incidents=${restored.incidents}, Changes=${restored.changes}`);
+                        `Incidents=${restored.incidents}, Changes=${restored.changes}`
+                );
             }
 
             return {
                 success: true,
                 restored,
-                warnings: validation.warnings
+                warnings: validation.warnings,
             };
         } catch (error) {
             console.error('[BackupManager] リストアエラー:', error);
             return {
                 success: false,
-                errors: [error.message]
+                errors: [error.message],
             };
         }
     },
@@ -489,7 +501,7 @@ const BackupManager = {
     showRestoreDialog(file) {
         const reader = new FileReader();
 
-        reader.onload = (e) => {
+        reader.onload = e => {
             try {
                 const data = JSON.parse(e.target.result);
                 const validation = this.validateBackup(data);
@@ -499,18 +511,26 @@ const BackupManager = {
                         <div class="restore-validation ${validation.valid ? 'valid' : 'invalid'}">
                             <h4><i class="fas ${validation.valid ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
                                 検証結果: ${validation.valid ? '有効' : '無効'}</h4>
-                            ${validation.errors.length > 0 ? `
+                            ${
+                                validation.errors.length > 0
+                                    ? `
                                 <div class="validation-errors">
                                     <strong>エラー:</strong>
                                     <ul>${validation.errors.map(e => `<li>${escapeHtml(e)}</li>`).join('')}</ul>
                                 </div>
-                            ` : ''}
-                            ${validation.warnings.length > 0 ? `
+                            `
+                                    : ''
+                            }
+                            ${
+                                validation.warnings.length > 0
+                                    ? `
                                 <div class="validation-warnings">
                                     <strong>警告:</strong>
                                     <ul>${validation.warnings.map(w => `<li>${escapeHtml(w)}</li>`).join('')}</ul>
                                 </div>
-                            ` : ''}
+                            `
+                                    : ''
+                            }
                         </div>
 
                         <div class="restore-summary">
@@ -557,7 +577,7 @@ const BackupManager = {
                             incidents: document.getElementById('restoreIncidents')?.checked,
                             changes: document.getElementById('restoreChanges')?.checked,
                             logs: document.getElementById('restoreLogs')?.checked,
-                            merge: document.getElementById('restoreMerge')?.checked
+                            merge: document.getElementById('restoreMerge')?.checked,
                         };
 
                         const result = this.selectiveRestore(data, options);
@@ -565,7 +585,10 @@ const BackupManager = {
                         if (result.success) {
                             showToast('リストアが完了しました', 'success');
                         } else {
-                            showToast('リストアに失敗しました: ' + result.errors.join(', '), 'error');
+                            showToast(
+                                'リストアに失敗しました: ' + result.errors.join(', '),
+                                'error'
+                            );
                         }
                     });
                 }
@@ -596,7 +619,7 @@ const BackupManager = {
             const intervalMap = {
                 60: 'hourly',
                 1440: 'daily',
-                10080: 'weekly'
+                10080: 'weekly',
             };
             intervalEl.value = intervalMap[config.intervalMinutes] || 'daily';
         }
@@ -621,9 +644,9 @@ const BackupManager = {
         const intervalEl = document.getElementById('backupInterval');
         if (intervalEl) {
             const intervalMap = {
-                'hourly': 60,
-                'daily': 1440,
-                'weekly': 10080
+                hourly: 60,
+                daily: 1440,
+                weekly: 10080,
             };
             config.intervalMinutes = intervalMap[intervalEl.value] || 1440;
         }
@@ -666,12 +689,16 @@ const BackupManager = {
             manualBackups: manualBackups.length,
             totalSize,
             lastBackup: history[0]?.date || null,
-            nextScheduled: config.autoBackupEnabled && config.lastAutoBackup
-                ? new Date(new Date(config.lastAutoBackup).getTime() + config.intervalMinutes * 60 * 1000)
-                : null,
-            autoBackupEnabled: config.autoBackupEnabled
+            nextScheduled:
+                config.autoBackupEnabled && config.lastAutoBackup
+                    ? new Date(
+                          new Date(config.lastAutoBackup).getTime() +
+                              config.intervalMinutes * 60 * 1000
+                      )
+                    : null,
+            autoBackupEnabled: config.autoBackupEnabled,
         };
-    }
+    },
 };
 
 // グローバルエクスポート

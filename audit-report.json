@@ -1,56 +1,22 @@
 {
   "auditReportVersion": 2,
-  "vulnerabilities": {
-    "eslint": {
-      "name": "eslint",
-      "severity": "moderate",
-      "isDirect": true,
-      "via": [
-        {
-          "source": 1112686,
-          "name": "eslint",
-          "dependency": "eslint",
-          "title": "eslint has a Stack Overflow when serializing objects with circular references",
-          "url": "https://github.com/advisories/GHSA-p5wg-g6qr-c7cg",
-          "severity": "moderate",
-          "cwe": [
-            "CWE-674"
-          ],
-          "cvss": {
-            "score": 5.5,
-            "vectorString": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"
-          },
-          "range": "<9.26.0"
-        }
-      ],
-      "effects": [],
-      "range": "<9.26.0",
-      "nodes": [
-        "node_modules/eslint"
-      ],
-      "fixAvailable": {
-        "name": "eslint",
-        "version": "9.39.2",
-        "isSemVerMajor": true
-      }
-    }
-  },
+  "vulnerabilities": {},
   "metadata": {
     "vulnerabilities": {
       "info": 0,
       "low": 0,
-      "moderate": 1,
+      "moderate": 0,
       "high": 0,
       "critical": 0,
-      "total": 1
+      "total": 0
     },
     "dependencies": {
       "prod": 1,
-      "dev": 420,
+      "dev": 416,
       "optional": 1,
-      "peer": 4,
+      "peer": 0,
       "peerOptional": 0,
-      "total": 420
+      "total": 416
     }
   }
 }

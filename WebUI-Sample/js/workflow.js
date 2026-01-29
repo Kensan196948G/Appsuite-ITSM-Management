@@ -34,7 +34,7 @@ const WorkflowEngine = {
         open: ['in_progress', 'closed'],
         in_progress: ['resolved', 'open'],
         resolved: ['closed', 'in_progress'],
-        closed: ['in_progress']
+        closed: ['in_progress'],
     },
 
     /**
@@ -44,7 +44,7 @@ const WorkflowEngine = {
         open: 'オープン',
         in_progress: '対応中',
         resolved: '解決済み',
-        closed: 'クローズ'
+        closed: 'クローズ',
     },
 
     /**
@@ -56,7 +56,7 @@ const WorkflowEngine = {
         approved: ['in_progress'],
         in_progress: ['completed'],
         completed: [],
-        rejected: []
+        rejected: [],
     },
 
     /**
@@ -68,7 +68,7 @@ const WorkflowEngine = {
         approved: '承認済み',
         in_progress: '実施中',
         completed: '完了',
-        rejected: '却下'
+        rejected: '却下',
     },
 
     // ========================================
@@ -82,17 +82,17 @@ const WorkflowEngine = {
      */
     SLA_DEFINITIONS: {
         high: {
-            response: 1 * 60 * 60 * 1000,      // 1時間
-            resolution: 4 * 60 * 60 * 1000     // 4時間
+            response: 1 * 60 * 60 * 1000, // 1時間
+            resolution: 4 * 60 * 60 * 1000, // 4時間
         },
         medium: {
-            response: 4 * 60 * 60 * 1000,      // 4時間
-            resolution: 24 * 60 * 60 * 1000    // 24時間
+            response: 4 * 60 * 60 * 1000, // 4時間
+            resolution: 24 * 60 * 60 * 1000, // 24時間
         },
         low: {
-            response: 24 * 60 * 60 * 1000,     // 24時間
-            resolution: 72 * 60 * 60 * 1000    // 72時間
-        }
+            response: 24 * 60 * 60 * 1000, // 24時間
+            resolution: 72 * 60 * 60 * 1000, // 72時間
+        },
     },
 
     // ========================================
@@ -154,7 +154,7 @@ const WorkflowEngine = {
 
         return {
             valid: false,
-            message: `「${fromLabel}」から「${toLabel}」への遷移は許可されていません`
+            message: `「${fromLabel}」から「${toLabel}」への遷移は許可されていません`,
         };
     },
 
@@ -182,7 +182,7 @@ const WorkflowEngine = {
 
         return {
             valid: false,
-            message: `「${fromLabel}」から「${toLabel}」への遷移は許可されていません`
+            message: `「${fromLabel}」から「${toLabel}」への遷移は許可されていません`,
         };
     },
 
@@ -206,15 +206,17 @@ const WorkflowEngine = {
         }
 
         // 現在のステータスも選択肢に含める
-        const result = [{
-            value: currentStatus,
-            label: labels[currentStatus] || currentStatus
-        }];
+        const result = [
+            {
+                value: currentStatus,
+                label: labels[currentStatus] || currentStatus,
+            },
+        ];
 
         transitions.forEach(status => {
             result.push({
                 value: status,
-                label: labels[status] || status
+                label: labels[status] || status,
             });
         });
 
@@ -269,7 +271,7 @@ const WorkflowEngine = {
                 status: 'completed',
                 remaining: null,
                 deadline: null,
-                message: 'SLA評価完了'
+                message: 'SLA評価完了',
             };
         }
 
@@ -281,7 +283,7 @@ const WorkflowEngine = {
                 status: 'unknown',
                 remaining: null,
                 deadline: null,
-                message: 'SLA定義なし'
+                message: 'SLA定義なし',
             };
         }
 
@@ -292,7 +294,7 @@ const WorkflowEngine = {
                 status: 'unknown',
                 remaining: null,
                 deadline: null,
-                message: '作成日時不明'
+                message: '作成日時不明',
             };
         }
 
@@ -328,7 +330,7 @@ const WorkflowEngine = {
 
         return {
             response: new Date(created.getTime() + sla.response),
-            resolution: new Date(created.getTime() + sla.resolution)
+            resolution: new Date(created.getTime() + sla.resolution),
         };
     },
 
@@ -342,8 +344,8 @@ const WorkflowEngine = {
             return { violations: [], warnings: [] };
         }
 
-        const activeIncidents = DataStore.incidents.filter(i =>
-            i.status !== 'closed' && i.status !== 'resolved'
+        const activeIncidents = DataStore.incidents.filter(
+            i => i.status !== 'closed' && i.status !== 'resolved'
         );
 
         const violations = [];
@@ -355,12 +357,12 @@ const WorkflowEngine = {
             if (slaStatus.status === 'breach') {
                 violations.push({
                     incident,
-                    slaStatus
+                    slaStatus,
                 });
             } else if (slaStatus.status === 'warning') {
                 warnings.push({
                     incident,
-                    slaStatus
+                    slaStatus,
                 });
             }
         });
@@ -401,9 +403,7 @@ const WorkflowEngine = {
         const escalationMs = escalationHours * 60 * 60 * 1000;
 
         // オープン状態かつ未エスカレートのインシデントを取得
-        const candidates = DataStore.incidents.filter(i =>
-            i.status === 'open' && !i.escalated
-        );
+        const candidates = DataStore.incidents.filter(i => i.status === 'open' && !i.escalated);
 
         const now = new Date();
 
@@ -427,7 +427,10 @@ const WorkflowEngine = {
         // 自動アサイン（設定がある場合）
         if (typeof SettingsModule !== 'undefined') {
             const settings = SettingsModule.load();
-            if (settings.workflow?.incidentAutoAssign && settings.workflow?.incidentDefaultAssignee) {
+            if (
+                settings.workflow?.incidentAutoAssign &&
+                settings.workflow?.incidentDefaultAssignee
+            ) {
                 incident.assignee = settings.workflow.incidentDefaultAssignee;
             }
         }
@@ -439,8 +442,12 @@ const WorkflowEngine = {
 
         // ログ記録
         if (typeof LogModule !== 'undefined') {
-            LogModule.addLog('escalation', 'インシデント', 'incident',
-                `エスカレーション: ${incident.id} - ${incident.title}`);
+            LogModule.addLog(
+                'escalation',
+                'インシデント',
+                'incident',
+                `エスカレーション: ${incident.id} - ${incident.title}`
+            );
         }
 
         console.log(`WorkflowEngine: インシデント ${incident.id} をエスカレートしました`);
@@ -479,7 +486,9 @@ const WorkflowEngine = {
      * @returns {string} フォーマットされた時間文字列
      */
     formatDuration(ms) {
-        if (ms < 0) {ms = 0;}
+        if (ms < 0) {
+            ms = 0;
+        }
 
         const hours = Math.floor(ms / (60 * 60 * 1000));
         const minutes = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
@@ -502,16 +511,16 @@ const WorkflowEngine = {
      */
     getSlaStatusBadgeClass(slaStatus) {
         switch (slaStatus) {
-        case 'ok':
-            return 'badge-success';
-        case 'warning':
-            return 'badge-warning';
-        case 'breach':
-            return 'badge-danger';
-        case 'completed':
-            return 'badge-info';
-        default:
-            return 'badge-secondary';
+            case 'ok':
+                return 'badge-success';
+            case 'warning':
+                return 'badge-warning';
+            case 'breach':
+                return 'badge-danger';
+            case 'completed':
+                return 'badge-info';
+            default:
+                return 'badge-secondary';
         }
     },
 
@@ -522,18 +531,18 @@ const WorkflowEngine = {
      */
     getSlaStatusIcon(slaStatus) {
         switch (slaStatus) {
-        case 'ok':
-            return 'fa-check-circle';
-        case 'warning':
-            return 'fa-exclamation-triangle';
-        case 'breach':
-            return 'fa-times-circle';
-        case 'completed':
-            return 'fa-flag-checkered';
-        default:
-            return 'fa-question-circle';
+            case 'ok':
+                return 'fa-check-circle';
+            case 'warning':
+                return 'fa-exclamation-triangle';
+            case 'breach':
+                return 'fa-times-circle';
+            case 'completed':
+                return 'fa-flag-checkered';
+            default:
+                return 'fa-question-circle';
         }
-    }
+    },
 };
 
 // グローバルに公開

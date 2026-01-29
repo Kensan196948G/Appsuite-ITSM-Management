@@ -28,7 +28,7 @@ env:
 
 jobs:
   build-and-fix:
-    runs-on: self-hosted  # Linux self-hosted runner required
+    runs-on: ubuntu-latest  # Changed from self-hosted for compatibility
     timeout-minutes: 30
 
     steps:
@@ -46,7 +46,8 @@ jobs:
       # ========================================
       - name: Setup PowerShell 7
         run: |
-          echo "========================================" echo "🔧 PowerShell Setup"
+          echo "========================================"
+          echo "🔧 PowerShell Setup"
           echo "========================================"
           pwsh -Command '$PSVersionTable'
           echo ""
@@ -82,7 +83,8 @@ jobs:
         id: build
         run: |
           set -o pipefail
-          echo "========================================" echo "🏗️  Running build.ps1"
+          echo "========================================"
+          echo "🏗️  Running build.ps1"
           echo "========================================"
           pwsh ./build.ps1 2>&1 | tee build.log
         continue-on-error: true

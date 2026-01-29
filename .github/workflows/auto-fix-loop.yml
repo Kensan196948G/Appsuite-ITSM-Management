@@ -161,14 +161,7 @@ jobs:
             echo "changes_committed=false" >> $GITHUB_OUTPUT
           else
             TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S UTC")
-            git commit -m "🔧 Auto-fix: Errors detected and fixed
-
-- Fix iterations: ${{ steps.fix-loop.outputs.fix_iterations }}
-- Vulnerabilities checked: ${{ steps.security-check.outputs.vulnerabilities }}
-- Timestamp: $TIMESTAMP
-
-Automated by GitHub Actions"
-
+            git commit -m "fix: Auto-fix errors (iterations: ${{ steps.fix-loop.outputs.fix_iterations }})"
             git push
             echo "changes_committed=true" >> $GITHUB_OUTPUT
           fi

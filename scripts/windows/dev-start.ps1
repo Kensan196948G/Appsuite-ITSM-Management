@@ -17,7 +17,7 @@ Write-Host "   プロトコル: HTTP" -ForegroundColor White
 Write-Host ""
 Write-Host "🌐 アクセスURL:" -ForegroundColor Yellow
 Write-Host "   ローカル: http://localhost:$PORT" -ForegroundColor Cyan
-Write-Host "   LAN: http://192.168.0.145:$PORT" -ForegroundColor Cyan
+Write-Host "   LAN: http://172.23.10.109:$PORT" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "📌 ポート情報:" -ForegroundColor Yellow
 Write-Host "   このプロジェクト専用ポート（変更不可）: $PORT" -ForegroundColor White

@@ -3,7 +3,7 @@
   "port": 3100,
   "protocol": "http",
   "host": "localhost",
-  "lanIP": "192.168.0.145",
+  "lanIP": "172.23.10.109",
   "logLevel": "DEBUG",
   "enableHotReload": true,
   "enableSourceMaps": true,
@@ -11,7 +11,7 @@
   "sampleData": true,
   "urls": {
     "local": "http://localhost:3100",
-    "lan": "http://192.168.0.145:3100"
+    "lan": "http://172.23.10.109:3100"
   },
   "cors": {
     "enabled": true,

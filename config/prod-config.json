@@ -3,7 +3,7 @@
   "port": 8443,
   "protocol": "https",
   "host": "localhost",
-  "lanIP": "192.168.0.145",
+  "lanIP": "172.23.10.109",
   "logLevel": "INFO",
   "enableHotReload": false,
   "enableSourceMaps": false,
@@ -15,11 +15,11 @@
   },
   "urls": {
     "local": "https://localhost:8443",
-    "lan": "https://192.168.0.145:8443"
+    "lan": "https://172.23.10.109:8443"
   },
   "cors": {
     "enabled": false,
-    "origin": "https://192.168.0.145:8443"
+    "origin": "https://172.23.10.109:8443"
   },
   "cache": {
     "enabled": true,

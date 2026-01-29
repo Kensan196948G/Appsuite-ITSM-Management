@@ -54,7 +54,7 @@ cd Appsuite-ITSM-Management
 # 依存関係インストール
 npm install
 
-# 開発環境起動（HTTP、ポート3000）
+# 開発環境起動（HTTP、ポート3100）
 npm run dev:win
 
 # または本番環境起動（HTTPS、ポート8443）
@@ -71,7 +71,7 @@ cd Appsuite-ITSM-Management
 # 依存関係インストール
 npm install
 
-# 開発環境起動（HTTP、ポート3000）
+# 開発環境起動（HTTP、ポート3100）
 npm run dev:linux
 
 # または本番環境起動（HTTPS、ポート8443）
@@ -82,8 +82,8 @@ npm run prod:linux
 
 | 環境 | ローカル | LAN |
 |------|---------|-----|
-| 開発環境 | http://localhost:3000 | http://192.168.0.145:3000 |
-| 本番環境 | https://localhost:8443 | https://192.168.0.145:8443 |
+| 開発環境 | http://localhost:3100 | http://172.23.10.109:3100 |
+| 本番環境 | https://localhost:8443 | https://172.23.10.109:8443 |
 
 **注**: 本番環境は自己署名SSL証明書を使用しています。ブラウザで警告が表示されますが、安全性を確認の上で承認してください。
 
@@ -140,7 +140,7 @@ Appsuite-ITSM-Management/
 │   ├── ユーザーガイド(User-Guide).md
 │   └── 用語集(Glossary).md
 │
-├── 📁 WebUI-Sample/              # 開発環境（HTTP:3000）
+├── 📁 WebUI-Sample/              # 開発環境（HTTP:3100）
 │   ├── index.html                # メインHTML（SPA）
 │   ├── css/styles.css            # スタイルシート
 │   ├── js/

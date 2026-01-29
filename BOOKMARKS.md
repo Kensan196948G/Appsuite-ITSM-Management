@@ -12,7 +12,7 @@
 - **ポート**: 3100（本プロジェクト専用、変更不可）
 
 #### LAN内アクセス
-- **URL**: http://192.168.0.145:3100
+- **URL**: http://172.23.10.109:3100
 - **プロトコル**: HTTP
 - **用途**: 同一ネットワーク内からのアクセス
 - **ブックマーク名**: 【開発】AppSuite ITSM - LAN
@@ -29,7 +29,7 @@
 - **注意**: 初回アクセス時に証明書の警告が表示されます
 
 #### LAN内アクセス
-- **URL**: https://192.168.0.145:8443
+- **URL**: https://172.23.10.109:8443
 - **プロトコル**: HTTPS (自己署名証明書)
 - **用途**: 同一ネットワーク内からの本番アクセス
 - **ブックマーク名**: 【本番】AppSuite ITSM - LAN
@@ -48,13 +48,13 @@
 ```
 📁 AppSuite ITSM
   ├─ 【開発】AppSuite ITSM - Local
-  │   http://localhost:3000
+  │   http://localhost:3100
   ├─ 【開発】AppSuite ITSM - LAN
-  │   http://192.168.0.145:3000
+  │   http://172.23.10.109:3100
   ├─ 【本番】AppSuite ITSM - Local
   │   https://localhost:8443
   └─ 【本番】AppSuite ITSM - LAN
-      https://192.168.0.145:8443
+      https://172.23.10.109:8443
 ```
 
 ### Firefox
@@ -88,7 +88,7 @@
 ## ポート番号の固定
 
 ### 開発環境
-- **ポート番号**: 3000
+- **ポート番号**: 3100
 - **変更禁止**: 開発途中での変更不可
 
 ### 本番環境
@@ -123,10 +123,10 @@ npm run ssl:generate
 ### 開発環境テスト
 ```bash
 # Linux
-curl -I http://localhost:3000
+curl -I http://localhost:3100
 
 # Windows (PowerShell)
-Invoke-WebRequest -Uri http://localhost:3000 -Method Head
+Invoke-WebRequest -Uri http://localhost:3100 -Method Head
 ```
 
 ### 本番環境テスト
@@ -145,11 +145,11 @@ Invoke-WebRequest -Uri https://localhost:8443 -Method Head -SkipCertificateCheck
 ### ポートが既に使用されている
 ```bash
 # Linux: ポート使用状況確認
-sudo lsof -i :3000
+sudo lsof -i :3100
 sudo lsof -i :8443
 
 # Windows: ポート使用状況確認
-netstat -ano | findstr :3000
+netstat -ano | findstr :3100
 netstat -ano | findstr :8443
 ```
 
@@ -175,7 +175,7 @@ Get-ScheduledTask -TaskName "AppSuite-ITSM-*"
 ### Linux (ufw)
 ```bash
 # 開発環境ポート開放
-sudo ufw allow 3000/tcp
+sudo ufw allow 3100/tcp
 
 # 本番環境ポート開放
 sudo ufw allow 8443/tcp
@@ -184,7 +184,7 @@ sudo ufw allow 8443/tcp
 ### Windows Defender
 1. コントロールパネル > システムとセキュリティ > Windows Defender ファイアウォール
 2. 「詳細設定」をクリック
-3. 「受信の規則」で新しいポート規則を追加（3000, 8443）
+3. 「受信の規則」で新しいポート規則を追加（3100, 8443）
 
 ---
 

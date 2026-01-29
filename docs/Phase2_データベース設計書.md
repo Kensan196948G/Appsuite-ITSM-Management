@@ -367,7 +367,7 @@ interface Log {
   "target": "INCIDENT",
   "targetId": "INC-20260121-001",
   "details": "{\"title\":\"経費精算システムにログインできない\",\"priority\":\"P2\"}",
-  "ipAddress": "192.168.0.145",
+  "ipAddress": "172.23.10.109",
   "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
 }
 ```

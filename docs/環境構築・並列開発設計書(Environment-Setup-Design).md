@@ -28,11 +28,11 @@
 | 項目 | 設定値 |
 |------|--------|
 | OS | Windows 11（Linux共有フォルダ） |
-| LAN IP | 192.168.0.145 |
+| LAN IP | 172.23.10.109 |
 | 開発環境ポート | 3000 (HTTP) |
 | 本番環境ポート | 8443 (HTTPS) |
-| 開発環境URL | http://localhost:3000 (ローカル)<br>http://192.168.0.145:3000 (LAN) |
-| 本番環境URL | https://localhost:8443 (ローカル)<br>https://192.168.0.145:8443 (LAN) |
+| 開発環境URL | http://localhost:3000 (ローカル)<br>http://172.23.10.109:3000 (LAN) |
+| 本番環境URL | https://localhost:8443 (ローカル)<br>https://172.23.10.109:8443 (LAN) |
 | Node.js | Windows/Linux両対応 |
 | Git | Worktree対応 |
 
@@ -291,7 +291,7 @@ Appsuite-ITSM-Management/
 openssl req -x509 -newkey rsa:4096 -keyout ssl/dev-key.pem -out ssl/dev-cert.pem -days 365 -nodes -subj "/CN=localhost"
 
 # 本番環境用
-openssl req -x509 -newkey rsa:4096 -keyout ssl/prod-key.pem -out ssl/prod-cert.pem -days 365 -nodes -subj "/CN=192.168.0.145"
+openssl req -x509 -newkey rsa:4096 -keyout ssl/prod-key.pem -out ssl/prod-cert.pem -days 365 -nodes -subj "/CN=172.23.10.109"
 ```
 
 ---
@@ -337,7 +337,7 @@ $ENV = "development"
 Write-Host "🚀 Starting Development Environment..." -ForegroundColor Green
 Write-Host "   Port: $PORT" -ForegroundColor Cyan
 Write-Host "   URL: http://localhost:$PORT" -ForegroundColor Cyan
-Write-Host "   LAN: http://192.168.0.145:$PORT" -ForegroundColor Cyan
+Write-Host "   LAN: http://172.23.10.109:$PORT" -ForegroundColor Cyan
 
 # Node.jsサーバー起動
 Set-Location WebUI-Sample
@@ -355,7 +355,7 @@ $ENV = "production"
 Write-Host "🔒 Starting Production Environment..." -ForegroundColor Green
 Write-Host "   Port: $PORT" -ForegroundColor Cyan
 Write-Host "   URL: https://localhost:$PORT" -ForegroundColor Cyan
-Write-Host "   LAN: https://192.168.0.145:$PORT" -ForegroundColor Cyan
+Write-Host "   LAN: https://172.23.10.109:$PORT" -ForegroundColor Cyan
 
 # HTTPS Node.jsサーバー起動
 Set-Location WebUI-Production
@@ -375,7 +375,7 @@ ENV="development"
 echo "🚀 Starting Development Environment..."
 echo "   Port: $PORT"
 echo "   URL: http://localhost:$PORT"
-echo "   LAN: http://192.168.0.145:$PORT"
+echo "   LAN: http://172.23.10.109:$PORT"
 
 cd WebUI-Sample
 npx http-server -p $PORT -c-1 --cors
@@ -390,7 +390,7 @@ ENV="production"
 echo "🔒 Starting Production Environment..."
 echo "   Port: $PORT"
 echo "   URL: https://localhost:$PORT"
-echo "   LAN: https://192.168.0.145:$PORT"
+echo "   LAN: https://172.23.10.109:$PORT"
 
 cd WebUI-Production
 npx http-server -p $PORT --ssl --cert ../ssl/prod-cert.pem --key ../ssl/prod-key.pem
@@ -475,9 +475,9 @@ sudo systemctl start appsuite-itsm-prod
 | 環境 | URL | 表示名 |
 |------|-----|--------|
 | 開発（ローカル） | http://localhost:3000 | [開発] AppSuite ITSM (localhost) |
-| 開発（LAN） | http://192.168.0.145:3000 | [開発] AppSuite ITSM (LAN) |
+| 開発（LAN） | http://172.23.10.109:3000 | [開発] AppSuite ITSM (LAN) |
 | 本番（ローカル） | https://localhost:8443 | [本番] AppSuite ITSM (localhost) |
-| 本番（LAN） | https://192.168.0.145:8443 | [本番] AppSuite ITSM (LAN) |
+| 本番（LAN） | https://172.23.10.109:8443 | [本番] AppSuite ITSM (LAN) |
 
 ---
 

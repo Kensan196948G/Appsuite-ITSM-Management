@@ -22,7 +22,7 @@
     "prod:linux": "bash scripts/linux/prod-start.sh",
     "ssl:generate": "npm run ssl:dev && npm run ssl:prod",
     "ssl:dev": "openssl req -x509 -newkey rsa:4096 -keyout ssl/dev-key.pem -out ssl/dev-cert.pem -days 365 -nodes -subj \"/CN=localhost\"",
-    "ssl:prod": "openssl req -x509 -newkey rsa:4096 -keyout ssl/prod-key.pem -out ssl/prod-cert.pem -days 365 -nodes -subj \"/CN=192.168.0.145\"",
+    "ssl:prod": "openssl req -x509 -newkey rsa:4096 -keyout ssl/prod-key.pem -out ssl/prod-cert.pem -days 365 -nodes -subj \"/CN=172.23.10.109\"",
     "lint": "eslint WebUI-Production/js/*.js WebUI-Sample/js/*.js",
     "lint:fix": "eslint WebUI-Production/js/*.js WebUI-Sample/js/*.js --fix",
     "format": "prettier --write \"WebUI-Production/**/*.{js,css,html}\" \"WebUI-Sample/**/*.{js,css,html}\"",

@@ -17,7 +17,7 @@ Write-Host "   プロトコル: HTTPS (SSL/TLS)" -ForegroundColor White
 Write-Host ""
 Write-Host "🌐 アクセスURL:" -ForegroundColor Yellow
 Write-Host "   ローカル: https://localhost:$PORT" -ForegroundColor Cyan
-Write-Host "   LAN: https://192.168.0.145:$PORT" -ForegroundColor Cyan
+Write-Host "   LAN: https://172.23.10.109:$PORT" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "⚠️  注意事項:" -ForegroundColor Yellow
 Write-Host "   - 自己署名SSL証明書を使用しています" -ForegroundColor White

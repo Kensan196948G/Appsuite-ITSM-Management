@@ -400,7 +400,7 @@ openssl req -x509 -newkey rsa:4096 \
   -keyout ssl/prod-key.pem \
   -out ssl/prod-cert.pem \
   -days 365 -nodes \
-  -subj "/CN=192.168.0.145"
+  -subj "/CN=172.23.10.109"
 ```
 
 ### 5.2 HTTPセキュリティヘッダー
@@ -430,7 +430,7 @@ Content-Security-Policy: default-src 'self'
 # /etc/apache2/sites-available/appsuite-itsm.conf
 
 <VirtualHost *:8443>
-    ServerName 192.168.0.145
+    ServerName 172.23.10.109
 
     SSLEngine on
     SSLCertificateFile /path/to/ssl/prod-cert.pem

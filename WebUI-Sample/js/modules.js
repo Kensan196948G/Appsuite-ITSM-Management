@@ -2,8 +2,42 @@
  * AppSuite 管理運用システム - 機能モジュール
  */
 
+/**
+ * メールアドレス検証
+ * @param {string} value - 検証する値
+ * @returns {boolean} - 有効なメールアドレスの場合true
+ */
 function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+/**
+ * 機密情報フィルタリング（ログ・エクスポート用）
+ * CVE-004対策: パスワード、APIキー、トークン等の機密情報を除外
+ * @param {string} text - フィルタリング対象のテキスト
+ * @returns {string} - 機密情報をマスキングしたテキスト
+ */
+function sanitizeSensitiveData(text) {
+    if (!text || typeof text !== 'string') {
+        return text;
+    }
+
+    // 機密情報パターンのマスキング
+    let sanitized = text;
+
+    // パスワード関連
+    sanitized = sanitized.replace(/(password|passwd|pwd)[\s:=]+['"]?[\w!@#$%^&*()_+-=]+['"]?/gi, '$1: ******');
+
+    // APIキー関連
+    sanitized = sanitized.replace(/(api[-_]?key|apikey|token|bearer)[\s:=]+['"]?[\w-]+['"]?/gi, '$1: ******');
+
+    // 認証情報
+    sanitized = sanitized.replace(/(authorization)[\s:=]+['"]?[\w\s]+['"]?/gi, '$1: ******');
+
+    // クレジットカード番号パターン（念のため）
+    sanitized = sanitized.replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, '****-****-****-****');
+
+    return sanitized;
 }
 
 // ユーザー管理モジュール
@@ -506,15 +540,50 @@ const LogModule = {
     addLog(action, target, targetType, detail) {
         const now = new Date();
         const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+        // IPアドレスの取得
+        // 注意: ブラウザ環境ではクライアントIPアドレスを直接取得することは
+        // セキュリティ上の理由により不可能です。
+        // 本番環境では、サーバーサイドでリクエストヘッダー（X-Forwarded-For等）から
+        // IPアドレスを取得し、APIレスポンスに含めるか、サーバーサイドでログを記録してください。
+        const clientIp = this.getClientIP();
+
+        // CVE-004対策: 機密情報のフィルタリング
+        const sanitizedDetail = sanitizeSensitiveData(detail);
+        const sanitizedTarget = sanitizeSensitiveData(target);
+
         DataStore.logs.unshift({
             timestamp: timestamp,
             user: document.getElementById('currentUser').textContent,
             action: action,
-            target: target,
+            target: sanitizedTarget,
             targetType: targetType,
-            detail: detail,
-            ip: '192.168.1.100',
+            detail: sanitizedDetail,
+            ip: clientIp,
         });
+    },
+
+    /**
+     * クライアントIPアドレス取得（ブラウザ環境では制限あり）
+     * @returns {string} IPアドレス（取得不可の場合は'N/A'）
+     */
+    getClientIP() {
+        // ブラウザ環境では真のクライアントIPを取得できないため、
+        // 'N/A'を返します。
+        //
+        // 本番環境での推奨実装:
+        // 1. サーバーAPIエンドポイント（/api/client-info）を作成
+        // 2. サーバー側でリクエストヘッダーからIPを取得
+        //    - req.headers['x-forwarded-for']（プロキシ経由の場合）
+        //    - req.connection.remoteAddress（直接接続の場合）
+        // 3. 各ログ記録時にAPIを呼び出してIPを取得
+        //
+        // 将来の実装例:
+        // if (typeof ApiClient !== 'undefined' && ApiClient.getClientInfo) {
+        //     return await ApiClient.getClientInfo();
+        // }
+
+        return 'N/A (ブラウザ側では取得不可)';
     },
 
     search() {

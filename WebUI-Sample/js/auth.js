@@ -257,28 +257,63 @@ const AuthModule = {
      * @param {string} hash - 保存されているハッシュ
      * @returns {Promise<boolean>} - 一致する場合true
      */
-    async verifyPassword(password, hash) {
-        // 管理者アカウント：admin / admin123
-        if (hash === 'admin') {
-            return password === 'admin123';
+    async verifyPassword(password, storedHashWithSalt) {
+        // 本番環境：SHA-256ハッシュ + salt比較
+        // フォーマット: "hash:salt"
+        if (!storedHashWithSalt || typeof storedHashWithSalt !== 'string') {
+            return false;
         }
 
-        // デモ環境：パスワードが'demo'または'password123'なら許可
-        if (hash === 'demo') {
-            return password === 'demo' || password === 'password123';
+        const parts = storedHashWithSalt.split(':');
+        if (parts.length !== 2) {
+            // 旧フォーマット（salt無し）との後方互換性
+            // セキュリティ警告: 旧フォーマットは脆弱なため、パスワード再設定を推奨
+            console.warn('⚠️ セキュリティ警告: 旧形式のパスワードハッシュが検出されました。パスワードを再設定してください。');
+            const inputHash = await this.hashPasswordLegacy(password);
+            return inputHash === storedHashWithSalt;
         }
 
-        // 本番環境：SHA-256ハッシュ比較
-        const inputHash = await this.hashPassword(password);
-        return inputHash === hash;
+        const [storedHash, salt] = parts;
+        const inputHash = await this.hashPassword(password, salt);
+        return inputHash === storedHash;
     },
 
     /**
-     * パスワードハッシュ化（SHA-256）
+     * パスワードハッシュ化（SHA-256 + ランダムsalt）
+     * @param {string} password - パスワード
+     * @param {string} [salt] - salt（省略時は新規生成）
+     * @returns {Promise<string>} - ハッシュ値（フォーマット: "hash:salt"）
+     */
+    async hashPassword(password, salt = null) {
+        // saltが指定されていない場合は新規生成（128ビット = 32文字の16進数）
+        if (!salt) {
+            const saltArray = new Uint8Array(16);
+            crypto.getRandomValues(saltArray);
+            salt = Array.from(saltArray).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password + salt);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // saltを指定された場合（検証時）はハッシュのみ返す
+        // saltを生成した場合（登録時）は"hash:salt"形式で返す
+        if (arguments.length > 1) {
+            return hash;
+        } else {
+            return `${hash}:${salt}`;
+        }
+    },
+
+    /**
+     * パスワードハッシュ化（旧方式・互換性のため残存）
+     * @deprecated セキュリティ上の理由により非推奨。hashPassword()を使用してください。
      * @param {string} password - パスワード
      * @returns {Promise<string>} - ハッシュ値
      */
-    async hashPassword(password) {
+    async hashPasswordLegacy(password) {
         const encoder = new TextEncoder();
         const data = encoder.encode(password + 'appsuite_salt_2026');
         const hashBuffer = await crypto.subtle.digest('SHA-256', data);

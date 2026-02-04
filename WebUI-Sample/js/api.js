@@ -514,6 +514,26 @@ const DataStore = {
      * 初期化：localStorageからデータを読み込む
      */
     init() {
+        // CVE-004対策: セキュリティ警告
+        // localStorageは平文でデータを保存するため、機密情報の保存には適していません。
+        // 本番環境では以下の対策を実施してください：
+        // 1. HTTPS必須（HTTPSでない場合、ネットワーク盗聴のリスク）
+        // 2. IndexedDBへの移行を検討（Web Crypto APIで暗号化可能）
+        // 3. サーバーサイドでのデータ管理を推奨
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            console.warn(
+                '%c⚠️ セキュリティ警告',
+                'background: #ff6b6b; color: white; font-weight: bold; padding: 4px 8px; border-radius: 3px;',
+                '\n本番環境ではHTTPSを使用してください。\nlocalStorageは平文保存のため、HTTPSなしではデータ漏洩のリスクがあります。'
+            );
+        }
+
+        console.info(
+            '%cℹ️ データストレージ情報',
+            'background: #4dabf7; color: white; font-weight: bold; padding: 4px 8px; border-radius: 3px;',
+            '\nlocalStorageを使用しています（開発環境向け）。\n本番環境では暗号化されたIndexedDBまたはサーバーサイドストレージへの移行を推奨します。'
+        );
+
         const collections = ['users', 'apps', 'incidents', 'changes', 'logs'];
         collections.forEach(collection => {
             const saved = localStorage.getItem(this.STORAGE_KEYS[collection]);

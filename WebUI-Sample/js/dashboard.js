@@ -1081,4 +1081,10 @@ const SystemStatus = {
     },
 };
 
+// Export to global scope
+window.DashboardManager = DashboardManager;
+window.KPIWidget = KPIWidget;
+window.QuickActions = QuickActions;
+window.SystemStatus = SystemStatus;
+
 // 初期化はapp.jsから呼び出される

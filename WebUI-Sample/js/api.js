@@ -867,3 +867,8 @@ function toggleApiKey() {
     const input = document.getElementById('apiKey');
     input.type = input.type === 'password' ? 'text' : 'password';
 }
+
+// Export to global scope for testing
+window.DataStore = DataStore;
+window.ApiConfig = ApiConfig;
+window.ApiSync = ApiSync;

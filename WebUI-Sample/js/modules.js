@@ -1859,3 +1859,11 @@ const ChangeModule = {
         this.render(filtered);
     },
 };
+
+// Export modules to global scope for inline onclick handlers and testing
+window.UserModule = UserModule;
+window.AppModule = AppModule;
+window.IncidentModule = IncidentModule;
+window.ChangeModule = ChangeModule;
+window.LogModule = LogModule;
+window.SettingsModule = SettingsModule;

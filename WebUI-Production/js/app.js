@@ -42,27 +42,27 @@ function showSection(sectionName) {
     }
 
     switch (sectionName) {
-        case 'dashboard':
-            updateDashboard();
-            break;
-        case 'users':
-            UserModule.refresh();
-            break;
-        case 'apps':
-            AppModule.refresh();
-            break;
-        case 'incidents':
-            IncidentModule.refresh();
-            break;
-        case 'changes':
-            ChangeModule.refresh();
-            break;
-        case 'logs':
-            LogModule.refresh();
-            break;
-        case 'settings':
-            SettingsModule.loadToForm();
-            break;
+    case 'dashboard':
+        updateDashboard();
+        break;
+    case 'users':
+        UserModule.refresh();
+        break;
+    case 'apps':
+        AppModule.refresh();
+        break;
+    case 'incidents':
+        IncidentModule.refresh();
+        break;
+    case 'changes':
+        ChangeModule.refresh();
+        break;
+    case 'logs':
+        LogModule.refresh();
+        break;
+    case 'settings':
+        SettingsModule.loadToForm();
+        break;
     }
 }
 

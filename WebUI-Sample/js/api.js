@@ -136,15 +136,15 @@ const Api = {
         };
 
         switch (ApiConfig.authMethod) {
-            case 'bearer':
-                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-                break;
-            case 'basic':
-                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-                break;
-            case 'apikey':
-                headers['X-API-Key'] = ApiConfig.apiKey;
-                break;
+        case 'bearer':
+            headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+            break;
+        case 'basic':
+            headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+            break;
+        case 'apikey':
+            headers['X-API-Key'] = ApiConfig.apiKey;
+            break;
         }
 
         return headers;

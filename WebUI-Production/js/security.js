@@ -22,7 +22,7 @@ const Security = {
             '<': '&lt;',
             '>': '&gt;',
             '"': '&quot;',
-            "'": '&#039;',
+            '\'': '&#039;',
             '/': '&#x2F;',
             '`': '&#x60;',
             '=': '&#x3D;',
@@ -46,7 +46,7 @@ const Security = {
             '&lt;': '<',
             '&gt;': '>',
             '&quot;': '"',
-            '&#039;': "'",
+            '&#039;': '\'',
             '&#x2F;': '/',
             '&#x60;': '`',
             '&#x3D;': '=',
@@ -91,7 +91,7 @@ const Security = {
             return '';
         }
         // シングルクォートをエスケープ
-        return str.replace(/'/g, "''");
+        return str.replace(/'/g, '\'\'');
     },
 };
 
@@ -333,27 +333,27 @@ const FormValidator = {
 
                 let valid = true;
                 switch (type) {
-                    case 'required':
-                        valid = Validator.required(value);
-                        break;
-                    case 'minLength':
-                        valid = Validator.minLength(value, params.min);
-                        break;
-                    case 'maxLength':
-                        valid = Validator.maxLength(value, params.max);
-                        break;
-                    case 'email':
-                        valid = !value || Validator.email(value);
-                        break;
-                    case 'pattern':
-                        valid = !value || Validator.pattern(value, params.pattern);
-                        break;
-                    case 'range':
-                        valid = !value || Validator.range(value, params.min, params.max);
-                        break;
-                    case 'custom':
-                        valid = params.fn(value, form);
-                        break;
+                case 'required':
+                    valid = Validator.required(value);
+                    break;
+                case 'minLength':
+                    valid = Validator.minLength(value, params.min);
+                    break;
+                case 'maxLength':
+                    valid = Validator.maxLength(value, params.max);
+                    break;
+                case 'email':
+                    valid = !value || Validator.email(value);
+                    break;
+                case 'pattern':
+                    valid = !value || Validator.pattern(value, params.pattern);
+                    break;
+                case 'range':
+                    valid = !value || Validator.range(value, params.min, params.max);
+                    break;
+                case 'custom':
+                    valid = params.fn(value, form);
+                    break;
                 }
 
                 if (!valid) {

@@ -617,3 +617,7 @@ function handleLogin(event) {
 function handleLogout() {
     AuthModule.logout();
 }
+
+// Export to global scope
+window.AuthModule = AuthModule;
+window.PasswordValidator = PasswordValidator;

@@ -50,7 +50,7 @@ const DashboardManager = {
         }
 
         // グローバル設定
-        Chart.defaults.font.family = "'Noto Sans JP', 'Hiragino Sans', sans-serif";
+        Chart.defaults.font.family = '\'Noto Sans JP\', \'Hiragino Sans\', sans-serif';
         Chart.defaults.responsive = true;
         Chart.defaults.maintainAspectRatio = false;
 
@@ -770,9 +770,9 @@ const KPIWidget = {
         const changeSuccessRate =
             completedChanges.length + failedChanges.length > 0
                 ? Math.round(
-                      (completedChanges.length / (completedChanges.length + failedChanges.length)) *
+                    (completedChanges.length / (completedChanges.length + failedChanges.length)) *
                           100
-                  )
+                )
                 : 100;
 
         // 今月のインシデント数
@@ -1080,5 +1080,11 @@ const SystemStatus = {
         };
     },
 };
+
+// Export to global scope
+window.DashboardManager = DashboardManager;
+window.KPIWidget = KPIWidget;
+window.QuickActions = QuickActions;
+window.SystemStatus = SystemStatus;
 
 // 初期化はapp.jsから呼び出される

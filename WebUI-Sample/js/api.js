@@ -136,15 +136,15 @@ const Api = {
         };
 
         switch (ApiConfig.authMethod) {
-            case 'bearer':
-                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-                break;
-            case 'basic':
-                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-                break;
-            case 'apikey':
-                headers['X-API-Key'] = ApiConfig.apiKey;
-                break;
+        case 'bearer':
+            headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+            break;
+        case 'basic':
+            headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+            break;
+        case 'apikey':
+            headers['X-API-Key'] = ApiConfig.apiKey;
+            break;
         }
 
         return headers;
@@ -867,3 +867,8 @@ function toggleApiKey() {
     const input = document.getElementById('apiKey');
     input.type = input.type === 'password' ? 'text' : 'password';
 }
+
+// Export to global scope for testing
+window.DataStore = DataStore;
+window.ApiConfig = ApiConfig;
+window.ApiSync = ApiSync;

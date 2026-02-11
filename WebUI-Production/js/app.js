@@ -78,14 +78,26 @@ function initNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', () => {
+            // undefined チェック追加
+            if (!item || !item.dataset) {
+                console.error('Navigation item or dataset is undefined');
+                return;
+            }
+
             const section = item.dataset.section;
+            if (!section) {
+                console.warn('Section name is undefined for navigation item');
+                return;
+            }
+
             showSection(section);
 
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
 
-            if (window.innerWidth <= 1024) {
-                document.getElementById('sidebar').classList.remove('active');
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 1024 && sidebar) {
+                sidebar.classList.remove('active');
             }
         });
     });
@@ -93,6 +105,29 @@ function initNavigation() {
 
 // セクション表示切替
 function showSection(sectionName) {
+    // CVE-003対策: 認証チェック追加
+    if (!AuthModule.isAuthenticated()) {
+        console.warn('⚠️ セキュリティ: 未認証アクセスをブロックしました');
+        AuthModule.showLoginScreen();
+        return;
+    }
+
+    // CVE-004対策: 管理者専用機能の権限チェック
+    const adminOnlySections = ['users', 'settings'];
+    if (adminOnlySections.includes(sectionName)) {
+        const user = AuthModule.getCurrentUser();
+        if (!user || (user.role !== '管理者' && user.role !== 'administrator')) {
+            console.warn('⚠️ セキュリティ: 権限不足のアクセスをブロックしました', {
+                user: user ? user.username : 'unknown',
+                role: user ? user.role : 'unknown',
+                requestedSection: sectionName
+            });
+            showToast('この機能は管理者のみ利用可能です', 'error');
+            showSection('dashboard'); // ダッシュボードにリダイレクト
+            return;
+        }
+    }
+
     const sections = document.querySelectorAll('.section');
     sections.forEach(sec => sec.classList.add('hidden'));
 

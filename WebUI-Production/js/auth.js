@@ -472,14 +472,24 @@ const AuthModule = {
     async handleLoginSubmit(event) {
         event.preventDefault();
 
-        const username = document.getElementById('loginUsername').value.trim();
-        const password = document.getElementById('loginPassword').value;
+        const username = document.getElementById('loginUsername')?.value.trim();
+        const password = document.getElementById('loginPassword')?.value;
         const errorElement = document.getElementById('loginError');
-        const submitButton = event.target.querySelector('button[type="submit"]');
+        const submitButton = event.target?.querySelector('button[type="submit"]');
 
-        // ボタン無効化
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ログイン中...';
+        // 入力要素の存在確認
+        if (!username || !password) {
+            if (errorElement) {
+                errorElement.textContent = 'ユーザー名とパスワードを入力してください';
+            }
+            return;
+        }
+
+        // ボタン無効化（ボタンが存在する場合のみ）
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ログイン中...';
+        }
 
         try {
             const result = await this.login(username, password);
@@ -500,11 +510,16 @@ const AuthModule = {
                 document.getElementById('loginPassword').value = '';
             }
         } catch (error) {
-            errorElement.textContent = 'ログイン処理中にエラーが発生しました';
+            if (errorElement) {
+                errorElement.textContent = 'ログイン処理中にエラーが発生しました';
+            }
             console.error('Login error:', error);
         } finally {
-            submitButton.disabled = false;
-            submitButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> ログイン';
+            // ボタンの再有効化（ボタンが存在する場合のみ）
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> ログイン';
+            }
         }
     },
 

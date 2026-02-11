@@ -55,15 +55,19 @@ Object.defineProperty(window, 'sessionStorage', {
     value: sessionStorageMock,
 });
 
-// crypto.getRandomValues のモック
-Object.defineProperty(window, 'crypto', {
+// TextEncoder/TextDecoder のポリフィル（Node.js 11+で標準提供）
+const { TextEncoder, TextDecoder } = require('util');
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// Web Crypto API のモック（実際の crypto.subtle を使用）
+const { webcrypto } = require('crypto');
+Object.defineProperty(global, 'crypto', {
     value: {
-        getRandomValues: jest.fn((arr) => {
-            for (let i = 0; i < arr.length; i++) {
-                arr[i] = Math.floor(Math.random() * 256);
-            }
-            return arr;
-        }),
+        getRandomValues: (arr) => {
+            return webcrypto.getRandomValues(arr);
+        },
+        subtle: webcrypto.subtle
     },
 });
 

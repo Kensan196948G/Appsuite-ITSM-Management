@@ -2,8 +2,42 @@
  * AppSuite 管理運用システム - 機能モジュール
  */
 
+/**
+ * メールアドレス検証
+ * @param {string} value - 検証する値
+ * @returns {boolean} - 有効なメールアドレスの場合true
+ */
 function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+/**
+ * 機密情報フィルタリング（ログ・エクスポート用）
+ * CVE-004対策: パスワード、APIキー、トークン等の機密情報を除外
+ * @param {string} text - フィルタリング対象のテキスト
+ * @returns {string} - 機密情報をマスキングしたテキスト
+ */
+function sanitizeSensitiveData(text) {
+    if (!text || typeof text !== 'string') {
+        return text;
+    }
+
+    // 機密情報パターンのマスキング
+    let sanitized = text;
+
+    // パスワード関連
+    sanitized = sanitized.replace(/(password|passwd|pwd)[\s:=]+['"]?[\w!@#$%^&*()_+-=]+['"]?/gi, '$1: ******');
+
+    // APIキー関連
+    sanitized = sanitized.replace(/(api[-_]?key|apikey|token|bearer)[\s:=]+['"]?[\w-]+['"]?/gi, '$1: ******');
+
+    // 認証情報
+    sanitized = sanitized.replace(/(authorization)[\s:=]+['"]?[\w\s]+['"]?/gi, '$1: ******');
+
+    // クレジットカード番号パターン（念のため）
+    sanitized = sanitized.replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, '****-****-****-****');
+
+    return sanitized;
 }
 
 // ユーザー管理モジュール
@@ -115,11 +149,11 @@ const UserModule = {
             `
             <div class="form-group">
                 <label>ユーザー名</label>
-                <input type="text" id="editUserName" value="${escapeHtml(user.username)}">
+                <input type="text" id="editUserName" value="${user.username}">
             </div>
             <div class="form-group">
                 <label>メールアドレス</label>
-                <input type="email" id="editUserEmail" value="${escapeHtml(user.email)}">
+                <input type="email" id="editUserEmail" value="${user.email}">
             </div>
             <div class="form-group">
                 <label>部署</label>
@@ -332,18 +366,18 @@ const AppModule = {
     view(id) {
         const app = DataStore.apps.find(a => a.id === id);
         openModal(
-            'アプリ詳細: ' + escapeHtml(app.name),
+            'アプリ詳細: ' + app.name,
             `
             <div style="line-height: 2;">
-                <p><strong>アプリID:</strong> ${escapeHtml(app.id)}</p>
-                <p><strong>アプリ名:</strong> ${escapeHtml(app.name)}</p>
-                <p><strong>カテゴリ:</strong> ${escapeHtml(app.category)}</p>
-                <p><strong>作成者:</strong> ${escapeHtml(app.creator)}</p>
+                <p><strong>アプリID:</strong> ${app.id}</p>
+                <p><strong>アプリ名:</strong> ${app.name}</p>
+                <p><strong>カテゴリ:</strong> ${app.category}</p>
+                <p><strong>作成者:</strong> ${app.creator}</p>
                 <p><strong>レコード数:</strong> ${app.records.toLocaleString()}件</p>
                 <p><strong>ステータス:</strong> ${this.getStatusText(app.status)}</p>
-                <p><strong>最終更新:</strong> ${escapeHtml(app.updated)}</p>
+                <p><strong>最終更新:</strong> ${app.updated}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(app.description) || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${app.description || '（なし）'}</p>
             </div>
         `,
             [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
@@ -353,11 +387,11 @@ const AppModule = {
     edit(id) {
         const app = DataStore.apps.find(a => a.id === id);
         openModal(
-            'アプリ編集: ' + escapeHtml(app.name),
+            'アプリ編集: ' + app.name,
             `
             <div class="form-group">
                 <label>アプリ名</label>
-                <input type="text" id="editAppName" value="${escapeHtml(app.name)}">
+                <input type="text" id="editAppName" value="${app.name}">
             </div>
             <div class="form-group">
                 <label>カテゴリ</label>
@@ -369,7 +403,7 @@ const AppModule = {
             </div>
             <div class="form-group">
                 <label>作成者</label>
-                <input type="text" id="editAppCreator" value="${escapeHtml(app.creator)}">
+                <input type="text" id="editAppCreator" value="${app.creator}">
             </div>
             <div class="form-group">
                 <label>ステータス</label>
@@ -381,16 +415,12 @@ const AppModule = {
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editAppDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(app.description) || ''}</textarea>
+                <textarea id="editAppDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${app.description || ''}</textarea>
             </div>
         `,
             [
                 { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                {
-                    text: '保存',
-                    class: 'btn-primary',
-                    onclick: `AppModule.save('${escapeHtml(id)}')`,
-                },
+                { text: '保存', class: 'btn-primary', onclick: `AppModule.save('${id}')` },
             ]
         );
     },
@@ -489,6 +519,7 @@ const LogModule = {
             update: 'badge-warning',
             delete: 'badge-danger',
             export: 'badge-info',
+            escalation: 'badge-danger',
         };
         return badges[action] || 'badge-secondary';
     },
@@ -501,6 +532,7 @@ const LogModule = {
             update: '更新',
             delete: '削除',
             export: 'エクスポート',
+            escalation: 'エスカレート',
         };
         return texts[action] || action;
     },
@@ -508,15 +540,50 @@ const LogModule = {
     addLog(action, target, targetType, detail) {
         const now = new Date();
         const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+        // IPアドレスの取得
+        // 注意: ブラウザ環境ではクライアントIPアドレスを直接取得することは
+        // セキュリティ上の理由により不可能です。
+        // 本番環境では、サーバーサイドでリクエストヘッダー（X-Forwarded-For等）から
+        // IPアドレスを取得し、APIレスポンスに含めるか、サーバーサイドでログを記録してください。
+        const clientIp = this.getClientIP();
+
+        // CVE-004対策: 機密情報のフィルタリング
+        const sanitizedDetail = sanitizeSensitiveData(detail);
+        const sanitizedTarget = sanitizeSensitiveData(target);
+
         DataStore.logs.unshift({
             timestamp: timestamp,
             user: document.getElementById('currentUser').textContent,
             action: action,
-            target: target,
+            target: sanitizedTarget,
             targetType: targetType,
-            detail: detail,
-            ip: '192.168.1.100',
+            detail: sanitizedDetail,
+            ip: clientIp,
         });
+    },
+
+    /**
+     * クライアントIPアドレス取得（ブラウザ環境では制限あり）
+     * @returns {string} IPアドレス（取得不可の場合は'N/A'）
+     */
+    getClientIP() {
+        // ブラウザ環境では真のクライアントIPを取得できないため、
+        // 'N/A'を返します。
+        //
+        // 本番環境での推奨実装:
+        // 1. サーバーAPIエンドポイント（/api/client-info）を作成
+        // 2. サーバー側でリクエストヘッダーからIPを取得
+        //    - req.headers['x-forwarded-for']（プロキシ経由の場合）
+        //    - req.connection.remoteAddress（直接接続の場合）
+        // 3. 各ログ記録時にAPIを呼び出してIPを取得
+        //
+        // 将来の実装例:
+        // if (typeof ApiClient !== 'undefined' && ApiClient.getClientInfo) {
+        //     return await ApiClient.getClientInfo();
+        // }
+
+        return 'N/A (ブラウザ側では取得不可)';
     },
 
     search() {
@@ -564,6 +631,126 @@ const LogModule = {
         a.click();
         showToast('ログをエクスポートしました', 'success');
         this.addLog('export', '監査ログ', 'system', 'CSVエクスポート実行');
+    },
+
+    /**
+     * JSON形式でエクスポート
+     */
+    exportJSON() {
+        const now = new Date();
+        const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+
+        const data = {
+            exportedAt: now.toISOString(),
+            version: '1.0.0',
+            totalCount: DataStore.logs.length,
+            logs: DataStore.logs.map(log => ({
+                timestamp: log.timestamp,
+                user: log.user,
+                action: log.action,
+                actionLabel: this.getActionText(log.action),
+                target: log.target,
+                targetType: log.targetType,
+                detail: log.detail,
+                ip: log.ip,
+            })),
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: 'application/json;charset=utf-8',
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'audit_log_' + timestamp + '.json';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showToast('ログをJSON形式でエクスポートしました', 'success');
+        this.addLog('export', '監査ログ', 'system', 'JSONエクスポート実行');
+    },
+
+    /**
+     * フィルタ付きエクスポート
+     * @param {string} format - 'csv' または 'json'
+     * @param {Object} filter - フィルタ条件
+     */
+    exportFiltered(format, filter = {}) {
+        let logs = [...DataStore.logs];
+
+        // フィルタ適用
+        if (filter.from) {
+            logs = logs.filter(l => l.timestamp >= filter.from);
+        }
+        if (filter.to) {
+            logs = logs.filter(l => l.timestamp <= filter.to + ' 23:59:59');
+        }
+        if (filter.action) {
+            logs = logs.filter(l => l.action === filter.action);
+        }
+        if (filter.targetType) {
+            logs = logs.filter(l => l.targetType === filter.targetType);
+        }
+
+        const now = new Date();
+        const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+
+        if (format === 'json') {
+            const data = {
+                exportedAt: now.toISOString(),
+                version: '1.0.0',
+                filter: filter,
+                totalCount: logs.length,
+                logs: logs.map(log => ({
+                    timestamp: log.timestamp,
+                    user: log.user,
+                    action: log.action,
+                    actionLabel: this.getActionText(log.action),
+                    target: log.target,
+                    targetType: log.targetType,
+                    detail: log.detail,
+                    ip: log.ip,
+                })),
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], {
+                type: 'application/json;charset=utf-8',
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'audit_log_filtered_' + timestamp + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        } else {
+            const csv =
+                '\uFEFF日時,ユーザー,操作タイプ,対象,詳細,IPアドレス\n' +
+                logs
+                    .map(
+                        l =>
+                            `"${l.timestamp}","${l.user}","${this.getActionText(l.action)}","${l.target}","${l.detail}","${l.ip}"`
+                    )
+                    .join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'audit_log_filtered_' + timestamp + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        showToast(
+            `${logs.length}件のログを${format.toUpperCase()}形式でエクスポートしました`,
+            'success'
+        );
+        this.addLog(
+            'export',
+            '監査ログ',
+            'system',
+            `${format.toUpperCase()}エクスポート実行（フィルタ適用）`
+        );
     },
 
     renderRecent() {
@@ -647,16 +834,11 @@ const IncidentModule = {
 
     showAddModal() {
         const appOptions = DataStore.apps
-            .map(
-                a =>
-                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`
-            )
+            .map(a => `<option value="${a.id}" data-name="${a.name}">${a.name}</option>`)
             .join('');
         const userOptions = DataStore.users
             .filter(u => u.status === 'active')
-            .map(
-                u => `<option value="${escapeHtml(u.username)}">${escapeHtml(u.username)}</option>`
-            )
+            .map(u => `<option value="${u.username}">${u.username}</option>`)
             .join('');
 
         openModal(
@@ -725,24 +907,32 @@ const IncidentModule = {
             '新規インシデント登録: ' + newInc.title
         );
         updateDashboard();
+
+        // 通知トリガー
+        if (typeof NotificationManager !== 'undefined') {
+            NotificationManager.notifyIncidentCreated(newInc);
+            if (newInc.priority === 'high') {
+                NotificationManager.notifyHighPriorityIncident(newInc);
+            }
+        }
     },
 
     view(id) {
         const inc = DataStore.incidents.find(i => i.id === id);
         openModal(
-            'インシデント詳細: ' + escapeHtml(inc.id),
+            'インシデント詳細: ' + inc.id,
             `
             <div style="line-height: 2;">
-                <p><strong>インシデントID:</strong> ${escapeHtml(inc.id)}</p>
-                <p><strong>タイトル:</strong> ${escapeHtml(inc.title)}</p>
-                <p><strong>対象アプリ:</strong> ${escapeHtml(inc.appName)}</p>
+                <p><strong>インシデントID:</strong> ${inc.id}</p>
+                <p><strong>タイトル:</strong> ${inc.title}</p>
+                <p><strong>対象アプリ:</strong> ${inc.appName}</p>
                 <p><strong>優先度:</strong> <span class="badge ${this.getPriorityBadge(inc.priority)}">${this.getPriorityText(inc.priority)}</span></p>
                 <p><strong>ステータス:</strong> <span class="badge ${this.getStatusBadge(inc.status)}">${this.getStatusText(inc.status)}</span></p>
-                <p><strong>報告者:</strong> ${escapeHtml(inc.reporter)}</p>
-                <p><strong>担当者:</strong> ${escapeHtml(inc.assignee)}</p>
-                <p><strong>登録日:</strong> ${escapeHtml(inc.created)}</p>
+                <p><strong>報告者:</strong> ${inc.reporter}</p>
+                <p><strong>担当者:</strong> ${inc.assignee}</p>
+                <p><strong>登録日:</strong> ${inc.created}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(inc.description) || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${inc.description || '（なし）'}</p>
             </div>
         `,
             [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
@@ -754,23 +944,23 @@ const IncidentModule = {
         const appOptions = DataStore.apps
             .map(
                 a =>
-                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === inc.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
+                    `<option value="${a.id}" data-name="${a.name}" ${a.id === inc.appId ? 'selected' : ''}>${a.name}</option>`
             )
             .join('');
         const userOptions = DataStore.users
             .filter(u => u.status === 'active')
             .map(
                 u =>
-                    `<option value="${escapeHtml(u.username)}" ${u.username === inc.assignee ? 'selected' : ''}>${escapeHtml(u.username)}</option>`
+                    `<option value="${u.username}" ${u.username === inc.assignee ? 'selected' : ''}>${u.username}</option>`
             )
             .join('');
 
         openModal(
-            'インシデント編集: ' + escapeHtml(inc.id),
+            'インシデント編集: ' + inc.id,
             `
             <div class="form-group">
                 <label>タイトル</label>
-                <input type="text" id="editIncTitle" value="${escapeHtml(inc.title)}">
+                <input type="text" id="editIncTitle" value="${inc.title}">
             </div>
             <div class="form-group">
                 <label>対象アプリ</label>
@@ -804,16 +994,12 @@ const IncidentModule = {
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editIncDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(inc.description) || ''}</textarea>
+                <textarea id="editIncDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${inc.description || ''}</textarea>
             </div>
         `,
             [
                 { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                {
-                    text: '保存',
-                    class: 'btn-primary',
-                    onclick: `IncidentModule.save('${escapeHtml(id)}')`,
-                },
+                { text: '保存', class: 'btn-primary', onclick: `IncidentModule.save('${id}')` },
             ]
         );
     },
@@ -823,22 +1009,51 @@ const IncidentModule = {
         const appSelect = document.getElementById('editIncApp');
         const selectedOption = appSelect.options[appSelect.selectedIndex];
         const nextStatus = document.getElementById('editIncStatus').value;
-        if (!this.isValidStatusTransition(inc.status, nextStatus)) {
+        const newAssignee = document.getElementById('editIncAssignee').value;
+
+        // ステータス遷移検証（WorkflowEngineまたはローカル検証）
+        if (typeof WorkflowEngine !== 'undefined') {
+            const result = WorkflowEngine.isValidIncidentTransition(inc.status, nextStatus);
+            if (!result.valid) {
+                showToast(result.message, 'error');
+                return;
+            }
+        } else if (!this.isValidStatusTransition(inc.status, nextStatus)) {
             showToast('ステータス遷移ルールに違反しています', 'error');
             return;
         }
+
+        // 変更前の値を保存（通知用）
+        const oldStatus = inc.status;
+        const oldAssignee = inc.assignee;
+
+        // 値を更新
         inc.title = document.getElementById('editIncTitle').value;
         inc.appId = appSelect.value;
         inc.appName = selectedOption.dataset.name;
         inc.priority = document.getElementById('editIncPriority').value;
         inc.status = nextStatus;
-        inc.assignee = document.getElementById('editIncAssignee').value;
+        inc.assignee = newAssignee;
         inc.description = document.getElementById('editIncDesc').value;
+        inc.updatedAt = new Date().toISOString();
+
         this.refresh();
         closeModal();
         showToast('インシデントを更新しました', 'success');
         LogModule.addLog('update', 'インシデント', 'incident', 'インシデント更新: ' + inc.title);
         updateDashboard();
+
+        // 通知トリガー
+        if (typeof NotificationManager !== 'undefined') {
+            // ステータス変更通知
+            if (oldStatus !== nextStatus) {
+                NotificationManager.notifyStatusChange(inc, 'incident', nextStatus);
+            }
+            // 担当者変更通知
+            if (oldAssignee !== newAssignee && newAssignee !== '-') {
+                NotificationManager.notifyAssignment(inc);
+            }
+        }
     },
 
     delete(id) {
@@ -1057,11 +1272,16 @@ const SettingsModule = {
         document.getElementById('requireComment').checked =
             settings.workflow?.requireComment !== false;
 
-        // バックアップ設定
-        document.getElementById('autoBackup').checked = settings.backup?.autoBackup !== false;
-        document.getElementById('backupInterval').value =
-            settings.backup?.backupInterval || 'daily';
-        document.getElementById('backupRetention').value = settings.backup?.backupRetention || 7;
+        // バックアップ設定（BackupManagerと連携）
+        if (typeof BackupManager !== 'undefined') {
+            BackupManager.updateAutoBackupUI();
+        } else {
+            document.getElementById('autoBackup').checked = settings.backup?.autoBackup !== false;
+            document.getElementById('backupInterval').value =
+                settings.backup?.backupInterval || 'daily';
+            document.getElementById('backupRetention').value =
+                settings.backup?.backupRetention || 7;
+        }
 
         // バックアップ状態を更新
         this.updateBackupStatus();
@@ -1274,7 +1494,7 @@ const SettingsModule = {
                 .map(
                     b => `
                 <div class="backup-item">
-                    <span>${new Date(b.date).toLocaleString('ja-JP')}</span>
+                    <span>${new Date(b.date).toLocaleString('ja-JP')}${b.type === 'auto' ? ' <small>(自動)</small>' : ''}</span>
                     <span>${this.formatBytes(b.size)}</span>
                 </div>
             `
@@ -1282,6 +1502,17 @@ const SettingsModule = {
                 .join('');
         } else {
             listEl.innerHTML = '<p class="text-muted">バックアップはありません</p>';
+        }
+
+        // 自動バックアップ状態表示
+        const autoBackupStatusEl = document.getElementById('autoBackupStatus');
+        if (autoBackupStatusEl && typeof BackupManager !== 'undefined') {
+            const stats = BackupManager.getStatistics();
+            if (stats.autoBackupEnabled) {
+                autoBackupStatusEl.innerHTML = '<span class="badge badge-success">有効</span>';
+            } else {
+                autoBackupStatusEl.innerHTML = '<span class="badge badge-secondary">無効</span>';
+            }
         }
     },
 
@@ -1470,10 +1701,7 @@ const ChangeModule = {
 
     showAddModal() {
         const appOptions = DataStore.apps
-            .map(
-                a =>
-                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`
-            )
+            .map(a => `<option value="${a.id}" data-name="${a.name}">${a.name}</option>`)
             .join('');
 
         openModal(
@@ -1539,18 +1767,18 @@ const ChangeModule = {
     view(id) {
         const chg = DataStore.changes.find(c => c.id === id);
         openModal(
-            '変更要求詳細: ' + escapeHtml(chg.id),
+            '変更要求詳細: ' + chg.id,
             `
             <div style="line-height: 2;">
-                <p><strong>変更ID:</strong> ${escapeHtml(chg.id)}</p>
-                <p><strong>タイトル:</strong> ${escapeHtml(chg.title)}</p>
-                <p><strong>対象アプリ:</strong> ${escapeHtml(chg.appName)}</p>
+                <p><strong>変更ID:</strong> ${chg.id}</p>
+                <p><strong>タイトル:</strong> ${chg.title}</p>
+                <p><strong>対象アプリ:</strong> ${chg.appName}</p>
                 <p><strong>変更種別:</strong> <span class="badge ${this.getTypeBadge(chg.type)}">${this.getTypeText(chg.type)}</span></p>
                 <p><strong>ステータス:</strong> <span class="badge ${this.getStatusBadge(chg.status)}">${this.getStatusText(chg.status)}</span></p>
-                <p><strong>依頼者:</strong> ${escapeHtml(chg.requester)}</p>
-                <p><strong>実施予定日:</strong> ${escapeHtml(chg.scheduled)}</p>
+                <p><strong>依頼者:</strong> ${chg.requester}</p>
+                <p><strong>実施予定日:</strong> ${chg.scheduled}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(chg.description) || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${chg.description || '（なし）'}</p>
             </div>
         `,
             [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
@@ -1562,16 +1790,16 @@ const ChangeModule = {
         const appOptions = DataStore.apps
             .map(
                 a =>
-                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === chg.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
+                    `<option value="${a.id}" data-name="${a.name}" ${a.id === chg.appId ? 'selected' : ''}>${a.name}</option>`
             )
             .join('');
 
         openModal(
-            '変更要求編集: ' + escapeHtml(chg.id),
+            '変更要求編集: ' + chg.id,
             `
             <div class="form-group">
                 <label>タイトル</label>
-                <input type="text" id="editChgTitle" value="${escapeHtml(chg.title)}">
+                <input type="text" id="editChgTitle" value="${chg.title}">
             </div>
             <div class="form-group">
                 <label>対象アプリ</label>
@@ -1601,20 +1829,16 @@ const ChangeModule = {
             </div>
             <div class="form-group">
                 <label>実施予定日</label>
-                <input type="date" id="editChgScheduled" value="${chg.scheduled !== '-' ? escapeHtml(chg.scheduled) : ''}">
+                <input type="date" id="editChgScheduled" value="${chg.scheduled !== '-' ? chg.scheduled : ''}">
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editChgDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(chg.description) || ''}</textarea>
+                <textarea id="editChgDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${chg.description || ''}</textarea>
             </div>
         `,
             [
                 { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                {
-                    text: '保存',
-                    class: 'btn-primary',
-                    onclick: `ChangeModule.save('${escapeHtml(id)}')`,
-                },
+                { text: '保存', class: 'btn-primary', onclick: `ChangeModule.save('${id}')` },
             ]
         );
     },
@@ -1623,18 +1847,49 @@ const ChangeModule = {
         const chg = DataStore.changes.find(c => c.id === id);
         const appSelect = document.getElementById('editChgApp');
         const selectedOption = appSelect.options[appSelect.selectedIndex];
+        const nextStatus = document.getElementById('editChgStatus').value;
+
+        // ステータス遷移検証（WorkflowEngineが利用可能な場合）
+        if (typeof WorkflowEngine !== 'undefined') {
+            const result = WorkflowEngine.isValidChangeTransition(chg.status, nextStatus);
+            if (!result.valid) {
+                showToast(result.message, 'error');
+                return;
+            }
+        }
+
+        // 変更前の値を保存（通知用）
+        const oldStatus = chg.status;
+
+        // 値を更新
         chg.title = document.getElementById('editChgTitle').value;
         chg.appId = appSelect.value;
         chg.appName = selectedOption.dataset.name;
         chg.type = document.getElementById('editChgType').value;
-        chg.status = document.getElementById('editChgStatus').value;
+        chg.status = nextStatus;
         chg.scheduled = document.getElementById('editChgScheduled').value || '-';
         chg.description = document.getElementById('editChgDesc').value;
+        chg.updatedAt = new Date().toISOString();
+
         this.refresh();
         closeModal();
         showToast('変更要求を更新しました', 'success');
         LogModule.addLog('update', '変更要求', 'change', '変更要求更新: ' + chg.title);
         updateDashboard();
+
+        // 通知トリガー
+        if (typeof NotificationManager !== 'undefined' && oldStatus !== nextStatus) {
+            // 承認待ちになった場合
+            if (nextStatus === 'pending') {
+                NotificationManager.notifyChangeApproval(chg);
+            }
+            // 承認または却下された場合
+            if (nextStatus === 'approved' || nextStatus === 'rejected') {
+                NotificationManager.notifyChangeDecision(chg, nextStatus);
+            }
+            // その他のステータス変更
+            NotificationManager.notifyStatusChange(chg, 'change', nextStatus);
+        }
     },
 
     delete(id) {
@@ -1673,3 +1928,11 @@ const ChangeModule = {
         this.render(filtered);
     },
 };
+
+// Export modules to global scope for inline onclick handlers and testing
+window.UserModule = UserModule;
+window.AppModule = AppModule;
+window.IncidentModule = IncidentModule;
+window.ChangeModule = ChangeModule;
+window.LogModule = LogModule;
+window.SettingsModule = SettingsModule;

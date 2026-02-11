@@ -45,13 +45,20 @@ Appsuite-ITSM-Management/
 │   ├── 運用マニュアル(Operation-Manual).md
 │   ├── ユーザーガイド(User-Guide).md
 │   └── 用語集(Glossary).md
-└── WebUI-Sample/                # メインアプリケーション
+└── WebUI-Production/            # メインアプリケーション（正式版）
     ├── index.html               # メインHTML（SPA）
     ├── css/
     │   └── styles.css           # スタイルシート
     ├── js/
+    │   ├── dashboard.js         # ダッシュボード機能
+    │   ├── auth.js              # 認証システム
+    │   ├── backup.js            # バックアップ機能
+    │   ├── notification.js      # 通知機能
+    │   ├── workflow.js          # ワークフローエンジン
+    │   ├── performance.js       # パフォーマンス監視
     │   ├── api.js               # DeskNet's Neo API連携
     │   ├── modules.js           # 機能モジュール（User/App/Incident/Change/Log/Settings）
+    │   ├── security.js          # セキュリティ機能
     │   └── app.js               # メインアプリケーションロジック
     ├── README.md
     └── DEPLOYMENT.md
@@ -136,9 +143,9 @@ DeskNet's Neo APIとの連携（オプション）:
 
 ### ローカル開発
 ```bash
-# WebUI-Sampleディレクトリでindex.htmlをブラウザで開く
+# WebUI-Productionディレクトリでindex.htmlをブラウザで開く
 # または簡易Webサーバーを起動
-npx http-server WebUI-Sample -p 8080
+npx http-server WebUI-Production -p 8080
 ```
 
 ### 本番デプロイ

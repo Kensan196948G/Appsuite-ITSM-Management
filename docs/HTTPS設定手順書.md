@@ -1,7 +1,7 @@
 # HTTPS設定手順書
 
 **作成日**: 2026-02-11
-**対象環境**: 本番環境（172.23.10.109:8443）
+**対象環境**: 本番環境（192.168.0.185:8443）
 **SSL証明書**: 自己署名証明書（365日有効）
 
 ---
@@ -124,10 +124,10 @@ sudo iptables-save > /etc/iptables/rules.v4
 
 ```bash
 # ローカルからHTTPS接続テスト
-curl -k https://172.23.10.109:443/
+curl -k https://192.168.0.185:443/
 
 # カスタムポート（8443）の場合
-curl -k https://172.23.10.109:8443/
+curl -k https://192.168.0.185:8443/
 
 # 期待される出力: index.htmlの内容
 ```
@@ -138,7 +138,7 @@ curl -k https://172.23.10.109:8443/
 
 1. ブラウザで以下にアクセス:
    ```
-   https://172.23.10.109:443/
+   https://192.168.0.185:443/
    ```
 
 2. 自己署名証明書の警告が表示される:
@@ -147,7 +147,7 @@ curl -k https://172.23.10.109:8443/
    - **Edge**: 「接続がプライベートではありません」
 
 3. 警告を承認して続行:
-   - Chrome: 「詳細設定」→「172.23.10.109にアクセスする（安全ではありません）」
+   - Chrome: 「詳細設定」→「192.168.0.185にアクセスする（安全ではありません）」
    - Firefox: 「詳細情報」→「危険性を承知で続行」
    - Edge: 「詳細情報」→「Webページへ移動（非推奨）」
 
@@ -157,11 +157,11 @@ curl -k https://172.23.10.109:8443/
 
 ```bash
 # HTTPアクセスがHTTPSにリダイレクトされるか確認
-curl -I http://172.23.10.109:80/
+curl -I http://192.168.0.185:80/
 
 # 期待される出力:
 # HTTP/1.1 301 Moved Permanently
-# Location: https://172.23.10.109/
+# Location: https://192.168.0.185/
 ```
 
 ---
@@ -170,7 +170,7 @@ curl -I http://172.23.10.109:80/
 
 ```bash
 # セキュリティヘッダーが設定されているか確認
-curl -k -I https://172.23.10.109:443/ | grep -E "Strict-Transport-Security|Content-Security-Policy|X-Frame-Options|X-Content-Type-Options"
+curl -k -I https://192.168.0.185:443/ | grep -E "Strict-Transport-Security|Content-Security-Policy|X-Frame-Options|X-Content-Type-Options"
 
 # 期待される出力:
 # Strict-Transport-Security: max-age=31536000; includeSubDomains; preload

@@ -273,13 +273,13 @@ sudo systemctl status appsuite-itsm-prod
 #### 開発環境
 ```
 http://localhost:3000
-http://172.23.10.109:3000
+http://192.168.0.185:3000
 ```
 
 #### 本番環境
 ```
 https://localhost:8443
-https://172.23.10.109:8443
+https://192.168.0.185:8443
 ```
 
 ### 4.3 ポート使用確認

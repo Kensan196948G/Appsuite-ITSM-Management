@@ -877,7 +877,7 @@ GitHub Actions の手動トリガーでも実行可能:
 #### SSL証明書
 - **場所**: `ssl/prod-cert.pem`, `ssl/prod-key.pem`
 - **種類**: 自己署名証明書（365日有効）
-- **発行先**: 172.23.10.109
+- **発行先**: 192.168.0.185
 
 #### Nginx設定
 - **設定ファイル**: `config/nginx/appsuite-itsm.conf`

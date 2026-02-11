@@ -71,6 +71,25 @@ const AuthModule = {
 
         // ログイン成功
         this.clearFailedAttempts(username);
+
+        // パスワード自動移行（平文 → ハッシュ化）
+        // HTTPS環境でのみ実行（セキュリティ強化）
+        if (window.location.protocol === 'https:' && user.passwordHash && !user.passwordHash.includes(':')) {
+            // 平文パスワードを検出 → ハッシュ化に自動移行
+            console.log('🔒 パスワードを自動的にハッシュ化しています...');
+            const newHash = await this.hashPassword(password);
+            user.passwordHash = newHash;
+
+            // DataStoreを更新
+            const userIndex = DataStore.users.findIndex(u => u.id === user.id);
+            if (userIndex !== -1) {
+                DataStore.users[userIndex] = user;
+                localStorage.setItem('appsuite_users', JSON.stringify(DataStore.users));
+            }
+
+            console.log('✅ パスワードをハッシュ化しました（次回からはハッシュ化パスワードでログイン）');
+        }
+
         const session = this.createSession(user);
         this.saveSession(session);
 
@@ -314,11 +333,20 @@ const AuthModule = {
      * @returns {Promise<string>} - ハッシュ値
      */
     async hashPasswordLegacy(password) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password + 'appsuite_salt_2026');
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        // Web Crypto API が利用可能かチェック（HTTPS または localhost のみ）
+        if (typeof crypto !== 'undefined' && crypto.subtle) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password + 'appsuite_salt_2026');
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        } else {
+            // HTTP環境ではWeb Crypto API利用不可
+            // デモ用フォールバック（本番環境では使用しないこと）
+            console.warn('⚠️ セキュリティ警告: HTTP環境のため、Web Crypto APIが利用できません。HTTPS環境の使用を推奨します。');
+            // 簡易ハッシュ（デモ専用、本番では使用禁止）
+            return password; // パスワードをそのまま返す（デモ環境のみ）
+        }
     },
 
     /**
@@ -463,14 +491,24 @@ const AuthModule = {
     async handleLoginSubmit(event) {
         event.preventDefault();
 
-        const username = document.getElementById('loginUsername').value.trim();
-        const password = document.getElementById('loginPassword').value;
+        const username = document.getElementById('loginUsername')?.value.trim();
+        const password = document.getElementById('loginPassword')?.value;
         const errorElement = document.getElementById('loginError');
-        const submitButton = event.target.querySelector('button[type="submit"]');
+        const submitButton = event.target?.querySelector('button[type="submit"]');
 
-        // ボタン無効化
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ログイン中...';
+        // 入力要素の存在確認
+        if (!username || !password) {
+            if (errorElement) {
+                errorElement.textContent = 'ユーザー名とパスワードを入力してください';
+            }
+            return;
+        }
+
+        // ボタン無効化（ボタンが存在する場合のみ）
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ログイン中...';
+        }
 
         try {
             const result = await this.login(username, password);
@@ -491,11 +529,16 @@ const AuthModule = {
                 document.getElementById('loginPassword').value = '';
             }
         } catch (error) {
-            errorElement.textContent = 'ログイン処理中にエラーが発生しました';
+            if (errorElement) {
+                errorElement.textContent = 'ログイン処理中にエラーが発生しました';
+            }
             console.error('Login error:', error);
         } finally {
-            submitButton.disabled = false;
-            submitButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> ログイン';
+            // ボタンの再有効化（ボタンが存在する場合のみ）
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> ログイン';
+            }
         }
     },
 

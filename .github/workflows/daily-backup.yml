@@ -1,0 +1,137 @@
+name: Daily Backup (AppSuite ITSM)
+
+on:
+  # 毎日2:00 AM（UTC 17:00 = JST 02:00）
+  schedule:
+    - cron: '0 17 * * *'
+
+  # 手動トリガー
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Backup reason'
+        required: false
+        default: 'Manual backup'
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # ========================================
+      # Step 1: チェックアウト
+      # ========================================
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ========================================
+      # Step 2: Node.js セットアップ
+      # ========================================
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ========================================
+      # Step 3: 依存関係インストール
+      # ========================================
+      - name: Install dependencies
+        run: |
+          npm ci || npm install
+          npx playwright install chromium --with-deps
+
+      # ========================================
+      # Step 4: バックアップディレクトリ作成
+      # ========================================
+      - name: Create backup directory
+        run: mkdir -p backups
+
+      # ========================================
+      # Step 5: WebUIサーバー起動（バックグラウンド）
+      # ========================================
+      - name: Start WebUI Server
+        run: |
+          cd WebUI-Production
+          npx http-server . -p 8888 --silent &
+          sleep 5
+          echo "✅ WebUI Server started on http://localhost:8888"
+
+      # ========================================
+      # Step 6: バックアップスクリプト実行
+      # ========================================
+      - name: Run Backup Script
+        id: backup
+        run: |
+          node scripts/backup-automation.js
+        env:
+          BACKUP_DIR: ./backups
+          WEBUI_URL: http://localhost:8888
+
+      # ========================================
+      # Step 7: バックアップファイルのアップロード
+      # ========================================
+      - name: Upload Backup Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: appsuite-backup-${{ github.run_id }}
+          path: backups/*.json
+          retention-days: 90  # 90日間保持（ITSM監査対応）
+
+      # ========================================
+      # Step 8: バックアップ検証
+      # ========================================
+      - name: Verify Backup
+        run: |
+          echo "Verifying backup files..."
+          for file in backups/*.json; do
+            if [ -f "$file" ]; then
+              SIZE=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null)
+              echo "✅ $file: $((SIZE / 1024)) KB"
+
+              # JSON妥当性チェック
+              if ! jq empty "$file" 2>/dev/null; then
+                echo "❌ Invalid JSON: $file"
+                exit 1
+              fi
+            fi
+          done
+          echo "✅ All backup files verified successfully"
+
+      # ========================================
+      # Step 9: バックアップサマリー生成
+      # ========================================
+      - name: Generate Backup Summary
+        if: always()
+        run: |
+          echo "## 📦 Daily Backup Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date**: $(date +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Run ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Backup Files" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|--------|" >> $GITHUB_STEP_SUMMARY
+
+          for file in backups/*.json; do
+            if [ -f "$file" ]; then
+              BASENAME=$(basename "$file")
+              SIZE=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null)
+              echo "| $BASENAME | $((SIZE / 1024)) KB | ✅ |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Retention" >> $GITHUB_STEP_SUMMARY
+          echo "Backup artifacts are retained for **90 days** (ITSM audit requirement)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Download" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "gh run download ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

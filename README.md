@@ -82,8 +82,8 @@ npm run prod:linux
 
 | 環境 | ローカル | LAN |
 |------|---------|-----|
-| 開発環境 | http://localhost:3100 | http://172.23.10.109:3100 |
-| 本番環境 | https://localhost:8443 | https://172.23.10.109:8443 |
+| 開発環境 | http://localhost:3100 | http://192.168.0.185:3100 |
+| 本番環境 | https://localhost:8443 | https://192.168.0.185:8443 |
 
 **注**: 本番環境は自己署名SSL証明書を使用しています。ブラウザで警告が表示されますが、安全性を確認の上で承認してください。
 
@@ -91,7 +91,7 @@ npm run prod:linux
 
 ### 方法2: ローカルファイルとして使用
 
-1. `WebUI-Sample/index.html` をブラウザで開く
+1. `WebUI-Production/index.html` をブラウザで開く
 2. 即座に使用開始！
 
 ---
@@ -140,18 +140,25 @@ Appsuite-ITSM-Management/
 │   ├── ユーザーガイド(User-Guide).md
 │   └── 用語集(Glossary).md
 │
-├── 📁 WebUI-Sample/              # 開発環境（HTTP:3100）
+├── 📁 WebUI-Production/          # 本番環境（HTTPS:8443）⭐正式版
 │   ├── index.html                # メインHTML（SPA）
 │   ├── css/styles.css            # スタイルシート
 │   ├── js/
+│   │   ├── dashboard.js          # ダッシュボード機能
+│   │   ├── auth.js               # 認証システム
+│   │   ├── backup.js             # バックアップ機能
+│   │   ├── notification.js       # 通知機能
+│   │   ├── workflow.js           # ワークフローエンジン
+│   │   ├── performance.js        # パフォーマンス監視
 │   │   ├── api.js                # API連携モジュール
 │   │   ├── modules.js            # 機能モジュール
+│   │   ├── security.js           # セキュリティ機能
 │   │   └── app.js                # メインアプリケーション
 │   ├── README.md
 │   └── DEPLOYMENT.md
 │
-├── 📁 WebUI-Production/          # 本番環境（HTTPS:8443）⭐NEW
-│   └── (WebUI-Sampleと同じ構成)
+├── 📁 WebUI-Production.archive/  # 旧本番環境（アーカイブ）
+│   └── (Phase 1-2相当の基本実装)
 │
 ├── 📁 scripts/                   # 起動スクリプト ⭐NEW
 │   ├── windows/
@@ -258,7 +265,7 @@ git clone https://github.com/your-repo/Appsuite-ITSM-Management.git
 cd Appsuite-ITSM-Management
 
 # 開発用サーバー起動
-cd WebUI-Sample
+cd WebUI-Production
 npx http-server -p 8080 --cors
 
 # http://localhost:8080 でアクセス

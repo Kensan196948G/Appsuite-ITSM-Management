@@ -1,9 +1,30 @@
 /**
  * AppSuite 管理運用システム - メインアプリケーション
+ * Phase 3 Sprint 1: 認証システム統合
  */
 
 // 初期化
 document.addEventListener('DOMContentLoaded', () => {
+    // 認証モジュール初期化
+    AuthModule.init();
+
+    // 認証チェック
+    if (AuthModule.isAuthenticated()) {
+        // 認証済み：アプリケーション初期化
+        initApplication();
+        AuthModule.hideLoginScreen();
+        const user = AuthModule.getCurrentUser();
+        if (user) {
+            AuthModule.updateUIForUser(user);
+        }
+    } else {
+        // 未認証：ログイン画面表示
+        AuthModule.showLoginScreen();
+    }
+});
+
+// アプリケーション初期化
+function initApplication() {
     initNavigation();
     initSidebar();
     initFilters();
@@ -11,21 +32,72 @@ document.addEventListener('DOMContentLoaded', () => {
     initApiSync();
     initDashboard();
     refreshAllModules();
-});
+
+    // ワークフローエンジン初期化
+    if (typeof WorkflowEngine !== 'undefined') {
+        WorkflowEngine.init();
+    }
+
+    // 通知システム初期化
+    if (typeof NotificationManager !== 'undefined') {
+        NotificationManager.init();
+    }
+
+    // バックアップマネージャー初期化
+    if (typeof BackupManager !== 'undefined') {
+        BackupManager.init();
+    }
+
+    // パフォーマンス最適化初期化
+    if (typeof PerformanceOptimizer !== 'undefined') {
+        PerformanceOptimizer.init();
+    }
+
+    // ページ離脱時のクリーンアップ
+    window.addEventListener('beforeunload', cleanupApplication);
+}
+
+// アプリケーションクリーンアップ
+function cleanupApplication() {
+    if (typeof WorkflowEngine !== 'undefined') {
+        WorkflowEngine.cleanup();
+    }
+    if (typeof NotificationManager !== 'undefined') {
+        NotificationManager.cleanup();
+    }
+    if (typeof BackupManager !== 'undefined') {
+        BackupManager.cleanup();
+    }
+    if (typeof LazyLoader !== 'undefined') {
+        LazyLoader.disconnect();
+    }
+}
 
 // ナビゲーション初期化
 function initNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', () => {
+            // undefined チェック追加
+            if (!item || !item.dataset) {
+                console.error('Navigation item or dataset is undefined');
+                return;
+            }
+
             const section = item.dataset.section;
+            if (!section) {
+                console.warn('Section name is undefined for navigation item');
+                return;
+            }
+
             showSection(section);
 
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
 
-            if (window.innerWidth <= 1024) {
-                document.getElementById('sidebar').classList.remove('active');
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 1024 && sidebar) {
+                sidebar.classList.remove('active');
             }
         });
     });
@@ -33,6 +105,29 @@ function initNavigation() {
 
 // セクション表示切替
 function showSection(sectionName) {
+    // CVE-003対策: 認証チェック追加
+    if (!AuthModule.isAuthenticated()) {
+        console.warn('⚠️ セキュリティ: 未認証アクセスをブロックしました');
+        AuthModule.showLoginScreen();
+        return;
+    }
+
+    // CVE-004対策: 管理者専用機能の権限チェック
+    const adminOnlySections = ['users', 'settings'];
+    if (adminOnlySections.includes(sectionName)) {
+        const user = AuthModule.getCurrentUser();
+        if (!user || (user.role !== '管理者' && user.role !== 'administrator')) {
+            console.warn('⚠️ セキュリティ: 権限不足のアクセスをブロックしました', {
+                user: user ? user.username : 'unknown',
+                role: user ? user.role : 'unknown',
+                requestedSection: sectionName
+            });
+            showToast('この機能は管理者のみ利用可能です', 'error');
+            showSection('dashboard'); // ダッシュボードにリダイレクト
+            return;
+        }
+    }
+
     const sections = document.querySelectorAll('.section');
     sections.forEach(sec => sec.classList.add('hidden'));
 
@@ -135,6 +230,26 @@ function initSettings() {
 // ダッシュボード初期化
 function initDashboard() {
     updateDashboard();
+
+    // DashboardManager初期化（Chart.js読み込み後）
+    if (typeof DashboardManager !== 'undefined') {
+        DashboardManager.init();
+
+        // KPIウィジェット初期化
+        if (typeof KPIWidget !== 'undefined') {
+            KPIWidget.render();
+        }
+
+        // クイックアクション初期化
+        if (typeof QuickActions !== 'undefined') {
+            QuickActions.render();
+        }
+
+        // システムステータス初期化
+        if (typeof SystemStatus !== 'undefined') {
+            SystemStatus.render();
+        }
+    }
 }
 
 // ダッシュボード更新
@@ -152,6 +267,14 @@ function updateDashboard() {
 
     // アプリサマリー
     renderAppSummary();
+
+    // ウィジェット更新
+    if (typeof KPIWidget !== 'undefined') {
+        KPIWidget.render();
+    }
+    if (typeof SystemStatus !== 'undefined') {
+        SystemStatus.render();
+    }
 }
 
 // アプリサマリー表示
@@ -164,7 +287,7 @@ function renderAppSummary() {
         .map(
             app => `
         <div class="app-summary-item">
-            <span class="app-name">${app.name}</span>
+            <span class="app-name">${escapeHtml(app.name)}</span>
             <span class="app-records">${app.records.toLocaleString()}件</span>
             <span class="badge ${AppModule.getStatusBadge(app.status)}">${AppModule.getStatusText(app.status)}</span>
         </div>
@@ -215,5 +338,7 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
     }
 });
 
-// 初期ログイン記録
-LogModule.addLog('login', 'システム', 'system', 'ログイン成功');
+// 認証後のアプリケーション起動（AuthModuleから呼び出される）
+function startApplicationAfterLogin() {
+    initApplication();
+}

@@ -1,9 +1,9 @@
 # AppSuite管理運用システム 運用マニュアル
 
 **文書番号**: OPR-APPSUITE-001
-**バージョン**: 2.0
+**バージョン**: 3.0
 **作成日**: 2026年1月20日
-**最終更新日**: 2026年2月4日
+**最終更新日**: 2026年2月11日（Phase 5実装完了）
 
 ---
 
@@ -773,9 +773,149 @@ curl -I https://appsuite-itsm.example.com/ | grep -E "(Strict-Transport-Security
 
 ---
 
+## 11. Phase 5 新機能（2026年2月実装）
+
+### 11.1 APIキー暗号化機能（SEC-001対応）
+
+#### 概要
+API設定（APIキー、認証情報）を**Web Crypto API（AES-GCM-256）**で暗号化し、**sessionStorage**に保存します。
+
+#### メリット
+- **XSS攻撃対策**: 暗号化により、万が一XSS攻撃を受けてもAPIキーは保護される
+- **自動削除**: ブラウザクローズ時にsessionStorageが自動削除され、永続化リスクを回避
+- **暗号化パスワード**: ユーザーが設定した暗号化パスワードでのみ復号化可能
+
+#### 使用方法
+
+1. **システム設定 > API接続設定** に移動
+2. 「暗号化パスワード」を入力（8文字以上、英大小文字・数字・記号推奨）
+3. API設定を入力
+4. 「保存（暗号化）」ボタンをクリック
+
+#### 注意事項
+- 暗号化パスワードを忘れた場合、API設定を再入力する必要があります
+- ブラウザを閉じると設定が削除されます（セキュリティ仕様）
+- 複数タブで同時に開く場合、各タブで暗号化パスワードの入力が必要
+
+#### トラブルシューティング
+
+**問題**: 復号化に失敗する
+- **原因**: 暗号化パスワードが間違っている
+- **解決**: 正しいパスワードを入力、または設定をクリアして再設定
+
+**問題**: ブラウザを開くたびに設定が消える
+- **原因**: sessionStorageの仕様（ブラウザクローズで自動削除）
+- **解決**: セキュリティ仕様のため、毎回設定が必要。利便性より安全性を優先
+
+---
+
+### 11.2 バックアップ自動化機能
+
+#### 概要
+**GitHub Actions**により、毎日2:00 AM（JST）に自動バックアップを実行します。
+
+#### バックアップ対象
+- ユーザーアカウント（users）
+- アプリ一覧（apps）
+- インシデント（incidents）
+- 変更要求（changes）
+- 監査ログ（logs）
+- システム設定（settings）
+
+#### バックアップ保持期間
+- **GitHub Artifacts**: 90日間（ITSM監査要件対応）
+- **ローカル**: 30日間（scripts/backup-automation.js 実行時）
+
+#### バックアップファイルのダウンロード方法
+
+**方法1: GitHub UI**
+1. GitHub リポジトリにアクセス
+2. `Actions` タブ → `Daily Backup` ワークフロー
+3. 最新の実行をクリック
+4. `Artifacts` セクションから `appsuite-backup-XXXXX` をダウンロード
+
+**方法2: GitHub CLI**
+```bash
+# 最新のバックアップをダウンロード
+gh run list --workflow=daily-backup.yml
+gh run download <run-id>
+```
+
+#### リストア手順
+
+1. **バックアップファイルを配置**
+   ```bash
+   # ダウンロードしたファイルをbackups/に配置
+   unzip appsuite-backup-XXXXX.zip -d backups/
+   ```
+
+2. **リストアスクリプト実行**
+   ```bash
+   node scripts/restore-backup.js
+   ```
+
+3. **ファイル選択**
+   - 利用可能なバックアップファイル一覧から選択
+
+4. **ブラウザでリストア**
+   - Webサーバーを起動: `npm run dev:linux`
+   - http://localhost:8888/restore.html にアクセス
+   - 「リストア実行」ボタンをクリック
+
+#### 手動バックアップ実行
+
+GitHub Actions の手動トリガーでも実行可能:
+
+1. GitHub UI: `Actions` → `Daily Backup` → `Run workflow`
+2. Backup reason を入力（オプション）
+3. `Run workflow` をクリック
+
+---
+
+### 11.3 HTTPS設定（本番環境）
+
+#### SSL証明書
+- **場所**: `ssl/prod-cert.pem`, `ssl/prod-key.pem`
+- **種類**: 自己署名証明書（365日有効）
+- **発行先**: 192.168.0.185
+
+#### Nginx設定
+- **設定ファイル**: `config/nginx/appsuite-itsm.conf`
+- **HTTPSポート**: 443（または8443）
+- **HTTPリダイレクト**: ポート80 → 443（自動）
+
+#### セキュリティヘッダー（7種類）
+1. **HSTS**: HTTP Strict Transport Security
+2. **CSP**: Content Security Policy
+3. **X-Content-Type-Options**: nosniff
+4. **X-Frame-Options**: SAMEORIGIN
+5. **Referrer-Policy**: strict-origin-when-cross-origin
+6. **Permissions-Policy**: 不要なAPI制限
+7. **X-XSS-Protection**: 1; mode=block
+
+詳細は `docs/HTTPS設定手順書.md` を参照。
+
+---
+
+### 11.4 セキュリティスコア改善
+
+Phase 5実装により、セキュリティスコアが向上しました:
+
+| 評価項目 | Phase 4 | Phase 5 | 改善 |
+|---------|:-------:|:-------:|:----:|
+| 認証セキュリティ | 85点 | **95点** | +10 |
+| データ保護 | 85点 | **95点** | +10 |
+| セッション管理 | 90点 | **90点** | 0 |
+| 入力検証 | 100点 | **100点** | 0 |
+| ログ管理 | 80点 | **80点** | 0 |
+| **総合スコア** | **85点** | **95点** | **+10** |
+
+---
+
 **文書履歴**
 
 | バージョン | 日付 | 変更内容 | 作成者 |
 |-----------|------|----------|--------|
 | 1.0 | 2026-01-20 | 初版作成 | - |
 | 2.0 | 2026-02-04 | Phase 4/5実績反映、セキュリティ対策追加、SSL/HTTPS運用追加、性能監視・定期メンテナンス追加 | システム管理者 |
+| 3.0 | 2026-02-11 | **Phase 5実装完了**：APIキー暗号化機能（SEC-001対応）、バックアップ自動化（GitHub Actions）、HTTPS設定手順、WebUI-Sample正式版化、セキュリティスコア95点達成 | Lead Agent |

@@ -18,7 +18,7 @@ echo "   プロトコル: HTTP"
 echo ""
 echo "🌐 アクセスURL:"
 echo "   ローカル: http://localhost:$PORT"
-echo "   LAN: http://172.23.10.109:$PORT"
+echo "   LAN: http://192.168.0.185:$PORT"
 echo ""
 echo "📌 ポート情報:"
 echo "   このプロジェクト専用ポート（変更不可）: $PORT"
@@ -30,8 +30,8 @@ echo ""
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-# WebUI-Sampleディレクトリに移動
-cd "$PROJECT_ROOT/WebUI-Sample"
+# WebUI-Productionディレクトリに移動
+cd "$PROJECT_ROOT/WebUI-Production"
 
 echo "🚀 サーバー起動中..."
 echo ""

@@ -14,8 +14,6 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
-        <!-- Chart.js CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     </head>
     <body>
         <div class="app-container">
@@ -66,63 +64,21 @@
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="header-right">
-                        <!-- 通知ベル -->
-                        <button
-                            class="notification-bell"
-                            id="notificationBell"
-                            onclick="NotificationManager.openNotificationPanel()"
-                            title="通知"
-                        >
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-badge" style="display: none">0</span>
-                        </button>
                         <span class="connection-status" id="connectionStatus">
                             <i class="fas fa-circle"></i> 未接続
                         </span>
                         <div class="user-info">
                             <i class="fas fa-user-circle"></i>
-                            <span id="currentUser">ゲスト</span>
-                            <span id="currentUserRole" class="user-role-badge"></span>
+                            <span id="currentUser">管理者</span>
                         </div>
-                        <button
-                            class="btn btn-outline btn-sm logout-btn"
-                            onclick="handleLogout()"
-                            title="ログアウト"
-                        >
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
                     </div>
                 </header>
 
                 <div class="content-area" id="contentArea">
                     <!-- ダッシュボードセクション -->
                     <section class="section" id="section-dashboard">
-                        <!-- ダッシュボードヘッダー -->
-                        <div class="dashboard-header">
-                            <h2><i class="fas fa-tachometer-alt"></i> ダッシュボード</h2>
-                            <div class="dashboard-controls">
-                                <span class="last-refresh">
-                                    <i class="fas fa-clock"></i>
-                                    最終更新: <span id="lastRefreshTime">--:--:--</span>
-                                </span>
-                                <button
-                                    class="btn btn-sm btn-outline"
-                                    id="refreshDashboard"
-                                    onclick="DashboardManager.refresh()"
-                                >
-                                    <i class="fas fa-sync-alt"></i> 更新
-                                </button>
-                                <button
-                                    class="btn btn-sm btn-outline"
-                                    onclick="DashboardManager.openWidgetSettings()"
-                                >
-                                    <i class="fas fa-cog"></i> 設定
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- 統計カード -->
-                        <div class="stats-grid" id="widget-stats">
+                        <h2><i class="fas fa-tachometer-alt"></i> ダッシュボード</h2>
+                        <div class="stats-grid">
                             <div class="stat-card">
                                 <div class="stat-icon users"><i class="fas fa-users"></i></div>
                                 <div class="stat-info">
@@ -175,69 +131,12 @@
                             </div>
                         </div>
 
-                        <!-- KPIウィジェット -->
-                        <div class="panel kpi-panel" id="widget-kpi">
-                            <h3><i class="fas fa-chart-line"></i> KPI指標</h3>
-                            <div id="kpiWidget"></div>
-                        </div>
-
-                        <!-- クイックアクション -->
-                        <div class="panel quick-actions-panel" id="widget-quickActions">
-                            <h3><i class="fas fa-bolt"></i> クイックアクション</h3>
-                            <div id="quickActions"></div>
-                        </div>
-
-                        <!-- チャートグリッド -->
-                        <div class="charts-grid">
-                            <!-- インシデントトレンド -->
-                            <div class="chart-panel" id="widget-incidentTrend">
-                                <div class="chart-container">
-                                    <canvas id="incidentTrendChart"></canvas>
-                                </div>
-                            </div>
-
-                            <!-- アプリステータス分布 -->
-                            <div class="chart-panel chart-small" id="widget-appStatus">
-                                <div class="chart-container">
-                                    <canvas id="appStatusChart"></canvas>
-                                </div>
-                            </div>
-
-                            <!-- インシデント優先度分布 -->
-                            <div class="chart-panel chart-small" id="widget-incidentPriority">
-                                <div class="chart-container">
-                                    <canvas id="incidentPriorityChart"></canvas>
-                                </div>
-                            </div>
-
-                            <!-- 変更タイプ別 -->
-                            <div class="chart-panel" id="widget-changeType">
-                                <div class="chart-container">
-                                    <canvas id="changeTypeChart"></canvas>
-                                </div>
-                            </div>
-
-                            <!-- 週間アクティビティ -->
-                            <div class="chart-panel chart-wide" id="widget-weeklyActivity">
-                                <div class="chart-container">
-                                    <canvas id="weeklyActivityChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- システムステータス -->
-                        <div class="panel system-status-panel" id="widget-systemStatus">
-                            <h3><i class="fas fa-server"></i> システムステータス</h3>
-                            <div id="systemStatus"></div>
-                        </div>
-
-                        <!-- 下部パネル -->
                         <div class="dashboard-panels">
-                            <div class="panel" id="widget-recentLogs">
+                            <div class="panel">
                                 <h3><i class="fas fa-clock"></i> 最近の操作ログ</h3>
                                 <div class="recent-logs" id="recentLogs"></div>
                             </div>
-                            <div class="panel" id="widget-appSummary">
+                            <div class="panel">
                                 <h3><i class="fas fa-th-large"></i> アプリ一覧</h3>
                                 <div class="app-summary" id="appSummary"></div>
                             </div>
@@ -1183,13 +1082,13 @@
                                     <div class="form-group">
                                         <label>バックアップ間隔</label>
                                         <select id="backupInterval">
-                                            <option value="hourly">1時間ごと</option>
                                             <option value="daily" selected>毎日</option>
                                             <option value="weekly">毎週</option>
+                                            <option value="monthly">毎月</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label>保持日数</label>
+                                        <label>保持世代数</label>
                                         <input
                                             type="number"
                                             id="backupRetention"
@@ -1198,45 +1097,30 @@
                                             max="30"
                                         />
                                     </div>
-                                    <div class="form-actions" style="margin-bottom: 20px">
-                                        <button
-                                            class="btn btn-primary"
-                                            onclick="BackupManager.saveAutoBackupSettings()"
-                                        >
-                                            <i class="fas fa-save"></i> 自動バックアップ設定を保存
-                                        </button>
-                                    </div>
 
                                     <h4>手動バックアップ</h4>
                                     <div class="form-actions" style="margin-bottom: 20px">
                                         <button
                                             class="btn btn-primary"
-                                            onclick="BackupManager.createManualBackup()"
+                                            onclick="SettingsModule.createBackup()"
                                         >
                                             <i class="fas fa-download"></i> バックアップ作成
                                         </button>
                                     </div>
 
-                                    <h4>データリストア（選択的復元対応）</h4>
+                                    <h4>データリストア</h4>
                                     <div class="form-group">
                                         <label>バックアップファイル</label>
-                                        <input
-                                            type="file"
-                                            id="restoreFile"
-                                            accept=".json"
-                                            onchange="
-                                                if (this.files[0])
-                                                    BackupManager.showRestoreDialog(this.files[0]);
-                                            "
-                                        />
+                                        <input type="file" id="restoreFile" accept=".json" />
                                     </div>
-                                    <p
-                                        class="text-muted"
-                                        style="font-size: 0.85rem; margin-top: -10px"
-                                    >
-                                        <i class="fas fa-info-circle"></i>
-                                        ファイル選択後、リストア対象を選べます
-                                    </p>
+                                    <div class="form-actions">
+                                        <button
+                                            class="btn btn-warning"
+                                            onclick="SettingsModule.restoreBackup()"
+                                        >
+                                            <i class="fas fa-upload"></i> リストア実行
+                                        </button>
+                                    </div>
 
                                     <h4>データ管理</h4>
                                     <div class="form-actions">
@@ -1270,12 +1154,6 @@
                                             <span class="status-label">データサイズ</span>
                                             <span class="status-value" id="dataSize">-</span>
                                         </div>
-                                        <div class="status-item">
-                                            <span class="status-label">自動バックアップ</span>
-                                            <span class="status-value" id="autoBackupStatus"
-                                                >-</span
-                                            >
-                                        </div>
                                     </div>
 
                                     <h3>バックアップ履歴</h3>
@@ -1288,62 +1166,6 @@
                     </section>
                 </div>
             </main>
-        </div>
-
-        <!-- ログインモーダル -->
-        <div class="login-modal active" id="loginModal">
-            <div class="login-container">
-                <div class="login-header">
-                    <i class="fas fa-cogs"></i>
-                    <h2>AppSuite 管理運用システム</h2>
-                    <p>ログインしてください</p>
-                </div>
-                <form class="login-form" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="loginUsername">
-                            <i class="fas fa-user"></i> ユーザー名またはメールアドレス
-                        </label>
-                        <input
-                            type="text"
-                            id="loginUsername"
-                            name="username"
-                            placeholder="例: yamada@example.com"
-                            required
-                            autocomplete="username"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword"> <i class="fas fa-lock"></i> パスワード </label>
-                        <div class="password-input-wrapper">
-                            <input
-                                type="password"
-                                id="loginPassword"
-                                name="password"
-                                placeholder="パスワードを入力"
-                                required
-                                autocomplete="current-password"
-                            />
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                onclick="toggleLoginPassword()"
-                            >
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="login-error" id="loginError"></div>
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fas fa-sign-in-alt"></i> ログイン
-                    </button>
-                    <div class="login-hint">
-                        <small
-                            >管理者:
-                            ユーザー名「admin」、パスワード「admin123」でログイン可能</small
-                        >
-                    </div>
-                </form>
-            </div>
         </div>
 
         <!-- モーダル -->
@@ -1362,33 +1184,9 @@
         <div class="toast-container" id="toastContainer"></div>
 
         <!-- スクリプト -->
-        <script src="js/security.js"></script>
-        <script src="js/utils.js"></script>
         <script src="js/api.js"></script>
-        <script src="js/components.js"></script>
+        <script src="js/security.js"></script>
         <script src="js/modules.js"></script>
-        <script src="js/dashboard.js"></script>
-        <script src="js/workflow.js"></script>
-        <script src="js/notification.js"></script>
-        <script src="js/backup.js"></script>
-        <script src="js/performance.js"></script>
-        <script src="js/auth.js"></script>
         <script src="js/app.js"></script>
-        <script>
-            // パスワード表示切替
-            function toggleLoginPassword() {
-                const input = document.getElementById('loginPassword');
-                const icon = event.currentTarget.querySelector('i');
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('fa-eye');
-                    icon.classList.add('fa-eye-slash');
-                } else {
-                    input.type = 'password';
-                    icon.classList.remove('fa-eye-slash');
-                    icon.classList.add('fa-eye');
-                }
-            }
-        </script>
     </body>
 </html>

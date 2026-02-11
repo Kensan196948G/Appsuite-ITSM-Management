@@ -48,6 +48,21 @@ jobs:
           npm ci || npm install
           npm install -g eslint prettier
 
+      - name: Run Tests
+        id: test-run
+        continue-on-error: true
+        run: |
+          echo "Running automated tests..."
+          npm test
+          TEST_EXIT_CODE=$?
+          echo "test_exit_code=$TEST_EXIT_CODE" >> $GITHUB_OUTPUT
+
+          if [ $TEST_EXIT_CODE -ne 0 ]; then
+            echo "⚠️ Tests failed with exit code $TEST_EXIT_CODE"
+          else
+            echo "✅ All tests passed"
+          fi
+
       - name: Auto Fix Loop
         id: fix-loop
         run: |
@@ -237,6 +252,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Result | ${{ steps.test-run.outputs.test_exit_code == '0' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Iterations | ${{ steps.fix-loop.outputs.fix_iterations }} / ${{ env.MAX_ITERATIONS }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Vulnerabilities | ${{ steps.security-check.outputs.vulnerabilities }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Changes Committed | ${{ steps.commit-changes.outputs.changes_committed }} |" >> $GITHUB_STEP_SUMMARY

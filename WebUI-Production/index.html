@@ -3,6 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+        />
         <title>AppSuite 管理運用システム</title>
         <link
             rel="icon"
@@ -277,8 +281,9 @@
                                 class="search-input"
                                 placeholder="ユーザー検索..."
                                 id="userSearch"
+                                aria-label="ユーザー名またはメールアドレスで検索"
                             />
-                            <select class="filter-select" id="userStatusFilter">
+                            <select class="filter-select" id="userStatusFilter" aria-label="ユーザーステータスでフィルタ">
                                 <option value="">すべてのステータス</option>
                                 <option value="active">有効</option>
                                 <option value="inactive">無効</option>
@@ -344,7 +349,7 @@
                                 type="text"
                                 class="search-input"
                                 placeholder="アプリ検索..."
-                                id="appSearch"
+                                id="appSearch" aria-label="アプリ名またはカテゴリで検索"
                             />
                             <select class="filter-select" id="appCategoryFilter">
                                 <option value="">すべてのカテゴリ</option>
@@ -410,7 +415,7 @@
                                 type="text"
                                 class="search-input"
                                 placeholder="インシデント検索..."
-                                id="incidentSearch"
+                                id="incidentSearch" aria-label="インシデントタイトルで検索"
                             />
                             <select class="filter-select" id="incidentStatusFilter">
                                 <option value="">すべてのステータス</option>
@@ -477,7 +482,7 @@
                                 type="text"
                                 class="search-input"
                                 placeholder="変更要求検索..."
-                                id="changeSearch"
+                                id="changeSearch" aria-label="変更要求タイトルで検索"
                             />
                             <select class="filter-select" id="changeTypeFilter">
                                 <option value="">すべてのタイプ</option>

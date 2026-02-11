@@ -71,6 +71,25 @@ const AuthModule = {
 
         // ログイン成功
         this.clearFailedAttempts(username);
+
+        // パスワード自動移行（平文 → ハッシュ化）
+        // HTTPS環境でのみ実行（セキュリティ強化）
+        if (window.location.protocol === 'https:' && user.passwordHash && !user.passwordHash.includes(':')) {
+            // 平文パスワードを検出 → ハッシュ化に自動移行
+            console.log('🔒 パスワードを自動的にハッシュ化しています...');
+            const newHash = await this.hashPassword(password);
+            user.passwordHash = newHash;
+
+            // DataStoreを更新
+            const userIndex = DataStore.users.findIndex(u => u.id === user.id);
+            if (userIndex !== -1) {
+                DataStore.users[userIndex] = user;
+                localStorage.setItem('appsuite_users', JSON.stringify(DataStore.users));
+            }
+
+            console.log('✅ パスワードをハッシュ化しました（次回からはハッシュ化パスワードでログイン）');
+        }
+
         const session = this.createSession(user);
         this.saveSession(session);
 

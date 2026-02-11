@@ -360,7 +360,7 @@ const DataStore = {
                 role: '管理者',
                 status: 'active',
                 lastLogin: '2026-01-23 22:00',
-                passwordHash: 'admin',
+                passwordHash: '8e351ab841a352a5b034de6a319ff1f9254fbdb26cc323ad7cb14ae7b66190bf:afdba3a0d9a45f65487bfd23bdec0d17', // admin（SHA-256+salt）
             },
             {
                 id: 'U0001',
@@ -370,7 +370,7 @@ const DataStore = {
                 role: '管理者',
                 status: 'active',
                 lastLogin: '2026-01-19 09:30',
-                passwordHash: 'demo',
+                passwordHash: 'ebdcf98c50ee94d0b27a5c250b196546fc059e1f2aa22d09be2ceb857f0658ae:1240a07482dee323ed73d80aaf330e24', // demo（SHA-256+salt）
             },
             {
                 id: 'U0002',
@@ -380,7 +380,7 @@ const DataStore = {
                 role: 'ユーザー',
                 status: 'active',
                 lastLogin: '2026-01-19 08:45',
-                passwordHash: 'demo',
+                passwordHash: 'ebdcf98c50ee94d0b27a5c250b196546fc059e1f2aa22d09be2ceb857f0658ae:1240a07482dee323ed73d80aaf330e24', // demo（SHA-256+salt）
             },
             {
                 id: 'U0003',
@@ -390,7 +390,7 @@ const DataStore = {
                 role: 'ユーザー',
                 status: 'active',
                 lastLogin: '2026-01-18 17:20',
-                passwordHash: 'demo',
+                passwordHash: 'ebdcf98c50ee94d0b27a5c250b196546fc059e1f2aa22d09be2ceb857f0658ae:1240a07482dee323ed73d80aaf330e24', // demo（SHA-256+salt）
             },
             {
                 id: 'U0004',
@@ -400,7 +400,7 @@ const DataStore = {
                 role: '管理者',
                 status: 'active',
                 lastLogin: '2026-01-19 10:15',
-                passwordHash: 'demo',
+                passwordHash: 'ebdcf98c50ee94d0b27a5c250b196546fc059e1f2aa22d09be2ceb857f0658ae:1240a07482dee323ed73d80aaf330e24', // demo（SHA-256+salt）
             },
             {
                 id: 'U0005',
@@ -410,7 +410,7 @@ const DataStore = {
                 role: 'ユーザー',
                 status: 'inactive',
                 lastLogin: '2026-01-10 14:00',
-                passwordHash: 'demo',
+                passwordHash: 'ebdcf98c50ee94d0b27a5c250b196546fc059e1f2aa22d09be2ceb857f0658ae:1240a07482dee323ed73d80aaf330e24', // demo（SHA-256+salt）
             },
             {
                 id: 'U0006',
@@ -420,7 +420,7 @@ const DataStore = {
                 role: 'ユーザー',
                 status: 'active',
                 lastLogin: '2026-01-19 09:00',
-                passwordHash: 'demo',
+                passwordHash: 'ebdcf98c50ee94d0b27a5c250b196546fc059e1f2aa22d09be2ceb857f0658ae:1240a07482dee323ed73d80aaf330e24', // demo（SHA-256+salt）
             },
             {
                 id: 'U0007',
@@ -430,7 +430,7 @@ const DataStore = {
                 role: 'ユーザー',
                 status: 'active',
                 lastLogin: '2026-01-18 16:30',
-                passwordHash: 'demo',
+                passwordHash: 'ebdcf98c50ee94d0b27a5c250b196546fc059e1f2aa22d09be2ceb857f0658ae:1240a07482dee323ed73d80aaf330e24', // demo（SHA-256+salt）
             },
         ],
         apps: [

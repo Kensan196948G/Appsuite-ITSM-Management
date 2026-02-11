@@ -42,12 +42,12 @@ class CryptoHelper {
                 name: 'PBKDF2',
                 salt: salt,
                 iterations: this.iterations,
-                hash: 'SHA-256'
+                hash: 'SHA-256',
             },
             baseKey,
             {
                 name: this.algorithm,
-                length: this.keyLength
+                length: this.keyLength,
             },
             false, // extractable: false（キーのエクスポート不可）
             ['encrypt', 'decrypt']
@@ -77,7 +77,7 @@ class CryptoHelper {
         const ciphertextBuffer = await crypto.subtle.encrypt(
             {
                 name: this.algorithm,
-                iv: iv
+                iv: iv,
             },
             key,
             plaintextBuffer
@@ -118,7 +118,7 @@ class CryptoHelper {
             const plaintextBuffer = await crypto.subtle.decrypt(
                 {
                     name: this.algorithm,
-                    iv: iv
+                    iv: iv,
                 },
                 key,
                 ciphertext
@@ -127,7 +127,6 @@ class CryptoHelper {
             // テキストに変換
             const decoder = new TextDecoder();
             return decoder.decode(plaintextBuffer);
-
         } catch (error) {
             console.error('復号化エラー:', error);
             throw new Error('復号化に失敗しました。パスワードが正しいか確認してください。');
@@ -171,7 +170,7 @@ class CryptoHelper {
         const result = {
             valid: false,
             strength: 'weak',
-            messages: []
+            messages: [],
         };
 
         if (!password || password.length < 8) {
@@ -193,7 +192,9 @@ class CryptoHelper {
 
         if (strength <= 2) {
             result.strength = 'weak';
-            result.messages.push('パスワードが弱いです。英大小文字・数字・記号を組み合わせてください。');
+            result.messages.push(
+                'パスワードが弱いです。英大小文字・数字・記号を組み合わせてください。'
+            );
         } else if (strength <= 4) {
             result.strength = 'medium';
             result.valid = true;
@@ -211,7 +212,8 @@ class CryptoHelper {
      * @returns {string}
      */
     generateRandomPassword(length = 16) {
-        const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+        const charset =
+            'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
         const randomValues = new Uint8Array(length);
         crypto.getRandomValues(randomValues);
 

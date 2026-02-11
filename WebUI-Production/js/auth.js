@@ -74,7 +74,11 @@ const AuthModule = {
 
         // パスワード自動移行（平文 → ハッシュ化）
         // HTTPS環境でのみ実行（セキュリティ強化）
-        if (window.location.protocol === 'https:' && user.passwordHash && !user.passwordHash.includes(':')) {
+        if (
+            window.location.protocol === 'https:' &&
+            user.passwordHash &&
+            !user.passwordHash.includes(':')
+        ) {
             // 平文パスワードを検出 → ハッシュ化に自動移行
             console.log('🔒 パスワードを自動的にハッシュ化しています...');
             const newHash = await this.hashPassword(password);
@@ -87,7 +91,9 @@ const AuthModule = {
                 localStorage.setItem('appsuite_users', JSON.stringify(DataStore.users));
             }
 
-            console.log('✅ パスワードをハッシュ化しました（次回からはハッシュ化パスワードでログイン）');
+            console.log(
+                '✅ パスワードをハッシュ化しました（次回からはハッシュ化パスワードでログイン）'
+            );
         }
 
         const session = this.createSession(user);
@@ -287,7 +293,9 @@ const AuthModule = {
         if (parts.length !== 2) {
             // 旧フォーマット（salt無し）との後方互換性
             // セキュリティ警告: 旧フォーマットは脆弱なため、パスワード再設定を推奨
-            console.warn('⚠️ セキュリティ警告: 旧形式のパスワードハッシュが検出されました。パスワードを再設定してください。');
+            console.warn(
+                '⚠️ セキュリティ警告: 旧形式のパスワードハッシュが検出されました。パスワードを再設定してください。'
+            );
             const inputHash = await this.hashPasswordLegacy(password);
             return inputHash === storedHashWithSalt;
         }
@@ -308,7 +316,9 @@ const AuthModule = {
         if (!salt) {
             const saltArray = new Uint8Array(16);
             crypto.getRandomValues(saltArray);
-            salt = Array.from(saltArray).map(b => b.toString(16).padStart(2, '0')).join('');
+            salt = Array.from(saltArray)
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
         }
 
         const encoder = new TextEncoder();
@@ -343,7 +353,9 @@ const AuthModule = {
         } else {
             // HTTP環境ではWeb Crypto API利用不可
             // デモ用フォールバック（本番環境では使用しないこと）
-            console.warn('⚠️ セキュリティ警告: HTTP環境のため、Web Crypto APIが利用できません。HTTPS環境の使用を推奨します。');
+            console.warn(
+                '⚠️ セキュリティ警告: HTTP環境のため、Web Crypto APIが利用できません。HTTPS環境の使用を推奨します。'
+            );
             // 簡易ハッシュ（デモ専用、本番では使用禁止）
             return password; // パスワードをそのまま返す（デモ環境のみ）
         }

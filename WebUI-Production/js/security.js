@@ -535,3 +535,8 @@ function escapeHtml(str) {
 function sanitizeInput(str) {
     return Security.escapeHtml(str);
 }
+
+// Node.js (Jest) 環境向けエクスポート
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { Security, Validator, FormValidator, CsrfProtection, RateLimiter };
+}

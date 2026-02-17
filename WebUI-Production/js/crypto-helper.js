@@ -228,3 +228,8 @@ class CryptoHelper {
 
 // シングルトンインスタンス
 const cryptoHelper = new CryptoHelper();
+
+// Node.js (Jest) 環境向けエクスポート
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { CryptoHelper, cryptoHelper };
+}

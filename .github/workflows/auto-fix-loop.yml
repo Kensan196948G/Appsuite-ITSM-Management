@@ -14,9 +14,6 @@ on:
   # プッシュ時にも実行
   push:
     branches: [main, master]
-  # PRにも実行
-  pull_request:
-    branches: [main, master]
 
 permissions:
   contents: write

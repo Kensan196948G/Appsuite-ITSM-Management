@@ -1,0 +1,16 @@
+[object Object]:
+	Environment key "es2021" is unknown
+
+Error: [object Object]:
+	Environment key "es2021" is unknown
+
+    at /home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config/config-validator.js:133:19
+    at Array.forEach (<anonymous>)
+    at validateEnvironment (/home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config/config-validator.js:129:30)
+    at Object.validate (/home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config/config-validator.js:202:5)
+    at loadFromDisk (/home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config/config-file.js:549:19)
+    at Object.load (/home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config/config-file.js:592:20)
+    at Config.getLocalConfigHierarchy (/home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config.js:228:44)
+    at Config.getConfigHierarchy (/home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config.js:182:43)
+    at Config.getConfigVector (/home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config.js:287:21)
+    at Config.getConfig (/home/runner/work/Appsuite-ITSM-Management/Appsuite-ITSM-Management/node_modules/eslint/lib/config.js:330:29)

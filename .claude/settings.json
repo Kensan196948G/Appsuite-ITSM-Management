@@ -1,1 +1,1 @@
-{"statusLine":{"type":"command","command":"/mnt/LinuxHDD/Appsuite-ITSM-Management/.claude/statusline.sh","padding":0}}
+{"statusLine":{"command":"/mnt/LinuxHDD/Appsuite-ITSM-Management/.claude/statusline.sh","padding":0,"type":"command"}}

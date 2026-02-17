@@ -118,10 +118,10 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 
 ## 【ブラウザ自動化ツール使い分けガイド】
 
-このプロジェクトではブラウザ自動化に **ChromeDevTools MCP** と **Playwright MCP** の2つが利用可能です。
+このプロジェクトではブラウザ自動化に **Puppeteer MCP** と **Playwright MCP** の2つが利用可能です。
 以下のガイドラインに従って適切なツールを選択してください。
 
-### ChromeDevTools MCP を使用すべき場合
+### Puppeteer MCP を使用すべき場合
 
 **状況**：既存のブラウザインスタンスに接続してデバッグ・検証を行う場合
 
@@ -152,14 +152,14 @@ curl -s http://127.0.0.1:\${MCP_CHROME_DEBUG_PORT}/json/list | jq '.'
 \`\`\`
 
 **利用可能なMCPツール**：
-- \`mcp__chrome-devtools__navigate_page\`: ページ遷移
-- \`mcp__chrome-devtools__click\`: 要素クリック
-- \`mcp__chrome-devtools__fill\`: フォーム入力
-- \`mcp__chrome-devtools__evaluate_script\`: JavaScriptコード実行
-- \`mcp__chrome-devtools__take_screenshot\`: スクリーンショット取得
-- \`mcp__chrome-devtools__get_console_message\`: コンソールログ取得
-- \`mcp__chrome-devtools__list_network_requests\`: ネットワークリクエスト一覧
-- （その他、\`mcp__chrome-devtools__*\` で利用可能なツールを検索）
+- \`mcp__plugin_puppeteer_puppeteer__navigate_page\`: ページ遷移
+- \`mcp__plugin_puppeteer_puppeteer__click\`: 要素クリック
+- \`mcp__plugin_puppeteer_puppeteer__fill\`: フォーム入力
+- \`mcp__plugin_puppeteer_puppeteer__evaluate_script\`: JavaScriptコード実行
+- \`mcp__plugin_puppeteer_puppeteer__take_screenshot\`: スクリーンショット取得
+- \`mcp__plugin_puppeteer_puppeteer__get_console_message\`: コンソールログ取得
+- \`mcp__plugin_puppeteer_puppeteer__list_network_requests\`: ネットワークリクエスト一覧
+- （その他、\`mcp__plugin_puppeteer_puppeteer__*\` で利用可能なツールを検索）
 
 ### Playwright MCP を使用すべき場合
 
@@ -199,7 +199,7 @@ curl -s http://127.0.0.1:\${MCP_CHROME_DEBUG_PORT}/json/list | jq '.'
 
 \`\`\`
 既存ブラウザの状態（ログイン・Cookie等）を利用したい？
-├─ YES → ChromeDevTools MCP
+├─ YES → Puppeteer MCP
 │         （Windows側ブラウザに接続、環境変数 MCP_CHROME_DEBUG_PORT 使用）
 │
 └─ NO  → 以下をさらに判断
@@ -207,19 +207,23 @@ curl -s http://127.0.0.1:\${MCP_CHROME_DEBUG_PORT}/json/list | jq '.'
           ├─ 自動テスト・CI/CD統合？ → Playwright MCP
           ├─ スクレイピング？ → Playwright MCP
           ├─ クロスブラウザ検証？ → Playwright MCP
-          └─ 手動操作との併用が必要？ → ChromeDevTools MCP
+          └─ 手動操作との併用が必要？ → Puppeteer MCP
 \`\`\`
 
 ### 注意事項
 
-1. **Xサーバ不要**：LinuxホストにXサーバがインストールされていなくても、両ツールともヘッドレスモードで動作します
-2. **ポート範囲**：ChromeDevTools MCPは9222～9229の範囲で動作（config.jsonで設定）
+1. **Xサーバ不要（重要）**：LinuxホストにXサーバがインストールされていなくても、両ツールとも動作します
+   - **Puppeteer MCP**: Windows側のブラウザに接続するため、Linux側にXサーバ不要（SSHポートフォワーディング経由）
+   - **Playwright MCP**: Linux側でヘッドレスブラウザを起動するため、Xサーバ不要
+   - ⚠️ **選択基準はXサーバの有無ではありません**。既存ブラウザ（ログイン状態等）を使うか、クリーンな環境かで判断してください
+2. **ポート範囲**：Puppeteer MCPは9222～9229の範囲で動作（config.jsonで設定）
 3. **並行利用**：両ツールは同時に使用可能（異なるユースケースで併用可）
 4. **ツール検索**：利用可能なツールを確認するには \`ToolSearch\` を使用してキーワード検索（例：\`ToolSearch "chrome-devtools screenshot"\`）
+5. **ChromeDevTools 優先原則**：ユーザーがブラウザ操作を依頼した場合、**既存のWindows側ブラウザ（Puppeteer MCP）を優先使用**してください。Playwrightは自動テスト・スクレイピング・クリーンな環境が必要な場合のみ使用
 
 ### 推奨ワークフロー
 
-1. **開発・デバッグフェーズ**：ChromeDevTools MCPで手動操作と併用しながら検証
+1. **開発・デバッグフェーズ**：Puppeteer MCPで手動操作と併用しながら検証
 2. **テスト自動化フェーズ**：Playwrightで自動テストスクリプト作成
 3. **CI/CD統合フェーズ**：PlaywrightテストをGitHub Actionsに組み込み
 
@@ -281,8 +285,26 @@ done
 export CLAUDE_CHROME_DEBUG_PORT=${PORT}
 export MCP_CHROME_DEBUG_PORT=${PORT}
 
+# Puppeteer MCP: 既存ブラウザへの接続設定
+echo "🔌 既存ブラウザへの接続準備..."
+WS_ENDPOINT=$(curl -s http://127.0.0.1:${PORT}/json/version 2>/dev/null | jq -r '.webSocketDebuggerUrl' 2>/dev/null)
+
+if [ -n "$WS_ENDPOINT" ] && [ "$WS_ENDPOINT" != "null" ]; then
+  echo "✅ WebSocketエンドポイント取得成功: $WS_ENDPOINT"
+  export PUPPETEER_LAUNCH_OPTIONS="{\\\"browserWSEndpoint\\\": \\\"${WS_ENDPOINT}\\\"}"
+  echo "   Puppeteer MCPは既存ブラウザに接続します"
+else
+  echo "⚠️  既存ブラウザが見つかりません。Puppeteerは新規ブラウザを起動します。"
+  export PUPPETEER_LAUNCH_OPTIONS="{\\\"headless\\\": false, \\\"timeout\\\": 30000}"
+fi
+
 # Agent Teams オーケストレーション有効化
 export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+
+# on-startup hook 実行（環境変数設定後）
+if [ -f ".claude/hooks/on-startup.sh" ]; then
+    bash .claude/hooks/on-startup.sh
+fi
 
 # DevTools詳細接続テスト関数
 test_devtools_connection() {

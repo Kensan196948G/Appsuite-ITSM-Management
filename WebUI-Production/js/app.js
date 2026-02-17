@@ -120,7 +120,7 @@ function showSection(sectionName) {
             console.warn('⚠️ セキュリティ: 権限不足のアクセスをブロックしました', {
                 user: user ? user.username : 'unknown',
                 role: user ? user.role : 'unknown',
-                requestedSection: sectionName
+                requestedSection: sectionName,
             });
             showToast('この機能は管理者のみ利用可能です', 'error');
             showSection('dashboard'); // ダッシュボードにリダイレクト
@@ -137,27 +137,27 @@ function showSection(sectionName) {
     }
 
     switch (sectionName) {
-    case 'dashboard':
-        updateDashboard();
-        break;
-    case 'users':
-        UserModule.refresh();
-        break;
-    case 'apps':
-        AppModule.refresh();
-        break;
-    case 'incidents':
-        IncidentModule.refresh();
-        break;
-    case 'changes':
-        ChangeModule.refresh();
-        break;
-    case 'logs':
-        LogModule.refresh();
-        break;
-    case 'settings':
-        SettingsModule.loadToForm();
-        break;
+        case 'dashboard':
+            updateDashboard();
+            break;
+        case 'users':
+            UserModule.refresh();
+            break;
+        case 'apps':
+            AppModule.refresh();
+            break;
+        case 'incidents':
+            IncidentModule.refresh();
+            break;
+        case 'changes':
+            ChangeModule.refresh();
+            break;
+        case 'logs':
+            LogModule.refresh();
+            break;
+        case 'settings':
+            SettingsModule.loadToForm();
+            break;
     }
 }
 

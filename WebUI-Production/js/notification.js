@@ -200,17 +200,17 @@ const NotificationManager = {
      */
     getToastType(type) {
         switch (type) {
-        case 'sla_violation':
-        case 'high_priority':
-        case 'escalation':
-            return 'error';
-        case 'sla_warning':
-            return 'warning';
-        case 'change_approved':
-        case 'incident_resolved':
-            return 'success';
-        default:
-            return 'info';
+            case 'sla_violation':
+            case 'high_priority':
+            case 'escalation':
+                return 'error';
+            case 'sla_warning':
+                return 'warning';
+            case 'change_approved':
+            case 'incident_resolved':
+                return 'success';
+            default:
+                return 'info';
         }
     },
 
@@ -527,19 +527,19 @@ const NotificationManager = {
             </div>
             <div class="notification-panel-body">
                 ${
-    notifications.length === 0
-        ? '<p class="notification-empty">通知はありません</p>'
-        : notifications.map(n => this.renderNotificationItem(n)).join('')
-}
+                    notifications.length === 0
+                        ? '<p class="notification-empty">通知はありません</p>'
+                        : notifications.map(n => this.renderNotificationItem(n)).join('')
+                }
             </div>
             <div class="notification-panel-footer">
                 ${
-    this.permission !== 'granted'
-        ? `<button class="btn btn-primary btn-sm" onclick="NotificationManager.requestPermission()">
+                    this.permission !== 'granted'
+                        ? `<button class="btn btn-primary btn-sm" onclick="NotificationManager.requestPermission()">
                         <i class="fas fa-bell"></i> デスクトップ通知を有効化
                        </button>`
-        : '<span class="text-muted"><i class="fas fa-check"></i> デスクトップ通知: 有効</span>'
-}
+                        : '<span class="text-muted"><i class="fas fa-check"></i> デスクトップ通知: 有効</span>'
+                }
             </div>
         `;
 

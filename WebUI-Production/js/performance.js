@@ -309,23 +309,23 @@ const EnhancedApi = {
         }
 
         switch (method) {
-        case 'GET':
-            if (id) {
-                return DataStore.findById(resource, id);
-            }
-            return DataStore[resource] || [];
+            case 'GET':
+                if (id) {
+                    return DataStore.findById(resource, id);
+                }
+                return DataStore[resource] || [];
 
-        case 'POST':
-            return DataStore.create(resource, options.data);
+            case 'POST':
+                return DataStore.create(resource, options.data);
 
-        case 'PUT':
-            return DataStore.update(resource, id, options.data);
+            case 'PUT':
+                return DataStore.update(resource, id, options.data);
 
-        case 'DELETE':
-            return DataStore.delete(resource, id);
+            case 'DELETE':
+                return DataStore.delete(resource, id);
 
-        default:
-            throw new Error(`Unsupported method: ${method}`);
+            default:
+                throw new Error(`Unsupported method: ${method}`);
         }
     },
 
@@ -340,15 +340,15 @@ const EnhancedApi = {
 
         if (typeof ApiConfig !== 'undefined' && ApiConfig.apiKey) {
             switch (ApiConfig.authMethod) {
-            case 'bearer':
-                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-                break;
-            case 'basic':
-                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-                break;
-            case 'apikey':
-                headers['X-API-Key'] = ApiConfig.apiKey;
-                break;
+                case 'bearer':
+                    headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+                    break;
+                case 'basic':
+                    headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+                    break;
+                case 'apikey':
+                    headers['X-API-Key'] = ApiConfig.apiKey;
+                    break;
             }
         }
 

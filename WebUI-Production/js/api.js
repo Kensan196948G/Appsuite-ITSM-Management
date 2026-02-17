@@ -18,14 +18,17 @@ const ApiConfig = {
         if (typeof cryptoHelper !== 'undefined') {
             const strengthCheck = cryptoHelper.checkPasswordStrength(encryptionPassword);
             if (!strengthCheck.valid) {
-                throw new Error(`暗号化パスワードが不十分です: ${strengthCheck.messages.join(', ')}`);
+                throw new Error(
+                    `暗号化パスワードが不十分です: ${strengthCheck.messages.join(', ')}`
+                );
             }
         }
 
         this.baseUrl = document.getElementById('apiUrl')?.value || this.baseUrl;
         this.apiKey = document.getElementById('apiKey')?.value || this.apiKey;
         this.authMethod = document.getElementById('authMethod')?.value || this.authMethod;
-        this.timeout = parseInt(document.getElementById('timeout')?.value || this.timeout / 1000) * 1000;
+        this.timeout =
+            parseInt(document.getElementById('timeout')?.value || this.timeout / 1000) * 1000;
 
         const config = {
             baseUrl: this.baseUrl,
@@ -33,7 +36,7 @@ const ApiConfig = {
             authMethod: this.authMethod,
             timeout: this.timeout,
             savedAt: new Date().toISOString(),
-            version: '2.0.0' // 暗号化版
+            version: '2.0.0', // 暗号化版
         };
 
         // JSON文字列化 → 暗号化
@@ -98,7 +101,6 @@ const ApiConfig = {
             showToast('API設定を読込みました', 'success');
             console.log('✅ API設定を復号化して読込みました');
             return true;
-
         } catch (error) {
             console.error('❌ 復号化失敗', error);
             showToast('復号化に失敗しました。パスワードを確認してください。', 'error');
@@ -188,7 +190,6 @@ const ApiConfig = {
 
             console.log('✅ 旧API設定から暗号化版への移行完了');
             return true;
-
         } catch (error) {
             console.error('移行失敗', error);
             throw error;
@@ -323,15 +324,15 @@ const Api = {
         };
 
         switch (ApiConfig.authMethod) {
-        case 'bearer':
-            headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-            break;
-        case 'basic':
-            headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-            break;
-        case 'apikey':
-            headers['X-API-Key'] = ApiConfig.apiKey;
-            break;
+            case 'bearer':
+                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+                break;
+            case 'basic':
+                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+                break;
+            case 'apikey':
+                headers['X-API-Key'] = ApiConfig.apiKey;
+                break;
         }
 
         return headers;
@@ -707,7 +708,11 @@ const DataStore = {
         // 1. HTTPS必須（HTTPSでない場合、ネットワーク盗聴のリスク）
         // 2. IndexedDBへの移行を検討（Web Crypto APIで暗号化可能）
         // 3. サーバーサイドでのデータ管理を推奨
-        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+        if (
+            location.protocol !== 'https:' &&
+            location.hostname !== 'localhost' &&
+            location.hostname !== '127.0.0.1'
+        ) {
             console.warn(
                 '%c⚠️ セキュリティ警告',
                 'background: #ff6b6b; color: white; font-weight: bold; padding: 4px 8px; border-radius: 3px;',

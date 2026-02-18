@@ -298,7 +298,9 @@ const AuthModule = {
             );
             // まずSHA-256ハッシュで比較（旧ハッシュ形式との互換）
             const inputHash = await this.hashPasswordLegacy(password);
-            if (inputHash === storedHashWithSalt) return true;
+            if (inputHash === storedHashWithSalt) {
+                return true;
+            }
             // デモ環境フォールバック: 平文パスワード比較
             // （crypto.subtleが利用可能な環境でも初期デモデータの平文パスワードに対応）
             return password === storedHashWithSalt;

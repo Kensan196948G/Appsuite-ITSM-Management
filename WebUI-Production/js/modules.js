@@ -843,11 +843,16 @@ const IncidentModule = {
 
     showAddModal() {
         const appOptions = DataStore.apps
-            .map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`)
+            .map(
+                a =>
+                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`
+            )
             .join('');
         const userOptions = DataStore.users
             .filter(u => u.status === 'active')
-            .map(u => `<option value="${escapeHtml(u.username)}">${escapeHtml(u.username)}</option>`)
+            .map(
+                u => `<option value="${escapeHtml(u.username)}">${escapeHtml(u.username)}</option>`
+            )
             .join('');
 
         openModal(
@@ -1711,7 +1716,10 @@ const ChangeModule = {
 
     showAddModal() {
         const appOptions = DataStore.apps
-            .map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`)
+            .map(
+                a =>
+                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`
+            )
             .join('');
 
         openModal(

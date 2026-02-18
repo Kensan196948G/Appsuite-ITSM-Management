@@ -383,7 +383,7 @@ const DataStore = {
                 role: '管理者',
                 status: 'active',
                 lastLogin: '2026-01-23 22:00',
-                passwordHash: 'admin', // admin（デモ環境：平文、本番環境：要ハッシュ化）
+                passwordHash: 'admin123', // admin123（デモ環境：平文、本番環境：要ハッシュ化）
             },
             {
                 id: 'U0001',
@@ -1084,10 +1084,12 @@ function showToast(message, type = 'info') {
         info: 'fa-info-circle',
     };
 
-    toast.innerHTML = `
-        <i class="fas ${icons[type]}"></i>
-        <span>${message}</span>
-    `;
+    const icon = document.createElement('i');
+    icon.className = `fas ${icons[type] || 'fa-info-circle'}`;
+    const span = document.createElement('span');
+    span.textContent = message;
+    toast.appendChild(icon);
+    toast.appendChild(span);
 
     container.appendChild(toast);
 

@@ -296,8 +296,12 @@ const AuthModule = {
             console.warn(
                 '⚠️ セキュリティ警告: 旧形式のパスワードハッシュが検出されました。パスワードを再設定してください。'
             );
+            // まずSHA-256ハッシュで比較（旧ハッシュ形式との互換）
             const inputHash = await this.hashPasswordLegacy(password);
-            return inputHash === storedHashWithSalt;
+            if (inputHash === storedHashWithSalt) return true;
+            // デモ環境フォールバック: 平文パスワード比較
+            // （crypto.subtleが利用可能な環境でも初期デモデータの平文パスワードに対応）
+            return password === storedHashWithSalt;
         }
 
         const [storedHash, salt] = parts;

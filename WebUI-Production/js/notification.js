@@ -597,7 +597,7 @@ const NotificationManager = {
         const readClass = notification.read ? 'read' : 'unread';
 
         return `
-            <div class="notification-item ${readClass}" onclick="NotificationManager.handleNotificationClick('${notification.id}')">
+            <div class="notification-item ${readClass}" onclick="NotificationManager.handleNotificationClick('${this.escapeHtml(notification.id)}')">
                 <div class="notification-icon ${notification.type}">
                     <i class="fas ${icon}"></i>
                 </div>

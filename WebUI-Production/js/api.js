@@ -1084,10 +1084,12 @@ function showToast(message, type = 'info') {
         info: 'fa-info-circle',
     };
 
-    toast.innerHTML = `
-        <i class="fas ${icons[type]}"></i>
-        <span>${message}</span>
-    `;
+    const icon = document.createElement('i');
+    icon.className = `fas ${icons[type] || 'fa-info-circle'}`;
+    const span = document.createElement('span');
+    span.textContent = message;
+    toast.appendChild(icon);
+    toast.appendChild(span);
 
     container.appendChild(toast);
 

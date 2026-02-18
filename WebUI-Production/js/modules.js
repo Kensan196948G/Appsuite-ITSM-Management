@@ -168,10 +168,10 @@ const UserModule = {
                 <label>部署</label>
                 <select id="editUserDept">
                     ${['情報システム部', '営業部', '総務部', '開発部', '経理部']
-                        .map(
-                            d => `<option ${d === user.department ? 'selected' : ''}>${d}</option>`
-                        )
-                        .join('')}
+        .map(
+            d => `<option ${d === user.department ? 'selected' : ''}>${d}</option>`
+        )
+        .join('')}
                 </select>
             </div>
             <div class="form-group">
@@ -406,8 +406,8 @@ const AppModule = {
                 <label>カテゴリ</label>
                 <select id="editAppCategory">
                     ${['業務管理', '申請・承認', 'データ管理', 'その他']
-                        .map(c => `<option ${c === app.category ? 'selected' : ''}>${c}</option>`)
-                        .join('')}
+        .map(c => `<option ${c === app.category ? 'selected' : ''}>${c}</option>`)
+        .join('')}
                 </select>
             </div>
             <div class="form-group">

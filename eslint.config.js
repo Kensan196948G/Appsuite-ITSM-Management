@@ -34,6 +34,23 @@ export default [
                 IntersectionObserver: 'readonly',
                 MutationObserver: 'readonly',
                 Notification: 'readonly',
+                FileReader: 'readonly',
+                TextEncoder: 'readonly',
+                TextDecoder: 'readonly',
+                location: 'readonly',
+                history: 'readonly',
+                requestAnimationFrame: 'readonly',
+                cancelAnimationFrame: 'readonly',
+                navigator: 'readonly',
+                Event: 'readonly',
+                CustomEvent: 'readonly',
+                Element: 'readonly',
+                HTMLElement: 'readonly',
+                Node: 'readonly',
+                NodeList: 'readonly',
+                getComputedStyle: 'readonly',
+                scrollTo: 'readonly',
+                ResizeObserver: 'readonly',
 
                 // Node.js
                 process: 'readonly',
@@ -44,6 +61,9 @@ export default [
                 exports: 'readonly',
 
                 // Custom globals
+                cryptoHelper: 'readonly',
+                LazyLoader: 'readonly',
+                toggleApiKey: 'readonly',
                 FontAwesome: 'readonly',
                 DataStore: 'readonly',
                 UserModule: 'readonly',

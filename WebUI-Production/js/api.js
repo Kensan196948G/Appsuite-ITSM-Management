@@ -383,7 +383,7 @@ const DataStore = {
                 role: '管理者',
                 status: 'active',
                 lastLogin: '2026-01-23 22:00',
-                passwordHash: 'admin', // admin（デモ環境：平文、本番環境：要ハッシュ化）
+                passwordHash: 'admin123', // admin123（デモ環境：平文、本番環境：要ハッシュ化）
             },
             {
                 id: 'U0001',

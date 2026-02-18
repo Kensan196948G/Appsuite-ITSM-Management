@@ -247,7 +247,11 @@ const ApiConfig = {
             // APIキーは旧データにある場合はsessionStorageへ移行し削除
             if (config.apiKey) {
                 sessionStorage.setItem('appsuite_api_key', config.apiKey);
-                const migrated = { baseUrl: config.baseUrl, authMethod: config.authMethod, timeout: config.timeout };
+                const migrated = {
+                    baseUrl: config.baseUrl,
+                    authMethod: config.authMethod,
+                    timeout: config.timeout,
+                };
                 localStorage.setItem('appsuite_api_config', JSON.stringify(migrated));
             }
         }
@@ -342,15 +346,15 @@ const Api = {
         };
 
         switch (ApiConfig.authMethod) {
-        case 'bearer':
-            headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
-            break;
-        case 'basic':
-            headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
-            break;
-        case 'apikey':
-            headers['X-API-Key'] = ApiConfig.apiKey;
-            break;
+            case 'bearer':
+                headers['Authorization'] = `Bearer ${ApiConfig.apiKey}`;
+                break;
+            case 'basic':
+                headers['Authorization'] = `Basic ${btoa(ApiConfig.apiKey)}`;
+                break;
+            case 'apikey':
+                headers['X-API-Key'] = ApiConfig.apiKey;
+                break;
         }
 
         return headers;

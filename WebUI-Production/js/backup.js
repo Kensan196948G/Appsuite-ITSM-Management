@@ -512,25 +512,25 @@ const BackupManager = {
                             <h4><i class="fas ${validation.valid ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
                                 検証結果: ${validation.valid ? '有効' : '無効'}</h4>
                             ${
-    validation.errors.length > 0
-        ? `
+                                validation.errors.length > 0
+                                    ? `
                                 <div class="validation-errors">
                                     <strong>エラー:</strong>
                                     <ul>${validation.errors.map(e => `<li>${escapeHtml(e)}</li>`).join('')}</ul>
                                 </div>
                             `
-        : ''
-}
+                                    : ''
+                            }
                             ${
-    validation.warnings.length > 0
-        ? `
+                                validation.warnings.length > 0
+                                    ? `
                                 <div class="validation-warnings">
                                     <strong>警告:</strong>
                                     <ul>${validation.warnings.map(w => `<li>${escapeHtml(w)}</li>`).join('')}</ul>
                                 </div>
                             `
-        : ''
-}
+                                    : ''
+                            }
                         </div>
 
                         <div class="restore-summary">
@@ -692,9 +692,9 @@ const BackupManager = {
             nextScheduled:
                 config.autoBackupEnabled && config.lastAutoBackup
                     ? new Date(
-                        new Date(config.lastAutoBackup).getTime() +
+                          new Date(config.lastAutoBackup).getTime() +
                               config.intervalMinutes * 60 * 1000
-                    )
+                      )
                     : null,
             autoBackupEnabled: config.autoBackupEnabled,
         };

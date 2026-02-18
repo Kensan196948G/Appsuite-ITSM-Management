@@ -511,16 +511,16 @@ const WorkflowEngine = {
      */
     getSlaStatusBadgeClass(slaStatus) {
         switch (slaStatus) {
-        case 'ok':
-            return 'badge-success';
-        case 'warning':
-            return 'badge-warning';
-        case 'breach':
-            return 'badge-danger';
-        case 'completed':
-            return 'badge-info';
-        default:
-            return 'badge-secondary';
+            case 'ok':
+                return 'badge-success';
+            case 'warning':
+                return 'badge-warning';
+            case 'breach':
+                return 'badge-danger';
+            case 'completed':
+                return 'badge-info';
+            default:
+                return 'badge-secondary';
         }
     },
 
@@ -531,16 +531,16 @@ const WorkflowEngine = {
      */
     getSlaStatusIcon(slaStatus) {
         switch (slaStatus) {
-        case 'ok':
-            return 'fa-check-circle';
-        case 'warning':
-            return 'fa-exclamation-triangle';
-        case 'breach':
-            return 'fa-times-circle';
-        case 'completed':
-            return 'fa-flag-checkered';
-        default:
-            return 'fa-question-circle';
+            case 'ok':
+                return 'fa-check-circle';
+            case 'warning':
+                return 'fa-exclamation-triangle';
+            case 'breach':
+                return 'fa-times-circle';
+            case 'completed':
+                return 'fa-flag-checkered';
+            default:
+                return 'fa-question-circle';
         }
     },
 };

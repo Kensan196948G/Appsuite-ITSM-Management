@@ -538,5 +538,5 @@ function sanitizeInput(str) {
 
 // Node.js (Jest) 環境向けエクスポート
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { Security, Validator, FormValidator, CsrfProtection, RateLimiter };
+    module.exports = { Security, Validator, FormValidator, CsrfProtection, RateLimiter, escapeHtml, sanitizeInput };
 }

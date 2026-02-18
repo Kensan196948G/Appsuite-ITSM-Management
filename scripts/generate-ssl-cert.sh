@@ -55,13 +55,15 @@ show_usage() {
 
 MODE:
   letsencrypt    Let's Encrypt証明書を取得（本番環境）
-  selfsigned     自己署名証明書を生成（開発環境）
+  selfsigned     自己署名証明書を生成（開発環境・対話形式）
+  prod           本番用自己署名証明書を自動生成（非対話・SAN対応）
   renew          Let's Encrypt証明書を更新
   help           このヘルプを表示
 
 例:
   $0 letsencrypt
   $0 selfsigned
+  $0 prod
   $0 renew
 
 EOF
@@ -312,6 +314,117 @@ generate_selfsigned() {
 }
 
 # ============================================
+# 本番用自己署名証明書の自動生成（SAN対応・非対話形式）
+# Windows Git Bash / Linux 両対応
+# ============================================
+generate_prod_selfsigned() {
+    log_info "=========================================="
+    log_info "本番用自己署名証明書の生成を開始します"
+    log_info "=========================================="
+    log_warning "この証明書はローカル/LAN環境でのみ使用してください"
+
+    # OpenSSLのインストール確認
+    if ! command -v openssl &> /dev/null; then
+        log_error "OpenSSLがインストールされていません"
+        exit 1
+    fi
+
+    # スクリプトのディレクトリからプロジェクトルートを取得
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+    CERT_DIR="$PROJECT_ROOT/ssl"
+
+    # ssl/ ディレクトリを作成
+    mkdir -p "$CERT_DIR"
+    log_info "証明書保存先: $CERT_DIR"
+
+    # 動的IPアドレスの取得
+    LOCAL_IP=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}' | head -1)
+    if [ -z "$LOCAL_IP" ]; then
+        LOCAL_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+    fi
+    LOCAL_IP="${LOCAL_IP:-127.0.0.1}"
+    log_info "検出されたIPアドレス: $LOCAL_IP"
+
+    # Windows Git Bash判定（MSYS_NO_PATHCONV でパス変換を無効化）
+    if [[ "${OSTYPE:-}" == "msys" ]] || [[ "${MSYSTEM:-}" == "MINGW64" ]] || [[ "${MSYSTEM:-}" == "MINGW32" ]]; then
+        log_info "Windows Git Bash を検出 — MSYS_NO_PATHCONV=1 を適用します"
+        export MSYS_NO_PATHCONV=1
+        export MSYS2_ARG_CONV_EXCL="*"
+    fi
+
+    # OpenSSL 設定ファイルをtempに作成（SAN対応）
+    TMPCONF=$(mktemp /tmp/openssl-san-XXXXXX.cnf)
+    cat > "$TMPCONF" << SSLCONF
+[req]
+default_bits       = 4096
+default_md         = sha256
+distinguished_name = req_distinguished_name
+req_extensions     = v3_req
+x509_extensions    = v3_ca
+prompt             = no
+
+[req_distinguished_name]
+C  = JP
+ST = Tokyo
+L  = Chiyoda-ku
+O  = AppSuite ITSM
+OU = IT Department
+CN = localhost
+
+[v3_req]
+subjectAltName = @alt_names
+
+[v3_ca]
+subjectAltName         = @alt_names
+basicConstraints       = CA:FALSE
+keyUsage               = digitalSignature, keyEncipherment
+extendedKeyUsage       = serverAuth
+
+[alt_names]
+DNS.1 = localhost
+IP.1  = 127.0.0.1
+IP.2  = $LOCAL_IP
+SSLCONF
+
+    log_info "秘密鍵（RSA 4096bit）を生成中..."
+    openssl genrsa -out "$CERT_DIR/prod-key.pem" 4096 2>/dev/null
+
+    log_info "自己署名証明書（SAN対応・有効期限825日）を生成中..."
+    openssl req -new -x509 \
+        -days 825 \
+        -key "$CERT_DIR/prod-key.pem" \
+        -out "$CERT_DIR/prod-cert.pem" \
+        -config "$TMPCONF" 2>/dev/null
+
+    rm -f "$TMPCONF"
+
+    # Windows Git Bash環境変数を元に戻す
+    unset MSYS_NO_PATHCONV 2>/dev/null || true
+    unset MSYS2_ARG_CONV_EXCL 2>/dev/null || true
+
+    # 権限設定（Linux のみ）
+    if [[ "${OSTYPE:-}" != "msys" ]] && [[ -z "${MSYSTEM:-}" ]]; then
+        chmod 600 "$CERT_DIR/prod-key.pem"
+        chmod 644 "$CERT_DIR/prod-cert.pem"
+    fi
+
+    log_success "証明書の生成に成功しました"
+    log_info "  秘密鍵: $CERT_DIR/prod-key.pem"
+    log_info "  証明書: $CERT_DIR/prod-cert.pem"
+
+    # SAN情報を表示
+    echo ""
+    log_info "証明書のSAN（Subject Alternative Name）:"
+    openssl x509 -in "$CERT_DIR/prod-cert.pem" -noout -ext subjectAltName 2>/dev/null || \
+        openssl x509 -in "$CERT_DIR/prod-cert.pem" -noout -text 2>/dev/null | grep -A2 "Subject Alternative"
+
+    echo ""
+    log_info "起動方法: ./scripts/windows/prod-start.ps1 または ./scripts/linux/prod-start.sh"
+    log_warning "ブラウザで「安全でない」警告が表示されます — 警告を承認してアクセスしてください"
+}
+
+# ============================================
 # 証明書の自動更新設定
 # ============================================
 setup_auto_renewal() {
@@ -420,6 +533,9 @@ main() {
         selfsigned)
             load_config
             generate_selfsigned
+            ;;
+        prod)
+            generate_prod_selfsigned
             ;;
         renew)
             renew_certificate

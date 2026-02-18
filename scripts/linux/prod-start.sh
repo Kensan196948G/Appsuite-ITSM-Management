@@ -6,6 +6,13 @@
 PORT=8443
 ENV_NAME="本番"
 
+# 動的IPアドレス取得
+LOCAL_IP=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}' | head -1)
+if [ -z "$LOCAL_IP" ]; then
+    LOCAL_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+fi
+LOCAL_IP="${LOCAL_IP:-127.0.0.1}"
+
 echo "========================================"
 echo "  AppSuite ITSM Management System"
 echo "  [$ENV_NAME] 環境起動中..."
@@ -18,7 +25,7 @@ echo "   プロトコル: HTTPS (SSL/TLS)"
 echo ""
 echo "🌐 アクセスURL:"
 echo "   ローカル: https://localhost:$PORT"
-echo "   LAN: https://192.168.0.185:$PORT"
+echo "   LAN: https://${LOCAL_IP}:$PORT"
 echo ""
 echo "⚠️  注意事項:"
 echo "   - 自己署名SSL証明書を使用しています"

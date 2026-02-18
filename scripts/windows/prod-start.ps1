@@ -5,6 +5,13 @@
 $PORT = 8443
 $ENV_NAME = "本番"
 
+# 動的IPアドレス取得
+$LOCAL_IP = (Get-NetIPAddress -AddressFamily IPv4 |
+    Where-Object { $_.IPAddress -notlike "127.*" -and $_.IPAddress -notlike "169.254.*" } |
+    Sort-Object -Property PrefixLength |
+    Select-Object -First 1).IPAddress
+if (-not $LOCAL_IP) { $LOCAL_IP = "127.0.0.1" }
+
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  AppSuite ITSM Management System" -ForegroundColor White
 Write-Host "  [$ENV_NAME] 環境起動中..." -ForegroundColor Red
@@ -17,7 +24,7 @@ Write-Host "   プロトコル: HTTPS (SSL/TLS)" -ForegroundColor White
 Write-Host ""
 Write-Host "🌐 アクセスURL:" -ForegroundColor Yellow
 Write-Host "   ローカル: https://localhost:$PORT" -ForegroundColor Cyan
-Write-Host "   LAN: https://172.23.10.109:$PORT" -ForegroundColor Cyan
+Write-Host "   LAN: https://${LOCAL_IP}:$PORT" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "⚠️  注意事項:" -ForegroundColor Yellow
 Write-Host "   - 自己署名SSL証明書を使用しています" -ForegroundColor White

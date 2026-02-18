@@ -6,6 +6,13 @@
 PORT=3100
 ENV_NAME="開発"
 
+# 動的IPアドレス取得
+LOCAL_IP=$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src") print $(i+1)}' | head -1)
+if [ -z "$LOCAL_IP" ]; then
+    LOCAL_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+fi
+LOCAL_IP="${LOCAL_IP:-127.0.0.1}"
+
 echo "========================================"
 echo "  AppSuite ITSM Management System"
 echo "  [$ENV_NAME] 環境起動中..."
@@ -18,7 +25,7 @@ echo "   プロトコル: HTTP"
 echo ""
 echo "🌐 アクセスURL:"
 echo "   ローカル: http://localhost:$PORT"
-echo "   LAN: http://192.168.0.185:$PORT"
+echo "   LAN: http://${LOCAL_IP}:$PORT"
 echo ""
 echo "📌 ポート情報:"
 echo "   このプロジェクト専用ポート（変更不可）: $PORT"

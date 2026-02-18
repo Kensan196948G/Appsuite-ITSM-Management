@@ -9,10 +9,10 @@ User=kensan
 Group=kensan
 WorkingDirectory=/mnt/LinuxHDD/Appsuite-ITSM-Management/WebUI-Production
 Environment="NODE_ENV=production"
-Environment="PORT=8443"
+Environment="PORT=9443"
 
-# http-serverをHTTPSモードで起動
-ExecStart=/usr/bin/npx http-server -p 8443 --ssl --cert /mnt/LinuxHDD/Appsuite-ITSM-Management/ssl/prod-cert.pem --key /mnt/LinuxHDD/Appsuite-ITSM-Management/ssl/prod-key.pem
+# http-serverをHTTPSモードで起動（ポート9443: 8443はwww-data/Pythonが使用中のため変更）
+ExecStart=/usr/bin/npx http-server -p 9443 --ssl --cert /mnt/LinuxHDD/Appsuite-ITSM-Management/ssl/prod-cert.pem --key /mnt/LinuxHDD/Appsuite-ITSM-Management/ssl/prod-key.pem
 
 # 自動再起動設定
 Restart=on-failure

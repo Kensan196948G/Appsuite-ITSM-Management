@@ -6,7 +6,7 @@
 |------|------|
 | 文書名 | 開発フェーズ計画書 |
 | プロジェクト名 | AppSuite ITSM管理システム |
-| バージョン | 2.2 |
+| バージョン | 2.3 |
 | 作成日 | 2025年1月20日 |
 | 最終更新日 | 2026年2月18日 |
 
@@ -546,6 +546,33 @@ Phase 4: テストフェーズ
 
 **Phase 5 現在状況**: 着手済み（P5-01〜P5-03タスク進行中）
 
+### 8.6 Phase 5 追加実施内容（v2.3 更新: 2026年2月18日）
+
+**Systemd サービス登録・稼働確認（P5-02 補足）:**
+
+| 環境 | ポート | プロトコル | サービス名 | 状態 |
+|------|--------|------------|-----------|------|
+| 開発 (dev) | 3100 | HTTP | appsuite-itsm-dev | ✅ 稼働中 |
+| 本番 (prod) | 9443 | HTTPS (自己署名SSL) | appsuite-itsm-prod | ✅ 稼働中 |
+
+**E2E テスト全件 PASS（P5-08 完了）:**
+- Playwright E2E テスト: **35/35 PASS** ✅
+- テスト対象: ログイン認証、ダッシュボード、ユーザー管理、アプリ管理、インシデント、変更管理、監査ログ、設定
+- Chrome DevTools MCP によるブラウザデバッグ確認
+
+**第3次セキュリティ修正（PR #16）:**
+- XSS 脆弱性修正 4 箇所（modules.js、api.js、notification.js、components.js）
+- escapeHtml 未適用箇所を修正済み
+
+**機能実装追加（PR #16）:**
+- CSV レポートエクスポート実装（dashboard.js - 未実装スタブから完成）
+- ログイン認証バグ修正（api.js: passwordHash 値修正 + auth.js: plain-text フォールバック追加）
+- SLA 監視二重起動防止ガード（workflow.js）
+
+**関連 PR:**
+- PR #16: `feature/webui-fixes` → main（WebUI バグ修正・XSS対策・機能実装）
+- PR #17: `feature/systemd-setup` → main（Systemd サービスファイル設定）
+
 ---
 
 ## 9. マイルストーン一覧
@@ -674,3 +701,4 @@ Phase 4: テストフェーズ
 | 1.0 | 2025/01/20 | 初版作成 | システム管理者 |
 | 2.1 | 2026/02/04 | Phase 4進捗更新（70%完了）、セキュリティ修正追加（CVE-001~004）、Phase 5移行条件更新 | Claude Code |
 | 2.2 | 2026/02/18 | Phase 3完了確定、Phase 4完了確定（テスト100%、ESLint 0エラー）、第2次セキュリティ修正（PR #13: DOM-XSS/APIキー対策）、CI/CD安定化（PR #14: カバレッジ閾値/continue-on-error削除）、Phase 5移行条件更新 | Claude Code |
+| 2.3 | 2026/02/18 | Phase 5実施状況更新: Systemd登録完了（dev HTTP:3100/prod HTTPS:9443）、Playwright E2E 35/35 PASS、第3次セキュリティ修正（PR #16: XSS 4箇所・auth修正・CSV実装）、PR #16/#17 作成 | Claude Code |

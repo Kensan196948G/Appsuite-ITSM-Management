@@ -321,7 +321,7 @@ const AppModule = {
             </div>
             <div class="form-group">
                 <label>作成者</label>
-                <input type="text" id="newAppCreator" value="${document.getElementById('currentUser').textContent}">
+                <input type="text" id="newAppCreator" value="${escapeHtml(document.getElementById('currentUser').textContent)}">
             </div>
             <div class="form-group">
                 <label>ステータス</label>

@@ -117,8 +117,8 @@ const UserModule = {
             </div>
         `,
             [
-                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                { text: '追加', class: 'btn-primary', onclick: 'UserModule.add()' },
+                { text: 'キャンセル', class: 'btn-secondary', onclick: closeModal },
+                { text: '追加', class: 'btn-primary', onclick: () => UserModule.add() },
             ]
         );
     },
@@ -158,11 +158,11 @@ const UserModule = {
             `
             <div class="form-group">
                 <label>ユーザー名</label>
-                <input type="text" id="editUserName" value="${user.username}">
+                <input type="text" id="editUserName" value="${escapeHtml(user.username)}">
             </div>
             <div class="form-group">
                 <label>メールアドレス</label>
-                <input type="email" id="editUserEmail" value="${user.email}">
+                <input type="email" id="editUserEmail" value="${escapeHtml(user.email)}">
             </div>
             <div class="form-group">
                 <label>部署</label>
@@ -190,8 +190,8 @@ const UserModule = {
             </div>
         `,
             [
-                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                { text: '保存', class: 'btn-primary', onclick: `UserModule.save('${id}')` },
+                { text: 'キャンセル', class: 'btn-secondary', onclick: closeModal },
+                { text: '保存', class: 'btn-primary', onclick: () => UserModule.save(id) },
             ]
         );
     },
@@ -337,8 +337,8 @@ const AppModule = {
             </div>
         `,
             [
-                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                { text: '登録', class: 'btn-primary', onclick: 'AppModule.add()' },
+                { text: 'キャンセル', class: 'btn-secondary', onclick: closeModal },
+                { text: '登録', class: 'btn-primary', onclick: () => AppModule.add() },
             ]
         );
     },
@@ -389,7 +389,7 @@ const AppModule = {
                 <p style="background:#f8fafc;padding:10px;border-radius:8px;">${app.description || '（なし）'}</p>
             </div>
         `,
-            [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
+            [{ text: '閉じる', class: 'btn-secondary', onclick: closeModal }]
         );
     },
 
@@ -400,7 +400,7 @@ const AppModule = {
             `
             <div class="form-group">
                 <label>アプリ名</label>
-                <input type="text" id="editAppName" value="${app.name}">
+                <input type="text" id="editAppName" value="${escapeHtml(app.name)}">
             </div>
             <div class="form-group">
                 <label>カテゴリ</label>
@@ -412,7 +412,7 @@ const AppModule = {
             </div>
             <div class="form-group">
                 <label>作成者</label>
-                <input type="text" id="editAppCreator" value="${app.creator}">
+                <input type="text" id="editAppCreator" value="${escapeHtml(app.creator)}">
             </div>
             <div class="form-group">
                 <label>ステータス</label>
@@ -428,8 +428,8 @@ const AppModule = {
             </div>
         `,
             [
-                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                { text: '保存', class: 'btn-primary', onclick: `AppModule.save('${id}')` },
+                { text: 'キャンセル', class: 'btn-secondary', onclick: closeModal },
+                { text: '保存', class: 'btn-primary', onclick: () => AppModule.save(id) },
             ]
         );
     },
@@ -884,8 +884,8 @@ const IncidentModule = {
             </div>
         `,
             [
-                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                { text: '登録', class: 'btn-primary', onclick: 'IncidentModule.add()' },
+                { text: 'キャンセル', class: 'btn-secondary', onclick: closeModal },
+                { text: '登録', class: 'btn-primary', onclick: () => IncidentModule.add() },
             ]
         );
     },
@@ -944,7 +944,7 @@ const IncidentModule = {
                 <p style="background:#f8fafc;padding:10px;border-radius:8px;">${inc.description || '（なし）'}</p>
             </div>
         `,
-            [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
+            [{ text: '閉じる', class: 'btn-secondary', onclick: closeModal }]
         );
     },
 
@@ -969,7 +969,7 @@ const IncidentModule = {
             `
             <div class="form-group">
                 <label>タイトル</label>
-                <input type="text" id="editIncTitle" value="${inc.title}">
+                <input type="text" id="editIncTitle" value="${escapeHtml(inc.title)}">
             </div>
             <div class="form-group">
                 <label>対象アプリ</label>
@@ -1007,8 +1007,8 @@ const IncidentModule = {
             </div>
         `,
             [
-                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                { text: '保存', class: 'btn-primary', onclick: `IncidentModule.save('${id}')` },
+                { text: 'キャンセル', class: 'btn-secondary', onclick: closeModal },
+                { text: '保存', class: 'btn-primary', onclick: () => IncidentModule.save(id) },
             ]
         );
     },
@@ -1745,8 +1745,8 @@ const ChangeModule = {
             </div>
         `,
             [
-                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                { text: '登録', class: 'btn-primary', onclick: 'ChangeModule.add()' },
+                { text: 'キャンセル', class: 'btn-secondary', onclick: closeModal },
+                { text: '登録', class: 'btn-primary', onclick: () => ChangeModule.add() },
             ]
         );
     },
@@ -1790,7 +1790,7 @@ const ChangeModule = {
                 <p style="background:#f8fafc;padding:10px;border-radius:8px;">${chg.description || '（なし）'}</p>
             </div>
         `,
-            [{ text: '閉じる', class: 'btn-secondary', onclick: 'closeModal()' }]
+            [{ text: '閉じる', class: 'btn-secondary', onclick: closeModal }]
         );
     },
 
@@ -1808,7 +1808,7 @@ const ChangeModule = {
             `
             <div class="form-group">
                 <label>タイトル</label>
-                <input type="text" id="editChgTitle" value="${chg.title}">
+                <input type="text" id="editChgTitle" value="${escapeHtml(chg.title)}">
             </div>
             <div class="form-group">
                 <label>対象アプリ</label>
@@ -1846,8 +1846,8 @@ const ChangeModule = {
             </div>
         `,
             [
-                { text: 'キャンセル', class: 'btn-secondary', onclick: 'closeModal()' },
-                { text: '保存', class: 'btn-primary', onclick: `ChangeModule.save('${id}')` },
+                { text: 'キャンセル', class: 'btn-secondary', onclick: closeModal },
+                { text: '保存', class: 'btn-primary', onclick: () => ChangeModule.save(id) },
             ]
         );
     },

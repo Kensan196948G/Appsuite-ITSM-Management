@@ -311,11 +311,16 @@ function openModal(title, bodyContent, buttons = []) {
     document.getElementById('modalBody').innerHTML = bodyContent;
 
     const footer = document.getElementById('modalFooter');
-    footer.innerHTML = buttons
-        .map(
-            btn => `<button class="btn ${btn.class}" onclick="${btn.onclick}">${btn.text}</button>`
-        )
-        .join('');
+    footer.innerHTML = '';
+    buttons.forEach(btn => {
+        const button = document.createElement('button');
+        button.className = `btn ${escapeHtml(btn.class)}`;
+        button.textContent = btn.text;
+        if (typeof btn.onclick === 'function') {
+            button.addEventListener('click', btn.onclick);
+        }
+        footer.appendChild(button);
+    });
 
     document.getElementById('modalOverlay').classList.add('active');
 }

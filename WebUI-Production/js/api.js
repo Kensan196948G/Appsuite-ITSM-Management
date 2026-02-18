@@ -113,8 +113,12 @@ const ApiConfig = {
      * @returns {string}
      */
     getApiKeyMasked() {
-        if (!this.apiKey) return '未設定';
-        if (this.apiKey.length <= 8) return '****';
+        if (!this.apiKey) {
+            return '未設定';
+        }
+        if (this.apiKey.length <= 8) {
+            return '****';
+        }
         // 最初の4文字と最後の4文字のみ表示
         const first = this.apiKey.slice(0, 4);
         const last = this.apiKey.slice(-4);

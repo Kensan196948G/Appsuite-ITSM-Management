@@ -181,14 +181,26 @@ class CryptoHelper {
         let strength = 0;
 
         // 長さチェック
-        if (password.length >= 12) strength++;
-        if (password.length >= 16) strength++;
+        if (password.length >= 12) {
+            strength++;
+        }
+        if (password.length >= 16) {
+            strength++;
+        }
 
         // 複雑性チェック
-        if (/[a-z]/.test(password)) strength++; // 小文字
-        if (/[A-Z]/.test(password)) strength++; // 大文字
-        if (/[0-9]/.test(password)) strength++; // 数字
-        if (/[^a-zA-Z0-9]/.test(password)) strength++; // 特殊文字
+        if (/[a-z]/.test(password)) {
+            strength++;
+        } // 小文字
+        if (/[A-Z]/.test(password)) {
+            strength++;
+        } // 大文字
+        if (/[0-9]/.test(password)) {
+            strength++;
+        } // 数字
+        if (/[^a-zA-Z0-9]/.test(password)) {
+            strength++;
+        } // 特殊文字
 
         if (strength <= 2) {
             result.strength = 'weak';

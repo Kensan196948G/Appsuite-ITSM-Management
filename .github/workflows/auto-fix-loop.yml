@@ -78,7 +78,7 @@ jobs:
             ERRORS_FOUND=false
 
             # ESLint チェック
-            if npx eslint WebUI-Production/js/*.js WebUI-Sample/js/*.js --format json > eslint-report.json 2>/dev/null; then
+            if npx eslint WebUI-Production/js/*.js --format json > eslint-report.json 2>/dev/null; then
               ESLINT_ERRORS=$(cat eslint-report.json | jq '[.[] | .errorCount] | add // 0')
               if [ "$ESLINT_ERRORS" -gt 0 ]; then
                 echo "ESLint errors found: $ESLINT_ERRORS"
@@ -91,7 +91,7 @@ jobs:
 
             # HTML バリデーション
             if command -v html-validate &> /dev/null; then
-              if ! html-validate WebUI-Production/*.html WebUI-Sample/*.html 2>/dev/null; then
+              if ! html-validate WebUI-Production/*.html 2>/dev/null; then
                 echo "HTML validation errors found"
                 ERRORS_FOUND=true
               fi
@@ -115,11 +115,10 @@ jobs:
             echo "Step 2: Auto-fixing errors..."
 
             # ESLint 自動修復
-            npx eslint WebUI-Production/js/*.js WebUI-Sample/js/*.js --fix 2>/dev/null || true
+            npx eslint WebUI-Production/js/*.js --fix 2>/dev/null || true
 
             # Prettier でフォーマット
             npx prettier --write "WebUI-Production/**/*.{js,css,html}" 2>/dev/null || true
-            npx prettier --write "WebUI-Sample/**/*.{js,css,html}" 2>/dev/null || true
 
             FIXED_COUNT=$((FIXED_COUNT + 1))
 

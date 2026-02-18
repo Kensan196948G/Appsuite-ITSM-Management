@@ -31,7 +31,7 @@ module.exports = defineConfig({
         },
     ],
     webServer: {
-        command: 'cd WebUI-Sample && python3 -m http.server 8888',
+        command: 'npx http-server WebUI-Production -p 8888 --silent',
         port: 8888,
         timeout: 120000,
         reuseExistingServer: !process.env.CI,

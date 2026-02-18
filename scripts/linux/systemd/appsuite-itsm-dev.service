@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=simple
 User=kensan
 Group=kensan
-WorkingDirectory=/mnt/LinuxHDD/Appsuite-ITSM-Management/WebUI-Sample
+WorkingDirectory=/mnt/LinuxHDD/Appsuite-ITSM-Management/WebUI-Production
 Environment="NODE_ENV=development"
 Environment="PORT=3100"
 

@@ -993,14 +993,20 @@ const QuickActions = {
      */
     _downloadCsv(filename, rows) {
         const bom = '\uFEFF'; // BOM for Excel UTF-8 compatibility
-        const csv = bom + rows
-            .map(row => row.map(cell => {
-                const str = String(cell == null ? '' : cell);
-                return str.includes(',') || str.includes('"') || str.includes('\n')
-                    ? `"${str.replace(/"/g, '""')}"`
-                    : str;
-            }).join(','))
-            .join('\r\n');
+        const csv =
+            bom +
+            rows
+                .map(row =>
+                    row
+                        .map(cell => {
+                            const str = String(cell == null ? '' : cell);
+                            return str.includes(',') || str.includes('"') || str.includes('\n')
+                                ? `"${str.replace(/"/g, '""')}"`
+                                : str;
+                        })
+                        .join(',')
+                )
+                .join('\r\n');
 
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
@@ -1020,11 +1026,31 @@ const QuickActions = {
     generateIncidentReport() {
         const incidents = DataStore.incidents || [];
         const now = DateUtils.format(new Date(), 'YYYY-MM-DD');
-        const header = ['ID', 'タイトル', 'アプリID', '優先度', 'ステータス', '報告者', '担当者', '作成日時', '解決日時'];
-        const rows = [header, ...incidents.map(inc => [
-            inc.id, inc.title, inc.appId, inc.priority, inc.status,
-            inc.reporter, inc.assignee || '', inc.created, inc.resolvedAt || '',
-        ])];
+        const header = [
+            'ID',
+            'タイトル',
+            'アプリID',
+            '優先度',
+            'ステータス',
+            '報告者',
+            '担当者',
+            '作成日時',
+            '解決日時',
+        ];
+        const rows = [
+            header,
+            ...incidents.map(inc => [
+                inc.id,
+                inc.title,
+                inc.appId,
+                inc.priority,
+                inc.status,
+                inc.reporter,
+                inc.assignee || '',
+                inc.created,
+                inc.resolvedAt || '',
+            ]),
+        ];
         this._downloadCsv(`incident-report-${now}.csv`, rows);
         Toast.success(`インシデントレポートをエクスポートしました（${incidents.length}件）`);
     },
@@ -1035,11 +1061,29 @@ const QuickActions = {
     generateChangeReport() {
         const changes = DataStore.changes || [];
         const now = DateUtils.format(new Date(), 'YYYY-MM-DD');
-        const header = ['ID', 'タイトル', 'アプリID', '種別', 'ステータス', '申請者', '承認者', '作成日時'];
-        const rows = [header, ...changes.map(chg => [
-            chg.id, chg.title, chg.appId, chg.type, chg.status,
-            chg.requester, chg.approver || '', chg.created,
-        ])];
+        const header = [
+            'ID',
+            'タイトル',
+            'アプリID',
+            '種別',
+            'ステータス',
+            '申請者',
+            '承認者',
+            '作成日時',
+        ];
+        const rows = [
+            header,
+            ...changes.map(chg => [
+                chg.id,
+                chg.title,
+                chg.appId,
+                chg.type,
+                chg.status,
+                chg.requester,
+                chg.approver || '',
+                chg.created,
+            ]),
+        ];
         this._downloadCsv(`change-report-${now}.csv`, rows);
         Toast.success(`変更管理レポートをエクスポートしました（${changes.length}件）`);
     },
@@ -1051,9 +1095,17 @@ const QuickActions = {
         const logs = DataStore.logs || [];
         const now = DateUtils.format(new Date(), 'YYYY-MM-DD');
         const header = ['ログID', '日時', 'ユーザーID', 'アクション', '対象', '詳細'];
-        const rows = [header, ...logs.map(log => [
-            log.id, log.timestamp, log.userId, log.action, log.target || '', log.details || '',
-        ])];
+        const rows = [
+            header,
+            ...logs.map(log => [
+                log.id,
+                log.timestamp,
+                log.userId,
+                log.action,
+                log.target || '',
+                log.details || '',
+            ]),
+        ];
         this._downloadCsv(`activity-report-${now}.csv`, rows);
         Toast.success(`アクティビティレポートをエクスポートしました（${logs.length}件）`);
     },

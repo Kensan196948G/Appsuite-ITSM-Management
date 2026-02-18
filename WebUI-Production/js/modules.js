@@ -1355,7 +1355,8 @@ const SettingsModule = {
 
         // システム名を反映
         document.querySelector('.sidebar-header h1').innerHTML =
-            '<i class="fas fa-cogs"></i> ' + escapeHtml(settings.general.systemName.substring(0, 15));
+            '<i class="fas fa-cogs"></i> ' +
+            escapeHtml(settings.general.systemName.substring(0, 15));
 
         showToast('基本設定を保存しました', 'success');
         LogModule.addLog('update', 'システム設定', 'system', '基本設定を更新');

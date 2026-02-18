@@ -321,7 +321,7 @@ const AppModule = {
             </div>
             <div class="form-group">
                 <label>作成者</label>
-                <input type="text" id="newAppCreator" value="${document.getElementById('currentUser').textContent}">
+                <input type="text" id="newAppCreator" value="${escapeHtml(document.getElementById('currentUser').textContent)}">
             </div>
             <div class="form-group">
                 <label>ステータス</label>
@@ -378,15 +378,15 @@ const AppModule = {
             'アプリ詳細: ' + app.name,
             `
             <div style="line-height: 2;">
-                <p><strong>アプリID:</strong> ${app.id}</p>
-                <p><strong>アプリ名:</strong> ${app.name}</p>
-                <p><strong>カテゴリ:</strong> ${app.category}</p>
-                <p><strong>作成者:</strong> ${app.creator}</p>
+                <p><strong>アプリID:</strong> ${escapeHtml(app.id)}</p>
+                <p><strong>アプリ名:</strong> ${escapeHtml(app.name)}</p>
+                <p><strong>カテゴリ:</strong> ${escapeHtml(app.category)}</p>
+                <p><strong>作成者:</strong> ${escapeHtml(app.creator)}</p>
                 <p><strong>レコード数:</strong> ${app.records.toLocaleString()}件</p>
                 <p><strong>ステータス:</strong> ${this.getStatusText(app.status)}</p>
-                <p><strong>最終更新:</strong> ${app.updated}</p>
+                <p><strong>最終更新:</strong> ${escapeHtml(app.updated)}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${app.description || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(app.description || '（なし）')}</p>
             </div>
         `,
             [{ text: '閉じる', class: 'btn-secondary', onclick: closeModal }]
@@ -424,7 +424,7 @@ const AppModule = {
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editAppDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${app.description || ''}</textarea>
+                <textarea id="editAppDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(app.description || '')}</textarea>
             </div>
         `,
             [
@@ -843,11 +843,11 @@ const IncidentModule = {
 
     showAddModal() {
         const appOptions = DataStore.apps
-            .map(a => `<option value="${a.id}" data-name="${a.name}">${a.name}</option>`)
+            .map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`)
             .join('');
         const userOptions = DataStore.users
             .filter(u => u.status === 'active')
-            .map(u => `<option value="${u.username}">${u.username}</option>`)
+            .map(u => `<option value="${escapeHtml(u.username)}">${escapeHtml(u.username)}</option>`)
             .join('');
 
         openModal(
@@ -932,16 +932,16 @@ const IncidentModule = {
             'インシデント詳細: ' + inc.id,
             `
             <div style="line-height: 2;">
-                <p><strong>インシデントID:</strong> ${inc.id}</p>
-                <p><strong>タイトル:</strong> ${inc.title}</p>
-                <p><strong>対象アプリ:</strong> ${inc.appName}</p>
+                <p><strong>インシデントID:</strong> ${escapeHtml(inc.id)}</p>
+                <p><strong>タイトル:</strong> ${escapeHtml(inc.title)}</p>
+                <p><strong>対象アプリ:</strong> ${escapeHtml(inc.appName)}</p>
                 <p><strong>優先度:</strong> <span class="badge ${this.getPriorityBadge(inc.priority)}">${this.getPriorityText(inc.priority)}</span></p>
                 <p><strong>ステータス:</strong> <span class="badge ${this.getStatusBadge(inc.status)}">${this.getStatusText(inc.status)}</span></p>
-                <p><strong>報告者:</strong> ${inc.reporter}</p>
-                <p><strong>担当者:</strong> ${inc.assignee}</p>
-                <p><strong>登録日:</strong> ${inc.created}</p>
+                <p><strong>報告者:</strong> ${escapeHtml(inc.reporter)}</p>
+                <p><strong>担当者:</strong> ${escapeHtml(inc.assignee)}</p>
+                <p><strong>登録日:</strong> ${escapeHtml(inc.created)}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${inc.description || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(inc.description || '（なし）')}</p>
             </div>
         `,
             [{ text: '閉じる', class: 'btn-secondary', onclick: closeModal }]
@@ -953,14 +953,14 @@ const IncidentModule = {
         const appOptions = DataStore.apps
             .map(
                 a =>
-                    `<option value="${a.id}" data-name="${a.name}" ${a.id === inc.appId ? 'selected' : ''}>${a.name}</option>`
+                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === inc.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
             )
             .join('');
         const userOptions = DataStore.users
             .filter(u => u.status === 'active')
             .map(
                 u =>
-                    `<option value="${u.username}" ${u.username === inc.assignee ? 'selected' : ''}>${u.username}</option>`
+                    `<option value="${escapeHtml(u.username)}" ${u.username === inc.assignee ? 'selected' : ''}>${escapeHtml(u.username)}</option>`
             )
             .join('');
 
@@ -1003,7 +1003,7 @@ const IncidentModule = {
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editIncDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${inc.description || ''}</textarea>
+                <textarea id="editIncDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(inc.description || '')}</textarea>
             </div>
         `,
             [
@@ -1711,7 +1711,7 @@ const ChangeModule = {
 
     showAddModal() {
         const appOptions = DataStore.apps
-            .map(a => `<option value="${a.id}" data-name="${a.name}">${a.name}</option>`)
+            .map(a => `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}">${escapeHtml(a.name)}</option>`)
             .join('');
 
         openModal(
@@ -1780,15 +1780,15 @@ const ChangeModule = {
             '変更要求詳細: ' + chg.id,
             `
             <div style="line-height: 2;">
-                <p><strong>変更ID:</strong> ${chg.id}</p>
-                <p><strong>タイトル:</strong> ${chg.title}</p>
-                <p><strong>対象アプリ:</strong> ${chg.appName}</p>
+                <p><strong>変更ID:</strong> ${escapeHtml(chg.id)}</p>
+                <p><strong>タイトル:</strong> ${escapeHtml(chg.title)}</p>
+                <p><strong>対象アプリ:</strong> ${escapeHtml(chg.appName)}</p>
                 <p><strong>変更種別:</strong> <span class="badge ${this.getTypeBadge(chg.type)}">${this.getTypeText(chg.type)}</span></p>
                 <p><strong>ステータス:</strong> <span class="badge ${this.getStatusBadge(chg.status)}">${this.getStatusText(chg.status)}</span></p>
-                <p><strong>依頼者:</strong> ${chg.requester}</p>
-                <p><strong>実施予定日:</strong> ${chg.scheduled}</p>
+                <p><strong>依頼者:</strong> ${escapeHtml(chg.requester)}</p>
+                <p><strong>実施予定日:</strong> ${escapeHtml(chg.scheduled)}</p>
                 <p><strong>説明:</strong></p>
-                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${chg.description || '（なし）'}</p>
+                <p style="background:#f8fafc;padding:10px;border-radius:8px;">${escapeHtml(chg.description || '（なし）')}</p>
             </div>
         `,
             [{ text: '閉じる', class: 'btn-secondary', onclick: closeModal }]
@@ -1800,7 +1800,7 @@ const ChangeModule = {
         const appOptions = DataStore.apps
             .map(
                 a =>
-                    `<option value="${a.id}" data-name="${a.name}" ${a.id === chg.appId ? 'selected' : ''}>${a.name}</option>`
+                    `<option value="${escapeHtml(a.id)}" data-name="${escapeHtml(a.name)}" ${a.id === chg.appId ? 'selected' : ''}>${escapeHtml(a.name)}</option>`
             )
             .join('');
 
@@ -1843,7 +1843,7 @@ const ChangeModule = {
             </div>
             <div class="form-group">
                 <label>説明</label>
-                <textarea id="editChgDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${chg.description || ''}</textarea>
+                <textarea id="editChgDesc" rows="3" style="width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;">${escapeHtml(chg.description || '')}</textarea>
             </div>
         `,
             [

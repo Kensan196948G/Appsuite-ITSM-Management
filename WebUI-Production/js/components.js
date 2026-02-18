@@ -144,7 +144,7 @@ const Modal = {
                     typeof btn.onclick === 'function'
                         ? `(${btn.onclick.toString()})()`
                         : btn.onclick;
-                return `<button class="btn ${escapeHtml(btn.class || '')}" onclick="${onclick}">${escapeHtml(btn.text)}</button>`;
+                return `<button class="btn ${escapeHtml(btn.class || '')}" onclick="${escapeHtml(onclick)}">${escapeHtml(btn.text)}</button>`;
             })
             .join('');
 

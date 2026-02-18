@@ -28,7 +28,7 @@ Write-Host ""
 # カレントディレクトリをWebUI-Sampleに移動
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path (Split-Path $scriptPath -Parent) -Parent
-Set-Location "$projectRoot\WebUI-Sample"
+Set-Location "$projectRoot\WebUI-Production"
 
 Write-Host "🚀 サーバー起動中..." -ForegroundColor Green
 Write-Host ""

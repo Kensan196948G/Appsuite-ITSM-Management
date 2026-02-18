@@ -1,1 +1,44 @@
-{"statusLine":{"command":"/mnt/LinuxHDD/Appsuite-ITSM-Management/.claude/statusline.sh","padding":0,"type":"command"}}
+{
+  "statusLine": {
+    "command": "~/.claude/statusline.sh",
+    "padding": 0,
+    "type": "command"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-start.sh",
+            "async": true,
+            "statusMessage": "並列開発環境を初期化中..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/user-prompt-submit.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/tool-call.sh",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

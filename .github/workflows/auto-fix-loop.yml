@@ -1,9 +1,9 @@
 name: Auto Error Detection and Fix Loop
 
 on:
-  # 30分間隔でスケジュール実行
+  # 1日1回（毎朝9時 JST = 0時 UTC）に変更
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 0 * * *'
   # 手動トリガー
   workflow_dispatch:
     inputs:
@@ -11,9 +11,6 @@ on:
         description: 'Maximum fix iterations'
         required: false
         default: '15'
-  # プッシュ時にも実行
-  push:
-    branches: [main, master]
 
 permissions:
   contents: write

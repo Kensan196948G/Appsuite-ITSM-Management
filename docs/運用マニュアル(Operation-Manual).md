@@ -1,9 +1,9 @@
 # AppSuite管理運用システム 運用マニュアル
 
 **文書番号**: OPR-APPSUITE-001
-**バージョン**: 3.0
+**バージョン**: 3.1
 **作成日**: 2026年1月20日
-**最終更新日**: 2026年2月11日（Phase 5実装完了）
+**最終更新日**: 2026年2月19日（最終版リリース）
 
 ---
 
@@ -36,13 +36,18 @@
 3. SSL証明書が有効であることを確認
 4. ダッシュボード画面が表示されることを確認
 
-**開発環境（ポート8888）**:
-1. 簡易Webサーバーを起動
+**開発環境（ポート3100）**:
+
+初回セットアップ（git clone後に一度だけ実行）:
 ```bash
-cd /path/to/Appsuite-ITSM-Management/WebUI-Production
-npx http-server -p 8888 --cors
+bash scripts/setup.sh
 ```
-2. ブラウザでアクセス: `http://localhost:8888/`
+
+起動:
+- **Windows**: `powershell -File scripts/windows/dev-start.ps1`
+- **Linux**: `bash scripts/linux/dev-start.sh`
+
+ブラウザでアクセス: `http://localhost:3100/`
 
 #### 2.1.2 停止手順
 
@@ -582,7 +587,7 @@ curl -I https://appsuite-itsm.example.com/ | grep -E "(Strict-Transport-Security
 | 大文字必須 | 有効 |
 | 数字必須 | 有効 |
 | 特殊文字必須 | 無効（推奨: 有効） |
-| パスワード有効期限 | 90日（Phase 5で実装予定） |
+| パスワード有効期限 | 90日（推奨。システム管理者がポリシーを設定） |
 
 #### 9.5.2 パスワードリセット手順
 
@@ -599,9 +604,9 @@ curl -I https://appsuite-itsm.example.com/ | grep -E "(Strict-Transport-Security
 
 ## 10. トラブルシューティング
 
-### 9.1 よくある問題と対処
+### 10.1 よくある問題と対処
 
-#### 9.1.1 画面が表示されない
+#### 10.1.1 画面が表示されない
 
 | 確認項目 | 対処 |
 |----------|------|
@@ -609,7 +614,7 @@ curl -I https://appsuite-itsm.example.com/ | grep -E "(Strict-Transport-Security
 | ブラウザキャッシュ | クリアして再読み込み |
 | ネットワーク接続 | 接続状態を確認 |
 
-#### 9.1.2 データが保存されない
+#### 10.1.2 データが保存されない
 
 | 確認項目 | 対処 |
 |----------|------|
@@ -617,7 +622,7 @@ curl -I https://appsuite-itsm.example.com/ | grep -E "(Strict-Transport-Security
 | プライベートブラウズ | 通常モードで使用 |
 | ブラウザ設定 | Cookie/ストレージ許可 |
 
-#### 9.1.3 API接続エラー
+#### 10.1.3 API接続エラー
 
 | エラー内容 | 対処 |
 |-----------|------|
@@ -626,15 +631,15 @@ curl -I https://appsuite-itsm.example.com/ | grep -E "(Strict-Transport-Security
 | 500 Internal Server Error | DeskNet's Neo側の確認 |
 | Timeout | タイムアウト値を増やす |
 
-### 9.2 緊急時対応
+### 10.2 緊急時対応
 
-#### 9.2.1 データ消失時
+#### 10.2.1 データ消失時
 
 1. 直近のバックアップファイルを確認
 2. リストアを実行
 3. バックアップ後の変更は手動で再入力
 
-#### 9.2.2 システム障害時
+#### 10.2.2 システム障害時
 
 1. エラーメッセージを記録
 2. ブラウザコンソールのエラーを確認
@@ -757,7 +762,7 @@ curl -I https://appsuite-itsm.example.com/ | grep -E "(Strict-Transport-Security
 
 ## 12. 連絡先
 
-### 10.1 サポート連絡先
+### 12.1 サポート連絡先
 
 | 区分 | 連絡先 | 対応時間 |
 |------|--------|----------|
@@ -765,7 +770,7 @@ curl -I https://appsuite-itsm.example.com/ | grep -E "(Strict-Transport-Security
 | システム管理者 | admin@example.com | 平日9:00-18:00 |
 | 緊急連絡先 | 090-xxxx-xxxx | 24時間 |
 
-### 10.2 ベンダー連絡先
+### 12.2 ベンダー連絡先
 
 | ベンダー | 連絡先 | 契約番号 |
 |----------|--------|----------|
@@ -812,7 +817,7 @@ API設定（APIキー、認証情報）を**Web Crypto API（AES-GCM-256）**で
 ### 11.2 バックアップ自動化機能
 
 #### 概要
-**GitHub Actions**により、毎日2:00 AM（JST）に自動バックアップを実行します。
+**GitHub Actions**により、毎朝9:00（JST）に自動バックアップを実行します。
 
 #### バックアップ対象
 - ユーザーアカウント（users）
@@ -858,8 +863,8 @@ gh run download <run-id>
    - 利用可能なバックアップファイル一覧から選択
 
 4. **ブラウザでリストア**
-   - Webサーバーを起動: `npm run dev:linux`
-   - http://localhost:8888/restore.html にアクセス
+   - Webサーバーを起動: `bash scripts/linux/dev-start.sh`（または Windows: `powershell -File scripts/windows/dev-start.ps1`）
+   - http://localhost:3100/ にアクセスしてリストア操作を実施
    - 「リストア実行」ボタンをクリック
 
 #### 手動バックアップ実行
@@ -875,9 +880,10 @@ GitHub Actions の手動トリガーでも実行可能:
 ### 11.3 HTTPS設定（本番環境）
 
 #### SSL証明書
-- **場所**: `ssl/prod-cert.pem`, `ssl/prod-key.pem`
-- **種類**: 自己署名証明書（365日有効）
-- **発行先**: 192.168.0.185
+- **場所**: `ssl/prod-cert.pem`, `ssl/prod-key.pem`（.gitignore対象）
+- **種類**: 自己署名証明書（825日有効、SAN対応）
+- **発行先**: `localhost`, `127.0.0.1`、および実行時の動的LANアドレス
+- **生成方法**: `bash scripts/setup.sh`（初回セットアップ）または `bash scripts/generate-ssl-cert.sh prod`（再生成）
 
 #### Nginx設定
 - **設定ファイル**: `config/nginx/appsuite-itsm.conf`
@@ -918,4 +924,5 @@ Phase 5実装により、セキュリティスコアが向上しました:
 |-----------|------|----------|--------|
 | 1.0 | 2026-01-20 | 初版作成 | - |
 | 2.0 | 2026-02-04 | Phase 4/5実績反映、セキュリティ対策追加、SSL/HTTPS運用追加、性能監視・定期メンテナンス追加 | システム管理者 |
-| 3.0 | 2026-02-11 | **Phase 5実装完了**：APIキー暗号化機能（SEC-001対応）、バックアップ自動化（GitHub Actions）、HTTPS設定手順、WebUI-Sample正式版化、セキュリティスコア95点達成 | Lead Agent |
+| 3.0 | 2026-02-11 | **Phase 5実装完了**：APIキー暗号化機能（SEC-001対応）、バックアップ自動化（GitHub Actions）、HTTPS設定手順、セキュリティスコア95点達成 | Lead Agent |
+| 3.1 | 2026-02-19 | **最終版リリース**：ポート番号修正（3100/8443）、動的IP対応（ハードコードIP削除）、setup.sh初期セットアップ手順追加、セクション番号修正、SSL証明書825日・SAN対応に更新、GitHub Actionsスケジュール反映 | Lead Agent |

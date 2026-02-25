@@ -1,0 +1,46 @@
+[
+  {
+    "id": "LOG-001",
+    "timestamp": "2026-02-24 08:55:12",
+    "userId": "U0004",
+    "username": "kobayashi",
+    "action": "ログイン",
+    "target": "システム",
+    "targetId": "-",
+    "details": "ログイン成功",
+    "ipAddress": "192.168.0.15"
+  },
+  {
+    "id": "LOG-002",
+    "timestamp": "2026-02-24 08:42:21",
+    "userId": "U0001",
+    "username": "admin",
+    "action": "更新",
+    "target": "設定",
+    "targetId": "CFG-SEC",
+    "details": "セッション30分",
+    "ipAddress": "192.168.0.10"
+  },
+  {
+    "id": "LOG-003",
+    "timestamp": "2026-02-24 08:20:05",
+    "userId": "U0001",
+    "username": "admin",
+    "action": "作成",
+    "target": "インシデント",
+    "targetId": "INC-001",
+    "details": "高優先度登録",
+    "ipAddress": "192.168.0.10"
+  },
+  {
+    "id": "LOG-004",
+    "timestamp": "2026-02-23 17:15:31",
+    "userId": "U0002",
+    "username": "sato",
+    "action": "エクスポート",
+    "target": "監査ログ",
+    "targetId": "-",
+    "details": "CSV出力",
+    "ipAddress": "192.168.0.21"
+  }
+]

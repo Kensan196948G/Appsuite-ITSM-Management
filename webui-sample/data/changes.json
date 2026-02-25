@@ -1,0 +1,38 @@
+[
+  {
+    "id": "CHG-001",
+    "title": "監査ログCSV列追加",
+    "description": "IP/対象ID列追加",
+    "appId": "A0001",
+    "type": "改善",
+    "status": "承認待ち",
+    "requester": "kobayashi",
+    "approver": "manager",
+    "plannedDate": "2026-02-27",
+    "completedDate": ""
+  },
+  {
+    "id": "CHG-002",
+    "title": "ログイン画面文言修正",
+    "description": "FAQに合わせて更新",
+    "appId": "A0002",
+    "type": "機能変更",
+    "status": "実装中",
+    "requester": "admin",
+    "approver": "manager",
+    "plannedDate": "2026-02-25",
+    "completedDate": ""
+  },
+  {
+    "id": "CHG-003",
+    "title": "バグ修正#123",
+    "description": "検索リセット不具合",
+    "appId": "A0003",
+    "type": "バグ修正",
+    "status": "完了",
+    "requester": "sato",
+    "approver": "manager",
+    "plannedDate": "2026-02-14",
+    "completedDate": "2026-02-15"
+  }
+]

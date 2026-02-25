@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "app.js DEFAULT",
+  "generatedAt": "2026-02-24T05:21:49.921Z",
+  "files": [
+    "connection.json",
+    "users.json",
+    "apps.json",
+    "incidents.json",
+    "changes.json",
+    "logs.json",
+    "backups.json",
+    "ops.json",
+    "settings.json",
+    "session.json",
+    "ui.json"
+  ]
+}

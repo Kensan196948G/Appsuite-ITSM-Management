@@ -1,0 +1,46 @@
+[
+  {
+    "id": "A0001",
+    "name": "勤怠管理",
+    "category": "業務管理",
+    "creator": "admin",
+    "recordCount": 1520,
+    "status": "稼働中",
+    "description": "出退勤・休暇管理",
+    "createdAt": "2026-01-20",
+    "updatedAt": "2026-02-24"
+  },
+  {
+    "id": "A0002",
+    "name": "経費申請",
+    "category": "申請・承認",
+    "creator": "sato",
+    "recordCount": 648,
+    "status": "稼働中",
+    "description": "経費精算ワークフロー",
+    "createdAt": "2026-01-22",
+    "updatedAt": "2026-02-22"
+  },
+  {
+    "id": "A0003",
+    "name": "顧客管理",
+    "category": "データ管理",
+    "creator": "admin",
+    "recordCount": 4200,
+    "status": "メンテナンス",
+    "description": "取引先・担当者マスタ",
+    "createdAt": "2026-01-24",
+    "updatedAt": "2026-02-19"
+  },
+  {
+    "id": "A0004",
+    "name": "契約管理",
+    "category": "業務管理",
+    "creator": "kobayashi",
+    "recordCount": 781,
+    "status": "稼働中",
+    "description": "契約台帳と期限通知",
+    "createdAt": "2026-02-03",
+    "updatedAt": "2026-02-23"
+  }
+]

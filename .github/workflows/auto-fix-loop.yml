@@ -11,6 +11,8 @@ on:
         description: 'Maximum fix iterations'
         required: false
         default: '15'
+  # NOTE: push トリガーは意図しない自動コミットを防ぐため無効化
+  # PR ベースの開発フローと CLAUDE.md 統治ルールに準拠
 
 permissions:
   contents: write

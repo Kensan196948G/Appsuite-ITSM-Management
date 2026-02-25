@@ -20,7 +20,19 @@
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-playwright"]
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "codex": {
+      "command": "codex",
+      "args": ["mcp-server"]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {
+        "PUPPETEER_LAUNCH_OPTIONS": "{\"headless\": false, \"timeout\": 30000}",
+        "ALLOW_DANGEROUS": "false"
+      }
     },
     "memory": {
       "command": "npx",

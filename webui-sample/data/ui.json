@@ -1,0 +1,24 @@
+{
+  "activeSection": "dashboard",
+  "activeSettingsTab": "api",
+  "selectedLogId": null,
+  "filters": {
+    "userSearch": "",
+    "userStatus": "all",
+    "userRole": "all",
+    "appSearch": "",
+    "appCategory": "all",
+    "appStatus": "all",
+    "incidentSearch": "",
+    "incidentStatus": "all",
+    "incidentPriority": "all",
+    "changeSearch": "",
+    "changeType": "all",
+    "changeStatus": "all",
+    "logFrom": "",
+    "logTo": "",
+    "logAction": "all",
+    "logTarget": "all",
+    "logMeta": "all"
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "INC-001",
+    "title": "ログイン不可",
+    "description": "Chromeで403",
+    "appId": "A0001",
+    "priority": "高",
+    "status": "対応中",
+    "reporter": "sato",
+    "assignee": "admin",
+    "reportedAt": "2026-02-24 08:12",
+    "resolvedAt": ""
+  },
+  {
+    "id": "INC-002",
+    "title": "表示崩れ",
+    "description": "モバイル幅で崩れる",
+    "appId": "A0002",
+    "priority": "中",
+    "status": "オープン",
+    "reporter": "yamada",
+    "assignee": "kobayashi",
+    "reportedAt": "2026-02-23 13:22",
+    "resolvedAt": ""
+  },
+  {
+    "id": "INC-003",
+    "title": "CSV文字化け",
+    "description": "エクスポート文字化け",
+    "appId": "A0003",
+    "priority": "低",
+    "status": "解決済み",
+    "reporter": "tanaka",
+    "assignee": "admin",
+    "reportedAt": "2026-02-20 16:05",
+    "resolvedAt": "2026-02-21 10:40"
+  }
+]

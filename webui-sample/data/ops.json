@@ -1,0 +1,40 @@
+{
+  "daily": [
+    {
+      "text": "API接続状態確認",
+      "done": true
+    },
+    {
+      "text": "未解決インシデント確認",
+      "done": false
+    },
+    {
+      "text": "本日の操作ログレビュー",
+      "done": false
+    }
+  ],
+  "weekly": [
+    {
+      "text": "監査ログレビュー",
+      "done": false
+    },
+    {
+      "text": "インシデント傾向分析",
+      "done": false
+    },
+    {
+      "text": "バックアップ検証",
+      "done": false
+    }
+  ],
+  "monthly": [
+    {
+      "text": "権限棚卸し",
+      "done": true
+    },
+    {
+      "text": "完全バックアップ取得",
+      "done": false
+    }
+  ]
+}

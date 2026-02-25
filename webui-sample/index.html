@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AppSuite管理運用システム | WebUI Sample</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="サイドバー">
+        <div class="brand">
+          <div class="brand-icon">AS</div>
+          <div>
+            <div class="brand-title">AppSuite管理運用</div>
+            <div class="brand-sub">DeskNet's Neo 連携 ITSM</div>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="主要メニュー">
+          <button class="nav-item active" data-section="dashboard">📊 ダッシュボード</button>
+          <button class="nav-item" data-section="users">👥 ユーザー管理</button>
+          <button class="nav-item" data-section="apps">📱 アプリ管理</button>
+          <button class="nav-item" data-section="incidents">⚠️ インシデント管理</button>
+          <button class="nav-item" data-section="changes">🔀 変更管理</button>
+          <button class="nav-item" data-section="logs">📋 監査ログ</button>
+          <button class="nav-item" data-section="settings">⚙️ システム設定</button>
+        </nav>
+
+        <div class="sidebar-meta">
+          <div class="mini-card">
+            <span>接続</span>
+            <strong id="sidebarConnection">未接続</strong>
+          </div>
+          <div class="mini-card">
+            <span>ユーザー</span>
+            <strong>管理者 / admin</strong>
+          </div>
+          <div class="mini-card mono" id="clock">--:--:--</div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar-left">
+            <button class="icon-btn mobile-only" id="menuToggle" aria-label="メニュー" aria-controls="sidebar" aria-expanded="false">☰</button>
+            <div>
+              <p class="eyebrow">SCR-001〜SCR-007 / Vanilla JS + localStorage</p>
+              <h1 id="pageTitle">ダッシュボード</h1>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <label class="compact-field">ロール
+              <select id="roleSwitcher">
+                <option value="管理者">管理者</option>
+                <option value="ユーザー">一般ユーザー</option>
+              </select>
+            </label>
+            <div class="connection-pill" id="connectionPill"><span class="dot"></span><span>API 未接続</span></div>
+            <button class="btn secondary" id="quickBackupBtn">バックアップ作成</button>
+            <button class="btn primary" id="globalActionBtn">新規登録</button>
+          </div>
+        </header>
+
+        <section class="screen active" id="screen-dashboard">
+          <div class="screen-head">
+            <div>
+              <h2>運用状況サマリー</h2>
+              <p>詳細要件定義書・画面設計書・運用/テスト関連ドキュメントを反映した統合ビュー</p>
+            </div>
+            <div class="auto-refresh">
+              <label for="refreshInterval">自動更新間隔</label>
+              <select id="refreshInterval">
+                <option value="15">15秒（デモ）</option>
+                <option value="30" selected>30秒（デモ）</option>
+                <option value="60">60秒（デモ）</option>
+              </select>
+              <button class="btn ghost" id="refreshNowBtn">今すぐ更新</button>
+            </div>
+          </div>
+
+          <div class="stats-grid" id="statsGrid"></div>
+
+          <div class="dashboard-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <h3>最近の操作ログ（DASH-003）</h3>
+                <button class="text-btn" data-jump="logs">監査ログへ</button>
+              </div>
+              <div id="recentLogs" class="timeline-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h3>稼働アプリサマリ（DASH-004）</h3>
+                <button class="text-btn" data-jump="apps">アプリ管理へ</button>
+              </div>
+              <div id="appSummaryList" class="summary-list"></div>
+            </section>
+
+            <section class="panel span-2">
+              <div class="panel-head">
+                <h3>運用チェック（運用マニュアル/チェックリスト反映）</h3>
+                <button class="text-btn" id="completeChecklistBtn">本日の確認を記録</button>
+              </div>
+              <div class="ops-columns" id="opsChecklist"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h3>品質・リリース状況</h3>
+                <span class="caption">E2E / UAT / Performance / Security</span>
+              </div>
+              <div id="qualityCards" class="quality-cards"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h3>トラブル/FAQクイック支援</h3>
+                <button class="text-btn" id="faqRandomBtn">別のFAQ</button>
+              </div>
+              <div id="faqCard" class="faq-card"></div>
+            </section>
+
+            <section class="panel span-2">
+              <div class="panel-head">
+                <h3>ドキュメント参照一覧（docsフォルダ全体）</h3>
+                <span class="caption" id="docsCountCaption"></span>
+              </div>
+              <div id="docsCategoryGrid" class="docs-category-grid"></div>
+              <div class="caption" id="docsMetaStamp"></div>
+              <details class="docs-detail">
+                <summary>全ファイル名を表示</summary>
+                <ul id="docsFileList" class="docs-file-list"></ul>
+              </details>
+              <div class="excel-meta" id="excelMeta"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-users">
+          <div class="module-intent">
+            <div><strong>🎯 目的</strong><span>ユーザーの登録・編集・削除と権限設定を一元管理</span></div>
+            <div><strong>💡 意味</strong><span>誰がどの権限でアクセスできるかを可視化</span></div>
+            <div><strong>✅ 必要性</strong><span>不正アクセス防止・監査対応に必須</span></div>
+          </div>
+          <div class="toolbar">
+            <button class="btn primary" data-open-modal="user">+ 新規ユーザー</button>
+            <input type="search" id="userSearch" placeholder="ユーザー名・メールで検索" />
+            <select id="userStatusFilter"><option value="all">ステータス: すべて</option></select>
+            <select id="userRoleFilter"><option value="all">権限: すべて</option></select>
+            <button class="btn ghost" id="userReset">リセット</button>
+          </div>
+          <div class="table-card">
+            <div id="usersTable"></div>
+            <div class="pager">[ < ] [ 1 ] [ 2 ] [ > ]</div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-apps">
+          <div class="module-intent">
+            <div><strong>🎯 目的</strong><span>業務アプリの棚卸・稼働状況の可視化</span></div>
+            <div><strong>💡 意味</strong><span>重複や管理漏れを防止し、保守計画に活用</span></div>
+            <div><strong>✅ 必要性</strong><span>カテゴリ/状態/件数で運用優先度を判断</span></div>
+          </div>
+          <div class="toolbar">
+            <button class="btn primary" data-open-modal="app">+ 新規アプリ</button>
+            <input type="search" id="appSearch" placeholder="アプリ名で検索" />
+            <select id="appCategoryFilter"><option value="all">カテゴリ: すべて</option></select>
+            <select id="appStatusFilter"><option value="all">状態: すべて</option></select>
+            <button class="btn ghost" id="appReset">リセット</button>
+          </div>
+          <div class="table-card" id="appsTable"></div>
+        </section>
+
+        <section class="screen" id="screen-incidents">
+          <div class="module-intent">
+            <div><strong>🎯 目的</strong><span>障害・不具合・問い合わせを追跡し対応漏れを防ぐ</span></div>
+            <div><strong>💡 意味</strong><span>発生から解決までの流れを可視化</span></div>
+            <div><strong>✅ 必要性</strong><span>SLA遵守・再発防止の基盤</span></div>
+          </div>
+          <div class="toolbar">
+            <button class="btn primary" data-open-modal="incident">+ 新規インシデント</button>
+            <input type="search" id="incidentSearch" placeholder="タイトル・内容で検索" />
+            <select id="incidentStatusFilter"><option value="all">ステータス: すべて</option></select>
+            <select id="incidentPriorityFilter"><option value="all">優先度: すべて</option></select>
+            <button class="btn ghost" id="incidentReset">リセット</button>
+          </div>
+          <div class="stack-grid">
+            <div class="table-card" id="incidentsTable"></div>
+            <aside class="side-panel">
+              <h3>ステータス遷移</h3>
+              <div class="flow-line">
+                <span>オープン</span><i>→</i><span>対応中</span><i>→</i><span>解決済み</span><i>→</i><span>クローズ</span>
+              </div>
+              <p>差し戻しは「対応中」へ戻す運用を想定（要件定義書 3.4.4）。</p>
+              <h4>エスカレーション期限</h4>
+              <p>24時間（ワークフロー設定デフォルト）</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-changes">
+          <div class="module-intent">
+            <div><strong>🎯 目的</strong><span>変更要求を承認フローで計画的に実施</span></div>
+            <div><strong>💡 意味</strong><span>影響範囲と履歴を残し、無計画変更を抑制</span></div>
+            <div><strong>✅ 必要性</strong><span>承認管理・ロールバック対応の前提</span></div>
+          </div>
+          <div class="toolbar">
+            <button class="btn primary" data-open-modal="change">+ 新規変更要求</button>
+            <input type="search" id="changeSearch" placeholder="タイトル・内容で検索" />
+            <select id="changeTypeFilter"><option value="all">タイプ: すべて</option></select>
+            <select id="changeStatusFilter"><option value="all">ステータス: すべて</option></select>
+            <button class="btn ghost" id="changeReset">リセット</button>
+          </div>
+          <div class="stack-grid">
+            <div class="table-card" id="changesTable"></div>
+            <aside class="side-panel">
+              <h3>承認フロー</h3>
+              <ol class="flow-list">
+                <li>下書き</li>
+                <li>承認待ち</li>
+                <li>承認済み</li>
+                <li>実装中</li>
+                <li>完了</li>
+              </ol>
+              <p>却下は承認待ちから分岐。コメント必須設定（デフォルト ON）。</p>
+              <button class="btn secondary full" id="approveDemoBtn">承認デモ実行</button>
+            </aside>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-logs">
+          <div class="module-intent">
+            <div><strong>🎯 目的</strong><span>全操作履歴を記録し、検索・エクスポート可能にする</span></div>
+            <div><strong>💡 意味</strong><span>監査・原因調査・内部統制に活用</span></div>
+            <div><strong>✅ 必要性</strong><span>コンプライアンス対応に必須</span></div>
+          </div>
+          <div class="toolbar">
+            <input type="date" id="logFrom" />
+            <input type="date" id="logTo" />
+            <select id="logActionFilter"><option value="all">操作タイプ: すべて</option></select>
+            <select id="logTargetFilter"><option value="all">対象: すべて</option></select>
+            <select id="logMetaFilter">
+              <option value="all">meta: すべて</option>
+              <option value="diff">diffあり</option>
+              <option value="backup">バックアップ関連</option>
+              <option value="settings">設定変更</option>
+            </select>
+            <button class="btn primary" id="logSearchBtn">検索</button>
+            <button class="btn ghost" id="exportLogsBtn">CSVエクスポート</button>
+          </div>
+          <div class="table-card">
+            <div id="logsTable"></div>
+            <div class="table-foot">
+              <span>保持期間設定: <strong>90日</strong>（OPR-001 / LOG-007任意）</span>
+              <span>ページサイズ: <strong id="pageSizeInfo">25</strong></span>
+            </div>
+          </div>
+          <aside class="log-detail-panel hidden" id="logDetailPanel">
+            <div class="panel-head">
+              <h3 id="logDetailTitle">監査ログ詳細</h3>
+              <button class="icon-btn" data-close-log-detail id="logDetailClose" aria-label="詳細を閉じる">✕</button>
+            </div>
+            <div class="toolbar compact">
+              <select id="logDetailDiffFilter">
+                <option value="all">差分: すべて</option>
+                <option value="beforeOnly">before only</option>
+                <option value="afterOnly">after only</option>
+              </select>
+            </div>
+            <div id="logDetailEmpty" class="note-box">行をクリックすると `meta` の詳細（差分比較 / JSON）を表示します。</div>
+            <div id="logDetailBody"></div>
+          </aside>
+        </section>
+
+        <section class="screen" id="screen-settings">
+          <div class="module-intent">
+            <div><strong>🎯 目的</strong><span>API・通知・セキュリティ・ワークフロー・バックアップ設定を一元管理</span></div>
+            <div><strong>💡 意味</strong><span>運用ポリシーに沿った柔軟なカスタマイズ</span></div>
+            <div><strong>✅ 必要性</strong><span>DeskNet's Neo連携・セキュリティ適用・復旧性の中核</span></div>
+          </div>
+          <div class="toolbar compact">
+            <span class="badge secondary" id="mockApiSyncBadge">mockApi 未同期</span>
+            <span class="caption" id="mockApiSyncMeta">overlay: -</span>
+          </div>
+          <details class="docs-detail" id="mockApiSyncPanel">
+            <summary>mockApi 同期詳細 / オーバーレイ管理</summary>
+            <div class="form-grid">
+              <div class="two-cols">
+                <label>カテゴリ一覧<select id="mockApiCategorySelect"></select></label>
+                <div class="form-actions compact" style="align-items:end">
+                  <button class="btn ghost" type="button" id="mockApiRefreshBtn">再読込</button>
+                  <button class="btn ghost" type="button" id="mockApiRemoveCategoryBtn">カテゴリ削除</button>
+                  <button class="btn secondary" type="button" id="mockApiResetOverlayBtn">全体リセット</button>
+                </div>
+              </div>
+              <div id="mockApiSyncHistory" class="backup-history"></div>
+            </div>
+          </details>
+
+          <div class="settings-tabs" id="settingsTabs">
+            <button class="tab active" data-tab="api">🔌 API接続</button>
+            <button class="tab" data-tab="basic">⚙️ 基本設定</button>
+            <button class="tab" data-tab="notify">🔔 通知設定</button>
+            <button class="tab" data-tab="security">🛡️ セキュリティ</button>
+            <button class="tab" data-tab="workflow">📊 ワークフロー</button>
+            <button class="tab" data-tab="permissions">🔐 権限設定</button>
+            <button class="tab" data-tab="backup">💾 バックアップ</button>
+          </div>
+
+          <div class="settings-panels">
+            <section class="settings-panel active" data-tab-panel="api">
+              <div class="split-grid">
+                <div class="panel">
+                  <h3>DeskNet's Neo API接続</h3>
+                  <div class="form-grid">
+                    <label>API URL<input id="apiUrl" type="url" /></label>
+                    <label>認証方式<select id="authMethod"></select></label>
+                    <label>APIキー / トークン
+                      <div class="inline-field">
+                        <input id="apiKey" type="password" />
+                        <button class="icon-btn" id="toggleApiKey" aria-label="APIキー表示切替">👁</button>
+                      </div>
+                    </label>
+                    <div class="two-cols">
+                      <label>タイムアウト（秒）<input id="apiTimeout" type="number" min="5" max="120" /></label>
+                      <label>自動同期間隔（分）<input id="syncInterval" type="number" min="1" max="1440" /></label>
+                    </div>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn secondary" id="saveApiBtn">保存</button>
+                    <button class="btn primary" id="testConnectionBtn">接続テスト</button>
+                  </div>
+                  <div class="note-box success">SEC-001対応: HTTPS運用 / APIキー暗号化設計（詳細設計_APIキー暗号化）を想定した表示です。</div>
+                </div>
+                <div class="panel status-stack" id="apiStatusCards"></div>
+              </div>
+            </section>
+
+            <section class="settings-panel" data-tab-panel="basic">
+              <div class="panel">
+                <h3>基本設定（3.7.2.2）</h3>
+                <div class="form-grid">
+                  <div class="two-cols">
+                    <label>システム名<input id="systemName" type="text" /></label>
+                    <label>組織名<input id="orgName" type="text" /></label>
+                  </div>
+                  <div class="two-cols">
+                    <label>管理者メール<input id="adminEmail" type="email" /></label>
+                    <label>言語<select id="language"></select></label>
+                  </div>
+                  <div class="two-cols">
+                    <label>日付形式<input id="dateFormat" type="text" /></label>
+                    <label>1ページ件数<input id="pageSize" type="number" min="10" max="100" step="5" /></label>
+                  </div>
+                </div>
+                <div class="form-actions"><button class="btn primary" id="saveBasicBtn">保存</button></div>
+              </div>
+            </section>
+
+            <section class="settings-panel" data-tab-panel="notify">
+              <div class="split-grid">
+                <div class="panel">
+                  <h3>通知トリガー</h3>
+                  <div class="checklist" id="notifyToggles"></div>
+                </div>
+                <div class="panel">
+                  <h3>SMTP設定</h3>
+                  <div class="form-grid">
+                    <div class="two-cols">
+                      <label>SMTP Host<input id="smtpHost" type="text" /></label>
+                      <label>SMTP Port<input id="smtpPort" type="number" /></label>
+                    </div>
+                    <label>SMTP User<input id="smtpUser" type="text" /></label>
+                    <label>SMTP Password<input id="smtpPass" type="password" /></label>
+                    <label class="inline-check"><input id="smtpSsl" type="checkbox" /> SSL/TLSを使用</label>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn secondary" id="sendTestMailBtn">テスト送信</button>
+                    <button class="btn primary" id="saveNotifyBtn">保存</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-panel" data-tab-panel="security">
+              <div class="split-grid">
+                <div class="panel">
+                  <h3>パスワード / 認証</h3>
+                  <div class="form-grid">
+                    <div class="three-cols compact">
+                      <label>最小文字数<input id="pwMinLength" type="number" min="6" max="32" /></label>
+                      <label>有効期限（日）<input id="pwExpireDays" type="number" min="0" max="365" /></label>
+                      <label>失敗許容回数<input id="maxLoginAttempts" type="number" min="1" max="10" /></label>
+                    </div>
+                    <div class="three-cols compact">
+                      <label>セッションタイムアウト（分）<input id="sessionTimeout" type="number" min="5" max="240" /></label>
+                      <label>最大同時ログイン<input id="maxSessions" type="number" min="1" max="10" /></label>
+                      <label>ロック時間（分）<input id="lockoutDuration" type="number" min="1" max="120" /></label>
+                    </div>
+                    <div class="checklist" id="securityChecks"></div>
+                  </div>
+                  <div class="form-actions"><button class="btn primary" id="saveSecurityBtn">保存</button></div>
+                </div>
+                <div class="panel">
+                  <h3>セキュリティ運用状況</h3>
+                  <div class="status-list" id="securityStatusList"></div>
+                  <div class="note-box">HTTPS設定手順書 / セキュリティ設計書 / 統合監査レポートを参照した要素を表示。</div>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-panel" data-tab-panel="workflow">
+              <div class="split-grid">
+                <div class="panel">
+                  <h3>インシデント設定</h3>
+                  <div class="form-grid">
+                    <label class="inline-check"><input id="incidentAutoAssign" type="checkbox" /> 自動割当</label>
+                    <label>デフォルト担当者<select id="incidentDefaultAssignee"></select></label>
+                    <label>エスカレーション期限（時間）<input id="incidentEscalation" type="number" min="1" max="168" /></label>
+                  </div>
+                </div>
+                <div class="panel">
+                  <h3>変更管理設定</h3>
+                  <div class="form-grid">
+                    <label class="inline-check"><input id="changeRequireApproval" type="checkbox" /> 承認必須</label>
+                    <label>承認者ロール<select id="changeApprover"></select></label>
+                    <div class="two-cols">
+                      <label>リードタイム（日）<input id="changeLeadTime" type="number" min="0" max="30" /></label>
+                      <label class="inline-check"><input id="allowSkipStatus" type="checkbox" /> ステータススキップ許可</label>
+                    </div>
+                    <label class="inline-check"><input id="requireComment" type="checkbox" /> ステータス変更時コメント必須</label>
+                  </div>
+                  <div class="form-actions"><button class="btn primary" id="saveWorkflowBtn">保存</button></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-panel" data-tab-panel="permissions">
+              <div class="panel">
+                <h3>権限モデル設定（ロール別・機能別）</h3>
+                <p class="caption">ロール定義を設定データとして保存し、`PERMISSIONS` 固定値より優先して適用します。</p>
+                <div id="permissionsEditor"></div>
+                <h4>行単位ルール</h4>
+                <div id="rowLevelRulesEditor"></div>
+                <hr class="divider" />
+                <h4>Docs エディタ（候補/運用ノート）</h4>
+                <p class="caption">docs 連携の候補アクションとレビュー情報を編集し、mock API（ローカルオーバーレイ）へ保存します。</p>
+                <div class="form-grid">
+                  <div class="two-cols">
+                    <label>レビュー担当<input id="docsEditorOwner" type="text" placeholder="例: IT運用管理" /></label>
+                    <label>見直し周期（日）<input id="docsEditorReviewDays" type="number" min="1" max="365" /></label>
+                  </div>
+                  <label>運用ノート<textarea id="docsEditorNote" rows="3" placeholder="docs反映時の運用メモ"></textarea></label>
+                  <div>
+                    <div class="panel-head">
+                      <h5>アクション候補（表形式編集）</h5>
+                      <div class="form-actions compact">
+                        <button class="btn ghost" type="button" id="docsActionAddBtn">行追加</button>
+                        <button class="btn ghost" type="button" id="docsActionSortBtn">並び替え（担当→状態）</button>
+                      </div>
+                    </div>
+                    <div id="docsActionsTable" class="table-wrap"></div>
+                    <div class="caption">行の追加/削除/上下移動後に「Docs 設定を保存」を押してください。</div>
+                  </div>
+                </div>
+                <div class="form-actions"><button class="btn secondary" id="saveDocsEditorBtn">Docs 設定を保存</button></div>
+                <div class="form-actions"><button class="btn primary" id="savePermissionsBtn">権限設定を保存</button></div>
+              </div>
+            </section>
+
+            <section class="settings-panel" data-tab-panel="backup">
+              <div class="split-grid">
+                <div class="panel">
+                  <h3>バックアップ設定（3.7.2.6）</h3>
+                  <div class="form-grid">
+                    <label class="inline-check"><input id="autoBackup" type="checkbox" /> 自動バックアップ有効</label>
+                    <div class="two-cols">
+                      <label>間隔<select id="backupInterval"></select></label>
+                      <label>保持世代<input id="backupRetention" type="number" min="1" max="30" /></label>
+                    </div>
+                    <div class="two-cols">
+                      <label>署名方式
+                        <select id="backupSignatureMode">
+                          <option value="sha256">SHA-256（ハッシュ）</option>
+                          <option value="hmac-sha256">HMAC-SHA256</option>
+                          <option value="none">なし</option>
+                        </select>
+                      </label>
+                      <label>HMAC秘密鍵（デモ）<input id="backupHmacSecret" type="password" placeholder="HMAC利用時のみ" /></label>
+                    </div>
+                  </div>
+                  <div class="form-actions">
+                    <button class="btn secondary" id="saveBackupBtn">保存</button>
+                    <button class="btn primary" id="createBackupBtn">今すぐバックアップ</button>
+                    <button class="btn ghost" id="exportBackupJsonBtn">JSONエクスポート</button>
+                    <button class="btn ghost" id="restoreBackupBtn">JSONインポート</button>
+                    <input id="backupImportFile" type="file" accept="application/json,.json" class="hidden" />
+                  </div>
+                  <div class="note-box warning">詳細設計_バックアップ自動化 / IndexedDB移行 / ロールバック手順書の運用観点を反映。</div>
+                </div>
+                <div class="panel">
+                  <h3>バックアップ履歴</h3>
+                  <div id="backupHistory" class="backup-history"></div>
+                  <div id="backupImportPreview" class="note-box hidden"></div>
+                  <h4>復旧メモ</h4>
+                  <ul class="plain-list">
+                    <li>誤削除時は最新正常バックアップから復元</li>
+                    <li>変更作業前に手動バックアップを推奨</li>
+                    <li>定期的にリストア手順を検証（UAT/運用チェック）</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop hidden" id="modalBackdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head">
+          <h3 id="modalTitle">新規登録</h3>
+          <button class="icon-btn" id="modalClose" aria-label="閉じる">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-foot">
+          <button class="btn ghost" id="modalCancel">キャンセル</button>
+          <button class="btn primary" id="modalSave">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="docs-metadata.generated.js"></script>
+    <script src="validation.js"></script>
+    <script src="workflow-rules.js"></script>
+    <script src="data-store.js"></script>
+    <script src="data/seed.js"></script>
+    <script src="mock-api.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "U0001",
+    "username": "admin",
+    "email": "admin@example.local",
+    "department": "IT部",
+    "role": "管理者",
+    "status": "有効",
+    "lastLogin": "2026-02-24 08:42",
+    "createdAt": "2026-01-20",
+    "updatedAt": "2026-02-24"
+  },
+  {
+    "id": "U0002",
+    "username": "sato",
+    "email": "sato@sales.local",
+    "department": "営業部",
+    "role": "ユーザー",
+    "status": "有効",
+    "lastLogin": "2026-02-23 17:10",
+    "createdAt": "2026-01-22",
+    "updatedAt": "2026-02-12"
+  },
+  {
+    "id": "U0003",
+    "username": "tanaka",
+    "email": "tanaka@general.local",
+    "department": "総務部",
+    "role": "ユーザー",
+    "status": "無効",
+    "lastLogin": "2026-02-10 09:31",
+    "createdAt": "2026-01-25",
+    "updatedAt": "2026-02-10"
+  },
+  {
+    "id": "U0004",
+    "username": "kobayashi",
+    "email": "kobayashi@ops.local",
+    "department": "情報システム",
+    "role": "管理者",
+    "status": "有効",
+    "lastLogin": "2026-02-24 08:55",
+    "createdAt": "2026-01-27",
+    "updatedAt": "2026-02-21"
+  }
+]

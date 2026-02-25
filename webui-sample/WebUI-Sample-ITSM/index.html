@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AppSuite 運用システム（サンプルUI）</title>
+
+  <!-- Font Awesome (icons) -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#main">本文へスキップ</a>
+
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="サイドバー">
+      <div class="brand">
+        <div class="brand__logo" aria-hidden="true">
+          <i class="fa-solid fa-sparkles"></i>
+        </div>
+        <div class="brand__text">
+          <div class="brand__title">AppSuite運用</div>
+          <div class="brand__sub">Ops Console (Sample)</div>
+        </div>
+      </div>
+
+      <div class="sidebar__search">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input id="menuSearch" type="search" placeholder="メニュー検索…" aria-label="メニュー検索" />
+      </div>
+
+      <nav class="menu" aria-label="メインメニュー">
+        <div class="menu__section">
+          <div class="menu__label">概要</div>
+          <a class="menu__item" href="#/dashboard" data-route="dashboard">
+            <i class="fa-solid fa-gauge-high"></i><span>ダッシュボード</span>
+          </a>
+        </div>
+
+        <div class="menu__section">
+          <div class="menu__label">人・組織</div>
+          <a class="menu__item" href="#/users" data-route="users">
+            <i class="fa-solid fa-users"></i><span>ユーザー管理</span>
+          </a>
+          <a class="menu__item" href="#/orgs" data-route="orgs">
+            <i class="fa-solid fa-sitemap"></i><span>組織管理</span>
+          </a>
+        </div>
+
+        <div class="menu__section">
+          <div class="menu__label">アプリ・権限</div>
+          <a class="menu__item" href="#/apps" data-route="apps">
+            <i class="fa-solid fa-cubes"></i><span>AppSuiteアプリ管理</span>
+          </a>
+          <a class="menu__item" href="#/access" data-route="access">
+            <i class="fa-solid fa-key"></i><span>権限・アクセス管理</span>
+          </a>
+        </div>
+
+        <div class="menu__section">
+          <div class="menu__label">データ・連携</div>
+          <a class="menu__item" href="#/data-ops" data-route="data-ops">
+            <i class="fa-solid fa-database"></i><span>データ運用管理</span>
+          </a>
+          <a class="menu__item" href="#/integrations" data-route="integrations">
+            <i class="fa-solid fa-arrows-rotate"></i><span>外部連携・同期管理</span>
+          </a>
+        </div>
+
+        <div class="menu__section">
+          <div class="menu__label">サービス品質</div>
+          <a class="menu__item" href="#/incidents" data-route="incidents">
+            <i class="fa-solid fa-triangle-exclamation"></i><span>インシデント管理</span>
+          </a>
+          <a class="menu__item" href="#/problem-management" data-route="problem-management">
+            <i class="fa-solid fa-magnifying-glass-chart"></i><span>問題管理</span>
+          </a>
+          <a class="menu__item" href="#/change-management" data-route="change-management">
+            <i class="fa-solid fa-code-branch"></i><span>変更管理</span>
+          </a>
+          <a class="menu__item" href="#/service-level" data-route="service-level">
+            <i class="fa-solid fa-handshake"></i><span>サービスレベル管理</span>
+          </a>
+        </div>
+
+        <div class="menu__section">
+          <div class="menu__label">保全・設定</div>
+          <a class="menu__item" href="#/evidence" data-route="evidence">
+            <i class="fa-solid fa-file-shield"></i><span>バックアップ・証跡管理</span>
+          </a>
+          <a class="menu__item" href="#/docs" data-route="docs">
+            <i class="fa-solid fa-book"></i><span>運用ルール・ドキュメント</span>
+          </a>
+          <a class="menu__item" href="#/settings" data-route="settings">
+            <i class="fa-solid fa-gear"></i><span>システム設定</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar__footer">
+        <button id="toggleThemeBtn" class="btn btn--ghost" type="button">
+          <i class="fa-solid fa-sun"></i><span>ライト</span>
+        </button>
+        <div class="hint">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>これはUIモックです</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+      <header class="topbar" aria-label="トップバー">
+        <div class="topbar__left">
+          <button id="sidebarToggle" class="icon-btn" type="button" aria-label="サイドバーを開閉">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div>
+            <div id="pageTitle" class="topbar__title">ダッシュボード</div>
+            <div id="pageSubtitle" class="topbar__sub">今日の運用状況を一目で確認</div>
+          </div>
+        </div>
+
+        <div class="topbar__right">
+          <div class="pill">
+            <i class="fa-solid fa-cloud" aria-hidden="true"></i>
+            <span>Cloud</span>
+          </div>
+          <div class="pill pill--ok" title="連携状態">
+            <i class="fa-solid fa-link" aria-hidden="true"></i>
+            <span>連携OK</span>
+          </div>
+          <button id="simulateBtn" class="btn btn--primary" type="button">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>サンプル更新</span>
+          </button>
+        </div>
+      </header>
+
+      <main id="main" class="content" tabindex="-1">
+        <!-- Views injected by JS -->
+        <section id="view" class="view" aria-live="polite"></section>
+      </main>
+
+      <footer class="footer">
+        <span>© Sample UI for AppSuite Ops</span>
+        <span class="footer__sep">•</span>
+        <span class="footer__muted">明るい配色＋アイコン多用（静的）</span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

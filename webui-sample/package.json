@@ -1,0 +1,21 @@
+{
+  "name": "webui-sample-appsuite",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "test": "npm run test:unit && npm run data:verify",
+    "test:all": "npm run test && npm run test:e2e",
+    "test:unit": "node --test tests/*.test.js",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:win": "cmd /c playwright test",
+    "test:e2e:win:headed": "cmd /c playwright test --headed",
+    "docs:meta": "node ../tools/generate-webui-docs-metadata.js",
+    "data:seed": "node ../tools/build-webui-seed.js",
+    "data:verify": "node ../tools/verify-webui-data.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.53.0"
+  }
+}

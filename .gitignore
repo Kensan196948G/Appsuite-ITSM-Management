@@ -79,6 +79,10 @@ build.log.*
 *~
 .claude/locks/
 
+# MCP config backup files (timestamped backups)
+.mcp.json.bak.*
+.mcp.json.backup.*
+
 # Playwright test results
 test-results/
 playwright-report/

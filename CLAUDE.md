@@ -32,20 +32,41 @@ Appsuite-ITSM-Management/
 ├── README.md                    # プロジェクト説明
 ├── DEPLOYMENT.md                # 本番稼働ガイド
 ├── Appsuite_ITSM_Processes.md   # ITSMプロセスドキュメント
-├── docs/                        # 設計書・仕様書
-│   ├── システム概要書(System-Overview).md
-│   ├── 機能仕様書(Functional-Specification).md
-│   ├── 詳細要件定義書(Requirements-Specification).md
-│   ├── 開発フェーズ計画書(Development-Phase-Plan).md
-│   ├── API仕様書(API-Specification).md
-│   ├── データベース設計書(Database-Design).md
-│   ├── 画面設計書(Screen-Design).md
-│   ├── セキュリティ設計書(Security-Design).md
-│   ├── テスト仕様書(Test-Specification).md
-│   ├── 運用マニュアル(Operation-Manual).md
-│   ├── ユーザーガイド(User-Guide).md
-│   └── 用語集(Glossary).md
-└── WebUI-Production/            # メインアプリケーション（正式版）
+├── docs/                        # 設計書・仕様書（フェーズ別サブディレクトリ）
+│   ├── 01_Requirements/         # 要件定義フェーズ
+│   ├── 02_Basic-Design/         # 基本設計フェーズ
+│   ├── 03_Detailed-Design/      # 詳細設計フェーズ
+│   ├── 04_Development-Environment/ # 開発環境設定
+│   ├── 05_Implementation/       # 実装フェーズ
+│   ├── 06_Testing/              # テストフェーズ
+│   ├── 07_CI-CD/                # CI/CDフェーズ
+│   ├── 08_Deployment/           # デプロイメント
+│   ├── 09_Operations-Maintenance/ # 運用・保守
+│   ├── 10_Security/             # セキュリティ設計
+│   ├── 11_Reports/              # レポート・監査
+│   └── webui-sample-docs/       # 新WebUI仕様書群（20本）
+├── tools/                       # ビルド・検証スクリプト
+│   ├── build-webui-seed.js      # WebUIシードデータ生成
+│   ├── generate-webui-docs-metadata.js # ドキュメントメタデータ生成
+│   └── verify-webui-data.js     # WebUIデータ検証
+│
+│ ★ WebUI 正本（新規実装はこちら）
+├── webui-sample/                # 【開発正本】正式WebUI候補（Sprint 1 決定）
+│   ├── index.html               # メインHTML（SPA）
+│   ├── app.js                   # アプリケーションロジック
+│   ├── styles.css               # スタイルシート
+│   ├── data-store.js            # 状態管理（IndexedDB/localStorage）
+│   ├── mock-api.js              # モックAPI（本番API差し替え対応設計）
+│   ├── workflow-rules.js        # ワークフロールール
+│   ├── validation.js            # バリデーション
+│   ├── data/                    # seedデータ（JSON）
+│   ├── tests/                   # テストスイート
+│   ├── e2e/                     # E2Eテスト（Playwright）
+│   ├── ARCHITECTURE-RESPONSIBILITIES.md # 責務整理ドキュメント
+│   └── playwright.config.js     # Playwrightテスト設定
+│
+│ ★ 旧正本（保守継続・新規実装は原則禁止）
+└── WebUI-Production/            # 【旧正本・保守のみ】XSS対策済み安定版
     ├── index.html               # メインHTML（SPA）
     ├── css/
     │   └── styles.css           # スタイルシート
@@ -63,6 +84,15 @@ Appsuite-ITSM-Management/
     ├── README.md
     └── DEPLOYMENT.md
 ```
+
+### WebUI 正本の使い分け方針
+
+| 用途 | 使用するディレクトリ |
+|------|---------------------|
+| 新規機能実装・テスト | `webui-sample/` ← **こちらを使う** |
+| 既存バグ修正（保守） | `WebUI-Production/` |
+| 本番デプロイ（現行） | `WebUI-Production/` |
+| 将来の本番デプロイ  | `webui-sample/`（移行完了後） |
 
 ## 開発フェーズ
 
@@ -141,7 +171,18 @@ DeskNet's Neo APIとの連携（オプション）:
 
 ## 実行方法
 
-### ローカル開発
+### ローカル開発（新正本 webui-sample/）
+```bash
+# webui-sample/ での開発（推奨）
+cd webui-sample
+npm install
+npx http-server . -p 8888
+
+# E2Eテスト実行
+npx playwright test
+```
+
+### ローカル開発（旧正本 WebUI-Production/・保守用）
 ```bash
 # WebUI-Productionディレクトリでindex.htmlをブラウザで開く
 # または簡易Webサーバーを起動
@@ -165,11 +206,15 @@ npx http-server WebUI-Production -p 8080
 
 ## 関連ドキュメント
 
-開発作業時は以下のドキュメントを参照:
-- 機能追加: `docs/機能仕様書(Functional-Specification).md`
-- API追加: `docs/API仕様書(API-Specification).md`
-- 画面変更: `docs/画面設計書(Screen-Design).md`
-- セキュリティ: `docs/セキュリティ設計書(Security-Design).md`
+開発作業時は以下のドキュメントを参照（フェーズ別再編後）:
+- 要件定義: `docs/01_Requirements/`
+- 基本・詳細設計: `docs/02_Basic-Design/`, `docs/03_Detailed-Design/`
+- セキュリティ: `docs/10_Security/`
+- テスト: `docs/06_Testing/`
+- CI/CD: `docs/07_CI-CD/`
+- 運用: `docs/09_Operations-Maintenance/`
+- 新WebUI仕様: `docs/webui-sample-docs/`
+- 新WebUI責務整理: `webui-sample/ARCHITECTURE-RESPONSIBILITIES.md`
 
 ## お問い合わせ
 
